@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StatCardComponent } from '../../shared';
-import { CardComponent } from '../../shared';
 import { PageHeaderComponent } from '../../shared';
 import { RevenueChartComponent } from './revenue-chart.component';
 import { ExpenseChartComponent } from './expense-chart.component';
@@ -17,7 +16,6 @@ import { QuickActionsComponent } from './quick-actions.component';
   imports: [
     CommonModule,
     StatCardComponent,
-    CardComponent,
     PageHeaderComponent,
     RevenueChartComponent,
     ExpenseChartComponent,
