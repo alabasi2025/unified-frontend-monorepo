@@ -9,6 +9,8 @@ import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { JournalEntriesService } from '../../services/journal-entries.service';
+import { AccountsService } from '../../services/accounts.service';
 
 interface JournalEntry {
   id: number;
@@ -392,14 +394,44 @@ export class JournalEntriesComponent implements OnInit {
   totalCredit = 0;
   Math = Math;
 
-  constructor(private messageService: MessageService) {}
+  constructor(
+    private messageService: MessageService,
+    private journalEntriesService: JournalEntriesService,
+    private accountsService: AccountsService
+  ) {}
 
   ngOnInit() {
     this.loadEntries();
   }
 
   loadEntries() {
-    // Mock data
+    this.journalEntriesService.getAll().subscribe({
+      next: (entries) => {
+        this.entries = entries.map(e => ({
+          id: parseInt(e.id),
+          entryNumber: e.entryNumber,
+          entryDate: new Date(e.date),
+          description: e.description,
+          totalDebit: e.totalDebit,
+          totalCredit: e.totalCredit,
+          status: e.status.toLowerCase(),
+          createdBy: 'admin',
+          createdAt: new Date(e.date)
+        }));
+      },
+      error: (error) => {
+        console.error('Error loading entries:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'خطأ',
+          detail: 'فشل تحميل القيود'
+        });
+      }
+    });
+  }
+
+  loadEntriesOld() {
+    // Mock data - BACKUP
     this.entries = [
       {
         id: 1,

@@ -9,6 +9,7 @@ import { DialogModule } from 'primeng/dialog';
 import { SelectModule } from 'primeng/select';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { AccountsService, Account } from '../../services/accounts.service';
 
 interface AccountNode {
   code: string;
@@ -413,14 +414,65 @@ export class AccountHierarchyComponent implements OnInit {
     { label: 'مصروفات', value: 'expense' }
   ];
 
-  constructor(private messageService: MessageService) {}
+  constructor(
+    private messageService: MessageService,
+    private accountsService: AccountsService
+  ) {}
 
   ngOnInit() {
     this.loadAccounts();
   }
 
   loadAccounts() {
-    // Mock hierarchical data
+    this.accountsService.getAll().subscribe({
+      next: (accounts) => {
+        const hierarchicalAccounts = this.buildHierarchy(accounts);
+        this.accountsTree = this.convertToTreeNodes(hierarchicalAccounts);
+      },
+      error: (error) => {
+        console.error('Error loading accounts:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'خطأ',
+          detail: 'فشل تحميل الحسابات'
+        });
+      }
+    });
+  }
+
+  buildHierarchy(accounts: Account[]): AccountNode[] {
+    const accountMap = new Map<string, AccountNode>();
+    const rootAccounts: AccountNode[] = [];
+
+    // Convert to AccountNode and create map
+    accounts.forEach(account => {
+      accountMap.set(account.id, {
+        code: account.code,
+        name: account.nameAr,
+        type: account.accountType.toLowerCase(),
+        balance: 0,
+        isActive: account.isActive,
+        children: []
+      });
+    });
+
+    // Build hierarchy
+    accounts.forEach(account => {
+      const node = accountMap.get(account.id)!;
+      if (account.parentId && accountMap.has(account.parentId)) {
+        const parent = accountMap.get(account.parentId)!;
+        if (!parent.children) parent.children = [];
+        parent.children.push(node);
+      } else {
+        rootAccounts.push(node);
+      }
+    });
+
+    return rootAccounts;
+  }
+
+  loadAccountsOld() {
+    // Mock hierarchical data - BACKUP
     const mockAccounts: AccountNode[] = [
       {
         code: '1000',

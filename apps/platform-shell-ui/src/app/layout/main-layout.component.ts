@@ -384,8 +384,8 @@ export class MainLayoutComponent implements OnInit {
         { label: 'التسلسل الهرمي', icon: 'pi pi-sitemap', routerLink: '/accounting/account-hierarchy' },
         { label: 'أرصدة الحسابات', icon: 'pi pi-money-bill', routerLink: '/accounting/account-balances' },
         { label: 'القيود اليومية', icon: 'pi pi-book', routerLink: '/accounting/journal-entries' },
-        { label: 'مراكز التكلفة', icon: 'pi pi-chart-pie', routerLink: '/cost-centers' },
-        { label: 'السنوات المالية', icon: 'pi pi-calendar', routerLink: '/fiscal-years' },
+        { label: 'مراكز التكلفة', icon: 'pi pi-chart-pie', routerLink: '/accounting/cost-centers' },
+        { label: 'السنوات المالية', icon: 'pi pi-calendar', routerLink: '/accounting/fiscal-years' },
         { label: 'الفترات المالية', icon: 'pi pi-clock', routerLink: '/accounting/fiscal-periods' }
       ]
     },

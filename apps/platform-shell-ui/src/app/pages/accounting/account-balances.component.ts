@@ -7,6 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
 import { CardModule } from 'primeng/card';
+import { AccountsService } from '../../services/accounts.service';
 
 interface AccountBalance {
   id: number;
@@ -384,6 +385,8 @@ export class AccountBalancesComponent implements OnInit {
   fromDate: Date = new Date(new Date().getFullYear(), 0, 1);
   toDate: Date = new Date();
   selectedAccountType: string = '';
+
+  constructor(private accountsService: AccountsService) {}
   
   accountTypes = [
     { label: 'الكل', value: '' },
@@ -404,7 +407,29 @@ export class AccountBalancesComponent implements OnInit {
   }
 
   loadBalances() {
-    // Mock data
+    this.accountsService.getAll().subscribe({
+      next: (accounts) => {
+        this.balances = accounts.map((account, index) => ({
+          id: parseInt(account.id),
+          accountCode: account.code,
+          accountName: account.nameAr,
+          accountType: account.accountType.toLowerCase(),
+          openingBalance: 0,
+          debit: 0,
+          credit: 0,
+          closingBalance: 0,
+          currency: 'YER'
+        }));
+        this.calculateTotals();
+      },
+      error: (error) => {
+        console.error('Error loading balances:', error);
+      }
+    });
+  }
+
+  loadBalancesOld() {
+    // Mock data - BACKUP
     this.balances = [
       {
         id: 1,
