@@ -266,5 +266,3 @@ export class SuppliersComponent implements OnInit {
     }, 500);
   }
 
-  hideDialog() { this.itemDialog = false; }
-}

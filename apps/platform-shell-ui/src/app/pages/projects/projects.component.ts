@@ -266,5 +266,3 @@ export class ProjectsComponent implements OnInit {
     }, 500);
   }
 
-  hideDialog() { this.itemDialog = false; }
-}

@@ -266,5 +266,3 @@ export class HoldingsComponent implements OnInit {
     }, 500);
   }
 
-  hideDialog() { this.itemDialog = false; }
-}

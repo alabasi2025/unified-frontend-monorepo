@@ -266,5 +266,3 @@ export class ItemsComponent implements OnInit {
     }, 500);
   }
 
-  hideDialog() { this.itemDialog = false; }
-}

@@ -266,5 +266,3 @@ export class UnitsComponent implements OnInit {
     }, 500);
   }
 
-  hideDialog() { this.itemDialog = false; }
-}

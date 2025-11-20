@@ -266,5 +266,3 @@ export class PermissionsComponent implements OnInit {
     }, 500);
   }
 
-  hideDialog() { this.itemDialog = false; }
-}

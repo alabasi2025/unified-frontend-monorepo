@@ -76,7 +76,79 @@ import { AuthService } from '../services/auth.service';
           </div>
 
           <div class="menu-section">
-            <div class="section-title" *ngIf="!sidebarCollapsed">العمليات</div>
+            <div class="section-title" *ngIf="!sidebarCollapsed">المحاسبة</div>
+            <a routerLink="/accounts" routerLinkActive="active" class="menu-item">
+              <i class="pi pi-wallet"></i>
+              <span *ngIf="!sidebarCollapsed">دليل الحسابات</span>
+            </a>
+            <a routerLink="/journal-entries" routerLinkActive="active" class="menu-item">
+              <i class="pi pi-book"></i>
+              <span *ngIf="!sidebarCollapsed">القيود اليومية</span>
+            </a>
+            <a routerLink="/cost-centers" routerLinkActive="active" class="menu-item">
+              <i class="pi pi-chart-pie"></i>
+              <span *ngIf="!sidebarCollapsed">مراكز التكلفة</span>
+            </a>
+            <a routerLink="/fiscal-years" routerLinkActive="active" class="menu-item">
+              <i class="pi pi-calendar"></i>
+              <span *ngIf="!sidebarCollapsed">السنوات المالية</span>
+            </a>
+          </div>
+
+          <div class="menu-section">
+            <div class="section-title" *ngIf="!sidebarCollapsed">المخزون</div>
+            <a routerLink="/warehouses" routerLinkActive="active" class="menu-item">
+              <i class="pi pi-box"></i>
+              <span *ngIf="!sidebarCollapsed">المستودعات</span>
+            </a>
+            <a routerLink="/items" routerLinkActive="active" class="menu-item">
+              <i class="pi pi-shopping-cart"></i>
+              <span *ngIf="!sidebarCollapsed">الأصناف</span>
+            </a>
+            <a routerLink="/stock-movements" routerLinkActive="active" class="menu-item">
+              <i class="pi pi-arrows-h"></i>
+              <span *ngIf="!sidebarCollapsed">حركات المخزون</span>
+            </a>
+            <a routerLink="/stock-counts" routerLinkActive="active" class="menu-item">
+              <i class="pi pi-list"></i>
+              <span *ngIf="!sidebarCollapsed">جرد المخزون</span>
+            </a>
+          </div>
+
+          <div class="menu-section">
+            <div class="section-title" *ngIf="!sidebarCollapsed">المشتريات</div>
+            <a routerLink="/purchase-orders" routerLinkActive="active" class="menu-item">
+              <i class="pi pi-shopping-cart"></i>
+              <span *ngIf="!sidebarCollapsed">أوامر الشراء</span>
+            </a>
+            <a routerLink="/purchase-invoices" routerLinkActive="active" class="menu-item">
+              <i class="pi pi-file"></i>
+              <span *ngIf="!sidebarCollapsed">فواتير الشراء</span>
+            </a>
+            <a routerLink="/purchase-returns" routerLinkActive="active" class="menu-item">
+              <i class="pi pi-undo"></i>
+              <span *ngIf="!sidebarCollapsed">مرتجعات المشتريات</span>
+            </a>
+          </div>
+
+          <div class="menu-section">
+            <div class="section-title" *ngIf="!sidebarCollapsed">المبيعات</div>
+            <a routerLink="/sales-orders" routerLinkActive="active" class="menu-item">
+              <i class="pi pi-dollar"></i>
+              <span *ngIf="!sidebarCollapsed">أوامر البيع</span>
+            </a>
+            <a routerLink="/sales-invoices" routerLinkActive="active" class="menu-item">
+              <i class="pi pi-file"></i>
+              <span *ngIf="!sidebarCollapsed">فواتير البيع</span>
+            </a>
+            <a routerLink="/sales-returns" routerLinkActive="active" class="menu-item">
+              <i class="pi pi-undo"></i>
+              <span *ngIf="!sidebarCollapsed">مرتجعات المبيعات</span>
+            </a>
+          </div>
+
+          <div class="menu-section">
+            <div class="section-title" *ngIf="!sidebarCollapsed">العملاء والموردين</div>
             <a routerLink="/customers" routerLinkActive="active" class="menu-item">
               <i class="pi pi-user"></i>
               <span *ngIf="!sidebarCollapsed">العملاء</span>
@@ -84,10 +156,6 @@ import { AuthService } from '../services/auth.service';
             <a routerLink="/suppliers" routerLinkActive="active" class="menu-item">
               <i class="pi pi-truck"></i>
               <span *ngIf="!sidebarCollapsed">الموردين</span>
-            </a>
-            <a routerLink="/items" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-shopping-cart"></i>
-              <span *ngIf="!sidebarCollapsed">الأصناف</span>
             </a>
           </div>
 

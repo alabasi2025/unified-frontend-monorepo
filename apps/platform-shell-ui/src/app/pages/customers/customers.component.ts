@@ -266,5 +266,3 @@ export class CustomersComponent implements OnInit {
     }, 500);
   }
 
-  hideDialog() { this.itemDialog = false; }
-}
