@@ -7,6 +7,13 @@ import { TooltipModule } from 'primeng/tooltip';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from '../services/auth.service';
 
+interface MenuSection {
+  title: string;
+  icon: string;
+  items: MenuItem[];
+  expanded?: boolean;
+}
+
 @Component({
   selector: 'app-main-layout',
   standalone: true,
@@ -18,165 +25,55 @@ import { AuthService } from '../services/auth.service';
     TooltipModule
   ],
   template: `
-    <div class="layout-wrapper">
+    <div class="layout-wrapper rtl">
       <!-- Sidebar -->
       <div class="layout-sidebar" [class.collapsed]="sidebarCollapsed">
         <div class="sidebar-header">
-          <div class="logo">
-            <i class="pi pi-building"></i>
-            <span *ngIf="!sidebarCollapsed">SEMOP ERP</span>
-          </div>
           <button 
             pButton 
             icon="pi pi-bars" 
             class="p-button-text p-button-rounded toggle-btn"
             (click)="toggleSidebar()">
           </button>
+          <div class="logo">
+            <i class="pi pi-building"></i>
+            <span *ngIf="!sidebarCollapsed">SEMOP ERP</span>
+          </div>
         </div>
 
         <div class="sidebar-menu">
+          <!-- الرئيسية -->
           <div class="menu-section">
-            <div class="section-title" *ngIf="!sidebarCollapsed">الرئيسية</div>
             <a routerLink="/dashboard" routerLinkActive="active" class="menu-item">
               <i class="pi pi-home"></i>
               <span *ngIf="!sidebarCollapsed">لوحة التحكم</span>
             </a>
           </div>
 
-          <div class="menu-section">
-            <div class="section-title" *ngIf="!sidebarCollapsed">الإدارة</div>
-            <a routerLink="/users" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-users"></i>
-              <span *ngIf="!sidebarCollapsed">المستخدمين</span>
-            </a>
-            <a routerLink="/roles" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-shield"></i>
-              <span *ngIf="!sidebarCollapsed">الأدوار</span>
-            </a>
-            <a routerLink="/permissions" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-lock"></i>
-              <span *ngIf="!sidebarCollapsed">الصلاحيات</span>
-            </a>
-          </div>
-
-          <div class="menu-section">
-            <div class="section-title" *ngIf="!sidebarCollapsed">الهيكل التنظيمي</div>
-            <a routerLink="/holdings" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-sitemap"></i>
-              <span *ngIf="!sidebarCollapsed">الشركات القابضة</span>
-            </a>
-            <a routerLink="/units" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-box"></i>
-              <span *ngIf="!sidebarCollapsed">الوحدات</span>
-            </a>
-            <a routerLink="/projects" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-briefcase"></i>
-              <span *ngIf="!sidebarCollapsed">المشاريع</span>
-            </a>
-          </div>
-
-          <div class="menu-section">
-            <div class="section-title" *ngIf="!sidebarCollapsed">المحاسبة</div>
-            <a routerLink="/accounts" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-wallet"></i>
-              <span *ngIf="!sidebarCollapsed">دليل الحسابات</span>
-            </a>
-            <a routerLink="/journal-entries" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-book"></i>
-              <span *ngIf="!sidebarCollapsed">القيود اليومية</span>
-            </a>
-            <a routerLink="/cost-centers" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-chart-pie"></i>
-              <span *ngIf="!sidebarCollapsed">مراكز التكلفة</span>
-            </a>
-            <a routerLink="/fiscal-years" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-calendar"></i>
-              <span *ngIf="!sidebarCollapsed">السنوات المالية</span>
-            </a>
-          </div>
-
-          <div class="menu-section">
-            <div class="section-title" *ngIf="!sidebarCollapsed">المخزون</div>
-            <a routerLink="/warehouses" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-box"></i>
-              <span *ngIf="!sidebarCollapsed">المستودعات</span>
-            </a>
-            <a routerLink="/items" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-shopping-cart"></i>
-              <span *ngIf="!sidebarCollapsed">الأصناف</span>
-            </a>
-            <a routerLink="/stock-movements" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-arrows-h"></i>
-              <span *ngIf="!sidebarCollapsed">حركات المخزون</span>
-            </a>
-            <a routerLink="/stock-counts" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-list"></i>
-              <span *ngIf="!sidebarCollapsed">جرد المخزون</span>
-            </a>
-          </div>
-
-          <div class="menu-section">
-            <div class="section-title" *ngIf="!sidebarCollapsed">المشتريات</div>
-            <a routerLink="/purchase-orders" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-shopping-cart"></i>
-              <span *ngIf="!sidebarCollapsed">أوامر الشراء</span>
-            </a>
-            <a routerLink="/purchase-invoices" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-file"></i>
-              <span *ngIf="!sidebarCollapsed">فواتير الشراء</span>
-            </a>
-            <a routerLink="/purchase-returns" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-undo"></i>
-              <span *ngIf="!sidebarCollapsed">مرتجعات المشتريات</span>
-            </a>
-          </div>
-
-          <div class="menu-section">
-            <div class="section-title" *ngIf="!sidebarCollapsed">المبيعات</div>
-            <a routerLink="/sales-orders" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-dollar"></i>
-              <span *ngIf="!sidebarCollapsed">أوامر البيع</span>
-            </a>
-            <a routerLink="/sales-invoices" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-file"></i>
-              <span *ngIf="!sidebarCollapsed">فواتير البيع</span>
-            </a>
-            <a routerLink="/sales-returns" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-undo"></i>
-              <span *ngIf="!sidebarCollapsed">مرتجعات المبيعات</span>
-            </a>
-          </div>
-
-          <div class="menu-section">
-            <div class="section-title" *ngIf="!sidebarCollapsed">العملاء والموردين</div>
-            <a routerLink="/customers" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-user"></i>
-              <span *ngIf="!sidebarCollapsed">العملاء</span>
-            </a>
-            <a routerLink="/suppliers" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-truck"></i>
-              <span *ngIf="!sidebarCollapsed">الموردين</span>
-            </a>
-          </div>
-
-          <div class="menu-section">
-            <div class="section-title" *ngIf="!sidebarCollapsed">التقارير</div>
-            <a routerLink="/reports" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-chart-bar"></i>
-              <span *ngIf="!sidebarCollapsed">التقارير</span>
-            </a>
-          </div>
-
-          <div class="menu-section">
-            <div class="section-title" *ngIf="!sidebarCollapsed">التطوير</div>
-            <a routerLink="/developer" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-code"></i>
-              <span *ngIf="!sidebarCollapsed">المطور (AI)</span>
-            </a>
-            <a routerLink="/documentation" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-book"></i>
-              <span *ngIf="!sidebarCollapsed">التوثيق</span>
-            </a>
+          <!-- الأنظمة مع تبويبات منبثقة -->
+          <div class="menu-section" *ngFor="let section of menuSections">
+            <div class="menu-item parent" 
+                 [class.active]="section.expanded"
+                 (click)="toggleSection(section)">
+              <i [class]="section.icon"></i>
+              <span *ngIf="!sidebarCollapsed">{{ section.title }}</span>
+              <i *ngIf="!sidebarCollapsed" 
+                 class="pi toggle-icon"
+                 [class.pi-chevron-down]="!section.expanded"
+                 [class.pi-chevron-up]="section.expanded"></i>
+            </div>
+            
+            <div class="submenu" 
+                 [class.expanded]="section.expanded && !sidebarCollapsed"
+                 [@slideDown]="section.expanded && !sidebarCollapsed ? 'expanded' : 'collapsed'">
+              <a *ngFor="let item of section.items" 
+                 [routerLink]="item.routerLink" 
+                 routerLinkActive="active"
+                 class="menu-item sub">
+                <i [class]="item.icon"></i>
+                <span>{{ item.label }}</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -190,15 +87,6 @@ import { AuthService } from '../services/auth.service';
           </div>
           <div class="topbar-right">
             <div class="user-info">
-              <p-avatar 
-                [label]="currentUser?.username?.charAt(0).toUpperCase()" 
-                shape="circle" 
-                [style]="{'background-color':'#2196F3', 'color': '#ffffff'}">
-              </p-avatar>
-              <div class="user-details">
-                <span class="username">{{ currentUser?.username }}</span>
-                <span class="role">مدير النظام</span>
-              </div>
               <button 
                 pButton 
                 icon="pi pi-sign-out" 
@@ -207,6 +95,15 @@ import { AuthService } from '../services/auth.service';
                 pTooltip="تسجيل خروج"
                 tooltipPosition="bottom">
               </button>
+              <div class="user-details">
+                <span class="username">{{ currentUser?.username }}</span>
+                <span class="role">مدير النظام</span>
+              </div>
+              <p-avatar 
+                [label]="currentUser?.username?.charAt(0).toUpperCase()" 
+                shape="circle" 
+                [style]="{'background-color':'#2196F3', 'color': '#ffffff'}">
+              </p-avatar>
             </div>
           </div>
         </div>
@@ -222,130 +119,173 @@ import { AuthService } from '../services/auth.service';
     .layout-wrapper {
       display: flex;
       min-height: 100vh;
-      background: #f5f7fa;
+      background: #f5f5f5;
     }
 
+    .layout-wrapper.rtl {
+      direction: rtl;
+    }
+
+    /* Sidebar */
     .layout-sidebar {
       width: 280px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       box-shadow: 2px 0 10px rgba(0,0,0,0.1);
       position: fixed;
-      height: 100vh;
+      right: 0;
+      top: 0;
+      bottom: 0;
       overflow-y: auto;
+      overflow-x: hidden;
       z-index: 1000;
     }
 
     .layout-sidebar.collapsed {
-      width: 80px;
+      width: 70px;
     }
 
+    .layout-sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .layout-sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.3);
+      border-radius: 3px;
+    }
+
+    /* Sidebar Header */
     .sidebar-header {
+      padding: 1.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 1.5rem 1rem;
       border-bottom: 1px solid rgba(255,255,255,0.1);
+      gap: 1rem;
     }
 
     .logo {
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       font-weight: 700;
+      white-space: nowrap;
     }
 
     .logo i {
-      font-size: 2rem;
+      font-size: 1.5rem;
     }
 
     .toggle-btn {
       color: white !important;
+      flex-shrink: 0;
     }
 
+    /* Sidebar Menu */
     .sidebar-menu {
       padding: 1rem 0;
     }
 
     .menu-section {
-      margin-bottom: 1.5rem;
-    }
-
-    .section-title {
-      padding: 0.5rem 1.5rem;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      opacity: 0.7;
-      font-weight: 600;
-      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
     }
 
     .menu-item {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.75rem;
       padding: 0.875rem 1.5rem;
       color: rgba(255,255,255,0.9);
       text-decoration: none;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
+      cursor: pointer;
       position: relative;
+      white-space: nowrap;
+    }
+
+    .menu-item i {
+      font-size: 1.125rem;
+      flex-shrink: 0;
+    }
+
+    .menu-item.parent {
+      font-weight: 600;
+      justify-content: space-between;
+    }
+
+    .menu-item.parent .toggle-icon {
+      margin-right: auto;
+      font-size: 0.875rem;
+      transition: transform 0.3s ease;
     }
 
     .menu-item:hover {
       background: rgba(255,255,255,0.1);
-      color: white;
     }
 
     .menu-item.active {
       background: rgba(255,255,255,0.15);
+      border-right: 3px solid white;
+    }
+
+    .menu-item.sub {
+      padding-right: 3rem;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .menu-item.sub:hover {
+      background: rgba(255,255,255,0.08);
+      padding-right: 2.9rem;
+    }
+
+    .menu-item.sub.active {
+      background: rgba(255,255,255,0.12);
       color: white;
-      font-weight: 600;
+      border-right: 3px solid #ffd700;
     }
 
-    .menu-item.active::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 4px;
-      background: white;
+    /* Submenu */
+    .submenu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .menu-item i {
-      font-size: 1.25rem;
-      min-width: 24px;
+    .submenu.expanded {
+      max-height: 1000px;
     }
 
+    /* Main Content */
     .layout-main {
       flex: 1;
       margin-right: 280px;
-      transition: all 0.3s ease;
+      transition: margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .layout-main.expanded {
-      margin-right: 80px;
+      margin-right: 70px;
     }
 
+    /* Topbar */
     .layout-topbar {
       background: white;
       padding: 1rem 2rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       display: flex;
       justify-content: space-between;
       align-items: center;
       position: sticky;
       top: 0;
-      z-index: 999;
+      z-index: 100;
     }
 
     .page-title {
       margin: 0;
       font-size: 1.5rem;
-      font-weight: 600;
-      color: #2c3e50;
+      color: #333;
     }
 
     .user-info {
@@ -357,40 +297,55 @@ import { AuthService } from '../services/auth.service';
     .user-details {
       display: flex;
       flex-direction: column;
-      text-align: right;
+      align-items: flex-end;
     }
 
     .username {
       font-weight: 600;
-      color: #2c3e50;
+      color: #333;
     }
 
     .role {
       font-size: 0.875rem;
-      color: #7f8c8d;
+      color: #666;
     }
 
+    /* Content */
     .layout-content {
       padding: 2rem;
-      min-height: calc(100vh - 80px);
     }
 
-    /* Scrollbar Styling */
-    .layout-sidebar::-webkit-scrollbar {
-      width: 6px;
+    /* Collapsed State */
+    .layout-sidebar.collapsed .menu-item span {
+      display: none;
     }
 
-    .layout-sidebar::-webkit-scrollbar-track {
-      background: rgba(255,255,255,0.1);
+    .layout-sidebar.collapsed .menu-item.parent .toggle-icon {
+      display: none;
     }
 
-    .layout-sidebar::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.3);
-      border-radius: 3px;
+    .layout-sidebar.collapsed .submenu {
+      display: none;
     }
 
-    .layout-sidebar::-webkit-scrollbar-thumb:hover {
-      background: rgba(255,255,255,0.5);
+    .layout-sidebar.collapsed .menu-item {
+      justify-content: center;
+      padding: 0.875rem 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .layout-sidebar {
+        transform: translateX(100%);
+      }
+
+      .layout-sidebar.collapsed {
+        transform: translateX(0);
+      }
+
+      .layout-main {
+        margin-right: 0;
+      }
     }
   `]
 })
@@ -398,17 +353,107 @@ export class MainLayoutComponent implements OnInit {
   sidebarCollapsed = false;
   pageTitle = 'لوحة التحكم';
   currentUser: any;
+  
+  menuSections: MenuSection[] = [
+    {
+      title: 'الإدارة',
+      icon: 'pi pi-users',
+      expanded: false,
+      items: [
+        { label: 'المستخدمين', icon: 'pi pi-user', routerLink: '/users' },
+        { label: 'الأدوار', icon: 'pi pi-shield', routerLink: '/roles' },
+        { label: 'الصلاحيات', icon: 'pi pi-lock', routerLink: '/permissions' }
+      ]
+    },
+    {
+      title: 'الهيكل التنظيمي',
+      icon: 'pi pi-sitemap',
+      expanded: false,
+      items: [
+        { label: 'الشركات القابضة', icon: 'pi pi-building', routerLink: '/holdings' },
+        { label: 'الوحدات', icon: 'pi pi-box', routerLink: '/units' },
+        { label: 'المشاريع', icon: 'pi pi-briefcase', routerLink: '/projects' }
+      ]
+    },
+    {
+      title: 'المحاسبة',
+      icon: 'pi pi-wallet',
+      expanded: false,
+      items: [
+        { label: 'دليل الحسابات', icon: 'pi pi-list', routerLink: '/accounts' },
+        { label: 'القيود اليومية', icon: 'pi pi-book', routerLink: '/journal-entries' },
+        { label: 'مراكز التكلفة', icon: 'pi pi-chart-pie', routerLink: '/cost-centers' },
+        { label: 'السنوات المالية', icon: 'pi pi-calendar', routerLink: '/fiscal-years' }
+      ]
+    },
+    {
+      title: 'المخزون',
+      icon: 'pi pi-database',
+      expanded: false,
+      items: [
+        { label: 'المستودعات', icon: 'pi pi-home', routerLink: '/warehouses' },
+        { label: 'الأصناف', icon: 'pi pi-tags', routerLink: '/items' },
+        { label: 'حركات المخزون', icon: 'pi pi-arrows-h', routerLink: '/stock-movements' },
+        { label: 'جرد المخزون', icon: 'pi pi-check-square', routerLink: '/stock-counts' }
+      ]
+    },
+    {
+      title: 'المشتريات',
+      icon: 'pi pi-shopping-cart',
+      expanded: false,
+      items: [
+        { label: 'أوامر الشراء', icon: 'pi pi-file', routerLink: '/purchase-orders' },
+        { label: 'فواتير الشراء', icon: 'pi pi-file-invoice', routerLink: '/purchase-invoices' },
+        { label: 'مرتجعات المشتريات', icon: 'pi pi-replay', routerLink: '/purchase-returns' }
+      ]
+    },
+    {
+      title: 'المبيعات',
+      icon: 'pi pi-dollar',
+      expanded: false,
+      items: [
+        { label: 'أوامر البيع', icon: 'pi pi-file', routerLink: '/sales-orders' },
+        { label: 'فواتير البيع', icon: 'pi pi-file-invoice', routerLink: '/sales-invoices' },
+        { label: 'مرتجعات المبيعات', icon: 'pi pi-replay', routerLink: '/sales-returns' }
+      ]
+    },
+    {
+      title: 'العملاء والموردين',
+      icon: 'pi pi-users',
+      expanded: false,
+      items: [
+        { label: 'العملاء', icon: 'pi pi-user', routerLink: '/customers' },
+        { label: 'الموردين', icon: 'pi pi-truck', routerLink: '/suppliers' }
+      ]
+    },
+    {
+      title: 'التقارير',
+      icon: 'pi pi-chart-bar',
+      expanded: false,
+      items: [
+        { label: 'التقارير المالية', icon: 'pi pi-chart-line', routerLink: '/reports' }
+      ]
+    },
+    {
+      title: 'التطوير',
+      icon: 'pi pi-code',
+      expanded: false,
+      items: [
+        { label: 'المطور (AI)', icon: 'pi pi-sparkles', routerLink: '/developer' },
+        { label: 'التوثيق', icon: 'pi pi-book', routerLink: '/documentation' }
+      ]
+    }
+  ];
 
   constructor(
-    private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
     this.updatePageTitle();
     
-    // Listen to route changes to update page title
     this.router.events.subscribe(() => {
       this.updatePageTitle();
     });
@@ -418,26 +463,35 @@ export class MainLayoutComponent implements OnInit {
     this.sidebarCollapsed = !this.sidebarCollapsed;
   }
 
+  toggleSection(section: MenuSection) {
+    if (!this.sidebarCollapsed) {
+      section.expanded = !section.expanded;
+    }
+  }
+
   updatePageTitle() {
-    const route = this.router.url;
+    const url = this.router.url;
     const titles: { [key: string]: string } = {
       '/dashboard': 'لوحة التحكم',
-      '/users': 'إدارة المستخدمين',
-      '/roles': 'إدارة الأدوار',
-      '/permissions': 'إدارة الصلاحيات',
-      '/holdings': 'إدارة الشركات القابضة',
-      '/units': 'إدارة الوحدات',
-      '/projects': 'إدارة المشاريع',
-      '/customers': 'إدارة العملاء',
-      '/suppliers': 'إدارة الموردين',
-      '/items': 'إدارة الأصناف',
-      '/reports': 'التقارير'
+      '/users': 'المستخدمين',
+      '/roles': 'الأدوار',
+      '/permissions': 'الصلاحيات',
+      '/holdings': 'الشركات القابضة',
+      '/units': 'الوحدات',
+      '/projects': 'المشاريع',
+      '/accounts': 'دليل الحسابات',
+      '/customers': 'العملاء',
+      '/suppliers': 'الموردين',
+      '/items': 'الأصناف',
+      '/reports': 'التقارير',
+      '/developer': 'المطور (AI)',
+      '/documentation': 'التوثيق'
     };
-    this.pageTitle = titles[route] || 'SEMOP ERP';
+    this.pageTitle = titles[url] || 'SEMOP ERP';
   }
 
   logout() {
     this.authService.logout();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/login']);
   }
 }
