@@ -23,7 +23,9 @@ export const appRoutes: Route[] = [
       { path: 'customers', loadComponent: () => import('./pages/customers/customers.component').then(m => m.CustomersComponent) },
       { path: 'suppliers', loadComponent: () => import('./pages/suppliers/suppliers.component').then(m => m.SuppliersComponent) },
       { path: 'items', loadComponent: () => import('./pages/items/items.component').then(m => m.ItemsComponent) },
-      { path: 'reports', loadComponent: () => import('./pages/reports/reports.component').then(m => m.ReportsComponent) }
+      { path: 'reports', loadComponent: () => import('./pages/reports/reports.component').then(m => m.ReportsComponent) },
+      { path: 'developer', loadComponent: () => import('./pages/developer/developer-chat.component').then(m => m.DeveloperChatComponent) },
+      { path: 'documentation', loadComponent: () => import('./pages/documentation/documentation-viewer.component').then(m => m.DocumentationViewerComponent) }
     ]
   },
   { path: '**', redirectTo: 'dashboard' }
