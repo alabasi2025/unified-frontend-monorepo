@@ -34,6 +34,9 @@ export const appRoutes: Route[] = [
       { path: 'accounting/cost-centers', loadComponent: () => import('./pages/accounting/cost-centers.component').then(m => m.CostCentersComponent) },
       { path: 'accounting/fiscal-years', loadComponent: () => import('./pages/accounting/fiscal-years.component').then(m => m.FiscalYearsComponent) },
       
+      // Inventory Module Routes
+      { path: 'warehouses', loadComponent: () => import('./pages/warehouses/warehouses.component').then(m => m.WarehousesComponent) },
+      
       { path: 'developer', loadComponent: () => import('./pages/developer/developer-chat.component').then(m => m.DeveloperChatComponent) },
       { path: 'documentation', loadComponent: () => import('./pages/documentation/documentation-viewer.component').then(m => m.DocumentationViewerComponent) }
     ]
