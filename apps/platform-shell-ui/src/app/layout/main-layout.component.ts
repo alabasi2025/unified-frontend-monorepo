@@ -166,6 +166,18 @@ import { AuthService } from '../services/auth.service';
               <span *ngIf="!sidebarCollapsed">التقارير</span>
             </a>
           </div>
+
+          <div class="menu-section">
+            <div class="section-title" *ngIf="!sidebarCollapsed">التطوير</div>
+            <a routerLink="/developer" routerLinkActive="active" class="menu-item">
+              <i class="pi pi-code"></i>
+              <span *ngIf="!sidebarCollapsed">المطور (AI)</span>
+            </a>
+            <a routerLink="/documentation" routerLinkActive="active" class="menu-item">
+              <i class="pi pi-book"></i>
+              <span *ngIf="!sidebarCollapsed">التوثيق</span>
+            </a>
+          </div>
         </div>
       </div>
 
