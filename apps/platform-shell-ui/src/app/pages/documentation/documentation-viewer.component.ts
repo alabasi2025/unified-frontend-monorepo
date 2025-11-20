@@ -221,10 +221,10 @@ import { MarkdownModule } from 'ngx-markdown';
                   <h4>دليل المستخدم</h4>
                   <p>تعلم كيفية استخدام النظام</p>
                 </div>
-                <div class="link-card" (click)="loadQuickDoc('architecture')">
+                <div class="link-card" (click)="loadQuickDoc('master-blueprint')">
                   <i class="pi pi-sitemap"></i>
-                  <h4>البنية المعمارية</h4>
-                  <p>فهم تصميم النظام</p>
+                  <h4>دليل بناء النظام</h4>
+                  <p>المخطط الشامل للنظام</p>
                 </div>
                 <div class="link-card" (click)="loadQuickDoc('developer')">
                   <i class="pi pi-code"></i>
@@ -768,6 +768,7 @@ export class DocumentationViewerComponent implements OnInit {
     ];
 
     this.developerTree = [
+      { label: 'دليل بناء النظام الشامل', data: 'master-blueprint', icon: 'pi pi-sitemap', styleClass: 'master-blueprint-node' },
       { label: 'البدء السريع', data: 'developer-quickstart', icon: 'pi pi-bolt' },
       { label: 'خطوات التطوير', data: 'developer-steps', icon: 'pi pi-list' },
       // ... more items
@@ -815,12 +816,42 @@ export class DocumentationViewerComponent implements OnInit {
   }
 
   loadDocumentBySlug(slug: string) {
+    // Special handling for master blueprint
+    if (slug === 'master-blueprint') {
+      this.loadMasterBlueprint();
+      return;
+    }
+    
     this.http.get<any>(`/api/documentation/slug/${slug}`).subscribe({
       next: (data) => {
         this.currentDocument = data;
       },
       error: (error) => {
         console.error('Error loading document:', error);
+      },
+    });
+  }
+
+  loadMasterBlueprint() {
+    this.http.get<any>('/api/documentation/master/blueprint').subscribe({
+      next: (response) => {
+        this.currentDocument = {
+          title: 'دليل بناء النظام الشامل - SEMOP Master Blueprint',
+          content: response.content,
+          category: 'DEVELOPER',
+          type: 'ARCHITECTURE',
+          viewCount: 0,
+          updatedAt: new Date('2025-11-21'),
+          version: '2.0.0',
+        };
+      },
+      error: (error) => {
+        console.error('Error loading master blueprint:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'خطأ',
+          detail: 'فشل تحميل دليل بناء النظام',
+        });
       },
     });
   }
