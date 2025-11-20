@@ -5,6 +5,7 @@
   "scripts": {},
   "private": true,
   "dependencies": {
+    "@angular/animations": "~20.3.0",
     "@angular/common": "~20.3.0",
     "@angular/compiler": "~20.3.0",
     "@angular/core": "~20.3.0",
@@ -15,6 +16,8 @@
     "@ngrx/effects": "^20.1.0",
     "@ngrx/store": "^20.1.0",
     "@ngrx/store-devtools": "^20.1.0",
+    "@primeng/themes": "^20.3.0",
+    "chart.js": "^4.5.1",
     "primeflex": "^4.0.0",
     "primeicons": "^7.0.0",
     "primeng": "^20.3.0",

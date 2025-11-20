@@ -21,7 +21,9 @@
             "input": "apps/platform-shell-ui/public"
           }
         ],
-        "styles": ["apps/platform-shell-ui/src/styles.scss"]
+        "styles": [
+          "apps/platform-shell-ui/src/styles.scss"
+        ]
       },
       "configurations": {
         "production": {

@@ -25,6 +25,30 @@ export interface User {
   permissions: string[];
 }
 
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+}
+
+export interface UpdateProfileRequest {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+}
+
+export interface ChangePasswordRequest {
+  oldPassword: string;
+  newPassword: string;
+}
+
+export interface UserPreferences {
+  language?: string;
+  theme?: string;
+  notifications?: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -66,6 +90,40 @@ export class AuthService {
         this.setSession(response);
       })
     );
+  }
+
+  register(data: RegisterRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/register`, data).pipe(
+      tap(response => {
+        this.setSession(response);
+        this.isAuthenticatedSubject.next(true);
+      })
+    );
+  }
+
+  forgotPassword(email: string): Observable<void> {
+    return this.http.post<void>(`${environment.apiUrl}/auth/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, password: string): Observable<void> {
+    return this.http.post<void>(`${environment.apiUrl}/auth/reset-password`, { token, password });
+  }
+
+  updateProfile(data: UpdateProfileRequest): Observable<User> {
+    return this.http.put<User>(`${environment.apiUrl}/auth/profile`, data).pipe(
+      tap(user => {
+        this.currentUserSubject.next(user);
+        this.storage.set('user', JSON.stringify(user));
+      })
+    );
+  }
+
+  changePassword(data: ChangePasswordRequest): Observable<void> {
+    return this.http.post<void>(`${environment.apiUrl}/auth/change-password`, data);
+  }
+
+  updatePreferences(preferences: UserPreferences): Observable<void> {
+    return this.http.put<void>(`${environment.apiUrl}/auth/preferences`, preferences);
   }
 
   getAccessToken(): string | null {

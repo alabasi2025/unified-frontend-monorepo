@@ -6,7 +6,6 @@ import { environment } from '../../../environments/environment';
 export interface ApiRequestOptions {
   headers?: HttpHeaders | { [header: string]: string | string[] };
   params?: HttpParams | { [param: string]: string | string[] };
-  responseType?: 'json' | 'text' | 'blob' | 'arraybuffer';
 }
 
 @Injectable({ providedIn: 'root' })
@@ -15,23 +14,48 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  get<T>(endpoint: string, options?: ApiRequestOptions): Observable<T> {
-    return this.http.get<T>(`${this.baseUrl}${endpoint}`, options);
+  // GET overloads
+  get<T>(endpoint: string, options?: ApiRequestOptions): Observable<T>;
+  get(endpoint: string, options: { responseType: 'arraybuffer' } & ApiRequestOptions): Observable<ArrayBuffer>;
+  get(endpoint: string, options: { responseType: 'blob' } & ApiRequestOptions): Observable<Blob>;
+  get(endpoint: string, options: { responseType: 'text' } & ApiRequestOptions): Observable<string>;
+  get(endpoint: string, options?: any): Observable<any> {
+    return this.http.get(`${this.baseUrl}${endpoint}`, options);
   }
 
-  post<T>(endpoint: string, body: any, options?: ApiRequestOptions): Observable<T> {
-    return this.http.post<T>(`${this.baseUrl}${endpoint}`, body, options);
+  // POST overloads
+  post<T>(endpoint: string, body: any, options?: ApiRequestOptions): Observable<T>;
+  post(endpoint: string, body: any, options: { responseType: 'arraybuffer' } & ApiRequestOptions): Observable<ArrayBuffer>;
+  post(endpoint: string, body: any, options: { responseType: 'blob' } & ApiRequestOptions): Observable<Blob>;
+  post(endpoint: string, body: any, options: { responseType: 'text' } & ApiRequestOptions): Observable<string>;
+  post(endpoint: string, body: any, options?: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}${endpoint}`, body, options);
   }
 
-  put<T>(endpoint: string, body: any, options?: ApiRequestOptions): Observable<T> {
-    return this.http.put<T>(`${this.baseUrl}${endpoint}`, body, options);
+  // PUT overloads
+  put<T>(endpoint: string, body: any, options?: ApiRequestOptions): Observable<T>;
+  put(endpoint: string, body: any, options: { responseType: 'arraybuffer' } & ApiRequestOptions): Observable<ArrayBuffer>;
+  put(endpoint: string, body: any, options: { responseType: 'blob' } & ApiRequestOptions): Observable<Blob>;
+  put(endpoint: string, body: any, options: { responseType: 'text' } & ApiRequestOptions): Observable<string>;
+  put(endpoint: string, body: any, options?: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}${endpoint}`, body, options);
   }
 
-  patch<T>(endpoint: string, body: any, options?: ApiRequestOptions): Observable<T> {
-    return this.http.patch<T>(`${this.baseUrl}${endpoint}`, body, options);
+  // PATCH overloads
+  patch<T>(endpoint: string, body: any, options?: ApiRequestOptions): Observable<T>;
+  patch(endpoint: string, body: any, options: { responseType: 'arraybuffer' } & ApiRequestOptions): Observable<ArrayBuffer>;
+  patch(endpoint: string, body: any, options: { responseType: 'blob' } & ApiRequestOptions): Observable<Blob>;
+  patch(endpoint: string, body: any, options: { responseType: 'text' } & ApiRequestOptions): Observable<string>;
+  patch(endpoint: string, body: any, options?: any): Observable<any> {
+    return this.http.patch(`${this.baseUrl}${endpoint}`, body, options);
   }
 
-  delete<T>(endpoint: string, options?: ApiRequestOptions): Observable<T> {
-    return this.http.delete<T>(`${this.baseUrl}${endpoint}`, options);
+  // DELETE overloads
+  delete<T>(endpoint: string, options?: ApiRequestOptions): Observable<T>;
+  delete(endpoint: string, options: { responseType: 'arraybuffer' } & ApiRequestOptions): Observable<ArrayBuffer>;
+  delete(endpoint: string, options: { responseType: 'blob' } & ApiRequestOptions): Observable<Blob>;
+  delete(endpoint: string, options: { responseType: 'text' } & ApiRequestOptions): Observable<string>;
+  delete(endpoint: string, options?: any): Observable<any> {
+    return this.http.delete(`${this.baseUrl}${endpoint}`, options);
   }
 }
