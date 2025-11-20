@@ -28,7 +28,7 @@ export const routes: Routes = [
 
   // Main application routes (with layout)
   {
-    path: '',
+    path: 'app',
     component: MainLayoutComponent,
     canActivate: [authGuard],
     children: [
@@ -100,9 +100,16 @@ export const routes: Routes = [
     ]
   },
 
+  // Default redirect
+  {
+    path: '',
+    redirectTo: 'auth/login',
+    pathMatch: 'full'
+  },
+
   // 404
   {
     path: '**',
-    redirectTo: 'dashboard'
+    redirectTo: 'auth/login'
   }
 ];
