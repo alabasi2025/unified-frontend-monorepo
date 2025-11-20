@@ -107,17 +107,25 @@ import { AuthService } from '../../services/auth.service';
                   <i class="pi pi-lock"></i>
                   كلمة المرور
                 </label>
-                <p-password 
-                  id="password" 
-                  [(ngModel)]="password"
-                  name="password" 
-                  [feedback]="false"
-                  [disabled]="loading"
-                  placeholder="أدخل كلمة المرور"
-                  styleClass="w-full"
-                  inputStyleClass="w-full"
-                  (keyup.enter)="login()">
-                </p-password>
+                <div class="password-input-wrapper">
+                  <input 
+                    [type]="showPassword ? 'text' : 'password'"
+                    pInputText 
+                    id="password" 
+                    [(ngModel)]="password"
+                    name="password"
+                    [disabled]="loading"
+                    placeholder="أدخل كلمة المرور"
+                    class="form-input"
+                    (keyup.enter)="login()" />
+                  <button 
+                    type="button"
+                    class="password-toggle"
+                    (click)="showPassword = !showPassword"
+                    [disabled]="loading">
+                    <i [class]="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+                  </button>
+                </div>
               </div>
 
               <div class="form-options">
@@ -443,6 +451,39 @@ import { AuthService } from '../../services/auth.service';
       outline: none;
     }
 
+    .password-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .password-input-wrapper .form-input {
+      padding-right: 3rem;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 1rem;
+      background: none;
+      border: none;
+      color: #9ca3af;
+      cursor: pointer;
+      padding: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.3s ease;
+    }
+
+    .password-toggle:hover {
+      color: #667eea;
+    }
+
+    .password-toggle:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
     .form-options {
       display: flex;
       justify-content: space-between;
@@ -643,6 +684,7 @@ export class LoginComponent {
   loading = false;
   errorMessage = '';
   rememberMe = false;
+  showPassword = false;
   returnUrl = '/dashboard';
 
   constructor(
