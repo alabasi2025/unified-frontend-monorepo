@@ -14,6 +14,8 @@
     "@angular/platform-browser-dynamic": "~20.3.0",
     "@angular/router": "~20.3.0",
     "chart.js": "^4.5.1",
+    "marked": "^17.0.1",
+    "ngx-markdown": "^20.1.0",
     "primeflex": "^4.0.0",
     "primeicons": "^7.0.0",
     "primeng": "^20.3.0",

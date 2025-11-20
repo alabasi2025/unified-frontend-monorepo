@@ -112,7 +112,7 @@ import { TooltipModule } from 'primeng/tooltip';
           </div>
         </div>
         <ng-template pTemplate="footer">
-          <button pButton label="إلغاء" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+          <button pButton label="إلغاء" icon="pi pi-times" class="p-button-text" (click)="itemDialog = false"></button>
           <button pButton label="حفظ" icon="pi pi-check" (click)="saveItem()" [loading]="saving"></button>
         </ng-template>
       </p-dialog>
@@ -266,3 +266,4 @@ export class ItemsComponent implements OnInit {
     }, 500);
   }
 
+}
