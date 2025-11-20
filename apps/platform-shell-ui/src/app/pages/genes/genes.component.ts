@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TabViewModule } from 'primeng/tabview';
+// import { TabViewModule } from 'primeng/tabview'; // Not available in current PrimeNG version
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ChipModule } from 'primeng/chip';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputTextModule } from 'primeng/inputtext';
-import { DropdownModule } from 'primeng/dropdown';
+// import { DropdownModule } from 'primeng/dropdown'; // Not available in current PrimeNG version
 import { AccordionModule } from 'primeng/accordion';
 import { BadgeModule } from 'primeng/badge';
 import { DividerModule } from 'primeng/divider';
@@ -29,14 +29,14 @@ interface CategoryGroup {
   imports: [
     CommonModule,
     FormsModule,
-    TabViewModule,
+    // TabViewModule,
     ButtonModule,
     CardModule,
     ChipModule,
     ToastModule,
     ConfirmDialogModule,
     InputTextModule,
-    DropdownModule,
+    // DropdownModule,
     AccordionModule,
     BadgeModule,
     DividerModule
@@ -56,20 +56,14 @@ interface CategoryGroup {
         <div class="header-actions">
           <div class="sector-info">
             <span class="sector-label">قطاع عملك:</span>
-            <p-dropdown 
-              [options]="sectors" 
+            <select 
               [(ngModel)]="selectedSector"
-              optionLabel="nameAr"
-              optionValue="id"
-              (onChange)="onSectorChange()"
-              [style]="{'width': '200px'}">
-              <ng-template let-sector pTemplate="item">
-                <span>{{ sector.icon }} {{ sector.nameAr }}</span>
-              </ng-template>
-              <ng-template let-sector pTemplate="selectedItem">
-                <span>{{ sector.icon }} {{ sector.nameAr }}</span>
-              </ng-template>
-            </p-dropdown>
+              (change)="onSectorChange()"
+              class="sector-select">
+              <option *ngFor="let sector of sectors" [value]="sector.id">
+                {{ sector.icon }} {{ sector.nameAr }}
+              </option>
+            </select>
           </div>
         </div>
       </div>
