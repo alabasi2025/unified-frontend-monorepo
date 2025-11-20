@@ -24,6 +24,13 @@ export const appRoutes: Route[] = [
       { path: 'suppliers', loadComponent: () => import('./pages/suppliers/suppliers.component').then(m => m.SuppliersComponent) },
       { path: 'items', loadComponent: () => import('./pages/items/items.component').then(m => m.ItemsComponent) },
       { path: 'reports', loadComponent: () => import('./pages/reports/reports.component').then(m => m.ReportsComponent) },
+      
+      // Accounting Module Routes
+      { path: 'accounting/journal-entries', loadComponent: () => import('./pages/accounting/journal-entries.component').then(m => m.JournalEntriesComponent) },
+      { path: 'accounting/account-balances', loadComponent: () => import('./pages/accounting/account-balances.component').then(m => m.AccountBalancesComponent) },
+      { path: 'accounting/account-hierarchy', loadComponent: () => import('./pages/accounting/account-hierarchy.component').then(m => m.AccountHierarchyComponent) },
+      { path: 'accounting/fiscal-periods', loadComponent: () => import('./pages/accounting/fiscal-periods.component').then(m => m.FiscalPeriodsComponent) },
+      
       { path: 'developer', loadComponent: () => import('./pages/developer/developer-chat.component').then(m => m.DeveloperChatComponent) },
       { path: 'documentation', loadComponent: () => import('./pages/documentation/documentation-viewer.component').then(m => m.DocumentationViewerComponent) }
     ]
