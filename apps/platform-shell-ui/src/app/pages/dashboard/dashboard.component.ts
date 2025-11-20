@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MenubarModule } from 'primeng/menubar';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { MenuItem } from 'primeng/api';
+import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,44 +16,57 @@ import { MenuItem } from 'primeng/api';
       <ng-template pTemplate="start">
         <span class="text-xl font-bold">SEMOP ERP</span>
       </ng-template>
+      <ng-template pTemplate="end">
+        <div class="flex align-items-center gap-2">
+          <span class="text-sm">{{ currentUser?.username }}</span>
+          <p-button label="تسجيل خروج" icon="pi pi-sign-out" severity="danger" [text]="true" (onClick)="logout()"></p-button>
+        </div>
+      </ng-template>
     </p-menubar>
 
     <div class="p-4">
       <h1 class="text-3xl font-bold mb-4">لوحة التحكم الرئيسية</h1>
       
-      <div class="grid">
-        <div class="col-12 md:col-6 lg:col-3">
-          <p-card header="المستخدمين" styleClass="text-center">
-            <i class="pi pi-users text-4xl text-primary mb-3"></i>
-            <p class="text-2xl font-bold">150</p>
-            <p-button label="عرض" (onClick)="navigate('/users')" styleClass="w-full mt-2"></p-button>
-          </p-card>
+      @if (loading) {
+        <div class="text-center p-5">
+          <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+          <p>جاري تحميل الإحصائيات...</p>
         </div>
-        
-        <div class="col-12 md:col-6 lg:col-3">
-          <p-card header="الأدوار" styleClass="text-center">
-            <i class="pi pi-shield text-4xl text-success mb-3"></i>
-            <p class="text-2xl font-bold">12</p>
-            <p-button label="عرض" (onClick)="navigate('/roles')" styleClass="w-full mt-2"></p-button>
-          </p-card>
+      } @else {
+        <div class="grid">
+          <div class="col-12 md:col-6 lg:col-3">
+            <p-card header="المستخدمين" styleClass="text-center">
+              <i class="pi pi-users text-4xl text-primary mb-3"></i>
+              <p class="text-2xl font-bold">{{ stats.usersCount }}</p>
+              <p-button label="عرض" (onClick)="navigate('/users')" styleClass="w-full mt-2"></p-button>
+            </p-card>
+          </div>
+          
+          <div class="col-12 md:col-6 lg:col-3">
+            <p-card header="الأدوار" styleClass="text-center">
+              <i class="pi pi-shield text-4xl text-success mb-3"></i>
+              <p class="text-2xl font-bold">{{ stats.rolesCount }}</p>
+              <p-button label="عرض" (onClick)="navigate('/roles')" styleClass="w-full mt-2"></p-button>
+            </p-card>
+          </div>
+          
+          <div class="col-12 md:col-6 lg:col-3">
+            <p-card header="العملاء" styleClass="text-center">
+              <i class="pi pi-briefcase text-4xl text-warning mb-3"></i>
+              <p class="text-2xl font-bold">{{ stats.customersCount }}</p>
+              <p-button label="عرض" (onClick)="navigate('/customers')" styleClass="w-full mt-2"></p-button>
+            </p-card>
+          </div>
+          
+          <div class="col-12 md:col-6 lg:col-3">
+            <p-card header="الموردين" styleClass="text-center">
+              <i class="pi pi-shopping-cart text-4xl text-danger mb-3"></i>
+              <p class="text-2xl font-bold">{{ stats.suppliersCount }}</p>
+              <p-button label="عرض" (onClick)="navigate('/suppliers')" styleClass="w-full mt-2"></p-button>
+            </p-card>
+          </div>
         </div>
-        
-        <div class="col-12 md:col-6 lg:col-3">
-          <p-card header="العملاء" styleClass="text-center">
-            <i class="pi pi-briefcase text-4xl text-warning mb-3"></i>
-            <p class="text-2xl font-bold">450</p>
-            <p-button label="عرض" (onClick)="navigate('/customers')" styleClass="w-full mt-2"></p-button>
-          </p-card>
-        </div>
-        
-        <div class="col-12 md:col-6 lg:col-3">
-          <p-card header="الموردين" styleClass="text-center">
-            <i class="pi pi-shopping-cart text-4xl text-danger mb-3"></i>
-            <p class="text-2xl font-bold">280</p>
-            <p-button label="عرض" (onClick)="navigate('/suppliers')" styleClass="w-full mt-2"></p-button>
-          </p-card>
-        </div>
-      </div>
+      }
     </div>
   `,
   styles: [`
@@ -60,7 +75,7 @@ import { MenuItem } from 'primeng/api';
     }
   `]
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   menuItems: MenuItem[] = [
     {
       label: 'الرئيسية',
@@ -101,9 +116,57 @@ export class DashboardComponent {
     }
   ];
 
-  constructor(private router: Router) {}
+  stats = {
+    usersCount: 0,
+    rolesCount: 0,
+    customersCount: 0,
+    suppliersCount: 0
+  };
+
+  loading = false;
+  currentUser: any = null;
+
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private authService: AuthService
+  ) {
+    this.currentUser = this.authService.getCurrentUser();
+  }
+
+  ngOnInit() {
+    this.loadStats();
+  }
+
+  loadStats() {
+    this.loading = true;
+    
+    // Load statistics from API
+    this.http.get<any>('/api/dashboard/stats').subscribe({
+      next: (data) => {
+        this.stats = data;
+        this.loading = false;
+      },
+      error: (error) => {
+        this.loading = false;
+        // Use dummy data if API fails
+        this.stats = {
+          usersCount: 0,
+          rolesCount: 0,
+          customersCount: 0,
+          suppliersCount: 0
+        };
+        console.error('Error loading stats:', error);
+      }
+    });
+  }
 
   navigate(path: string) {
     this.router.navigate([path]);
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }
