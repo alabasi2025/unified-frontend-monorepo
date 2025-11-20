@@ -9,16 +9,19 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { CheckboxModule } from 'primeng/checkbox';
+import { FiscalPeriodsService, FiscalPeriod as ApiFiscalPeriod } from '../../services/fiscal-periods.service';
+import { FiscalYearsService } from '../../services/fiscal-years.service';
 
 interface FiscalPeriod {
-  id: number;
-  periodName: string;
-  startDate: Date;
-  endDate: Date;
-  status: string;
+  id: string;
+  fiscalYearId: string;
+  code: string;
+  nameAr: string;
+  startDate: Date | string;
+  endDate: Date | string;
   isClosed: boolean;
-  closedBy?: string;
-  closedAt?: Date;
+  closedBy?: string | null;
+  closedAt?: Date | string | null;
 }
 
 @Component({
@@ -35,7 +38,7 @@ interface FiscalPeriod {
     ToastModule,
     CheckboxModule
   ],
-  providers: [MessageService],
+  providers: [MessageService, FiscalPeriodsService, FiscalYearsService],
   template: `
     <div class="page-container">
       <div class="page-header">
@@ -64,8 +67,11 @@ interface FiscalPeriod {
 
           <ng-template pTemplate="header">
             <tr>
-              <th pSortableColumn="periodName">
-                اسم الفترة <p-sortIcon field="periodName"></p-sortIcon>
+              <th pSortableColumn="code">
+                الرمز <p-sortIcon field="code"></p-sortIcon>
+              </th>
+              <th pSortableColumn="nameAr">
+                اسم الفترة <p-sortIcon field="nameAr"></p-sortIcon>
               </th>
               <th pSortableColumn="startDate">
                 تاريخ البداية <p-sortIcon field="startDate"></p-sortIcon>
@@ -74,7 +80,6 @@ interface FiscalPeriod {
                 تاريخ النهاية <p-sortIcon field="endDate"></p-sortIcon>
               </th>
               <th>المدة (أيام)</th>
-              <th>الحالة</th>
               <th>مغلقة</th>
               <th>الإجراءات</th>
             </tr>
@@ -82,15 +87,11 @@ interface FiscalPeriod {
 
           <ng-template pTemplate="body" let-period>
             <tr>
-              <td><strong>{{ period.periodName }}</strong></td>
+              <td><strong>{{ period.code }}</strong></td>
+              <td>{{ period.nameAr }}</td>
               <td>{{ period.startDate | date:'dd/MM/yyyy' }}</td>
               <td>{{ period.endDate | date:'dd/MM/yyyy' }}</td>
               <td>{{ calculateDuration(period.startDate, period.endDate) }}</td>
-              <td>
-                <span [class]="'status-badge status-' + period.status">
-                  {{ getStatusLabel(period.status) }}
-                </span>
-              </td>
               <td>
                 <span [class]="'closed-badge ' + (period.isClosed ? 'closed' : 'open')">
                   <i [class]="period.isClosed ? 'pi pi-lock' : 'pi pi-lock-open'"></i>
@@ -123,7 +124,7 @@ interface FiscalPeriod {
 
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="7" class="text-center">لا توجد فترات مالية</td>
+              <td colspan="6" class="text-center">لا توجد فترات مالية</td>
             </tr>
           </ng-template>
         </p-table>
@@ -138,8 +139,15 @@ interface FiscalPeriod {
         
         <div class="period-form">
           <div class="form-group">
+            <label>رمز الفترة *</label>
+            <input pInputText [(ngModel)]="period.code" 
+                   placeholder="مثال: Q1-2025" />
+            <small class="help-text">رمز فريد للفترة المالية</small>
+          </div>
+
+          <div class="form-group">
             <label>اسم الفترة *</label>
-            <input pInputText [(ngModel)]="period.periodName" 
+            <input pInputText [(ngModel)]="period.nameAr" 
                    placeholder="مثال: الربع الأول 2025" />
             <small class="help-text">اسم وصفي للفترة المالية</small>
           </div>
@@ -168,23 +176,7 @@ interface FiscalPeriod {
             <span>مدة الفترة: <strong>{{ calculateDuration(period.startDate, period.endDate) }}</strong> يوم</span>
           </div>
 
-          <div class="form-group">
-            <label>الحالة *</label>
-            <div class="status-options">
-              <label class="radio-option">
-                <input type="radio" name="status" value="active" [(ngModel)]="period.status" />
-                <span>نشطة</span>
-              </label>
-              <label class="radio-option">
-                <input type="radio" name="status" value="future" [(ngModel)]="period.status" />
-                <span>مستقبلية</span>
-              </label>
-              <label class="radio-option">
-                <input type="radio" name="status" value="inactive" [(ngModel)]="period.status" />
-                <span>غير نشطة</span>
-              </label>
-            </div>
-          </div>
+
 
           <div class="warning-box" *ngIf="isEditMode && period.isClosed">
             <i class="pi pi-exclamation-triangle"></i>
@@ -213,8 +205,13 @@ interface FiscalPeriod {
         
         <div class="view-content" *ngIf="selectedPeriod">
           <div class="detail-row">
+            <span class="detail-label">رمز الفترة:</span>
+            <span class="detail-value"><strong>{{ selectedPeriod.code }}</strong></span>
+          </div>
+
+          <div class="detail-row">
             <span class="detail-label">اسم الفترة:</span>
-            <span class="detail-value"><strong>{{ selectedPeriod.periodName }}</strong></span>
+            <span class="detail-value">{{ selectedPeriod.nameAr }}</span>
           </div>
 
           <div class="detail-row">
@@ -232,14 +229,7 @@ interface FiscalPeriod {
             <span class="detail-value">{{ calculateDuration(selectedPeriod.startDate, selectedPeriod.endDate) }} يوم</span>
           </div>
 
-          <div class="detail-row">
-            <span class="detail-label">الحالة:</span>
-            <span class="detail-value">
-              <span [class]="'status-badge status-' + selectedPeriod.status">
-                {{ getStatusLabel(selectedPeriod.status) }}
-              </span>
-            </span>
-          </div>
+
 
           <div class="detail-row">
             <span class="detail-label">حالة الإغلاق:</span>
@@ -479,58 +469,43 @@ export class FiscalPeriodsComponent implements OnInit {
   dialogTitle = '';
   isEditMode = false;
 
-  constructor(private messageService: MessageService) {}
+  constructor(
+    private messageService: MessageService,
+    private fiscalPeriodsService: FiscalPeriodsService
+  ) {}
 
   ngOnInit() {
     this.loadPeriods();
   }
 
   loadPeriods() {
-    // Mock data
-    this.periods = [
-      {
-        id: 1,
-        periodName: 'الربع الأول 2025',
-        startDate: new Date('2025-01-01'),
-        endDate: new Date('2025-03-31'),
-        status: 'active',
-        isClosed: false
+    this.fiscalPeriodsService.getAll().subscribe({
+      next: (data) => {
+        this.periods = data.map(p => ({
+          ...p,
+          startDate: new Date(p.startDate),
+          endDate: new Date(p.endDate),
+          closedAt: p.closedAt ? new Date(p.closedAt) : null
+        }));
       },
-      {
-        id: 2,
-        periodName: 'الربع الثاني 2025',
-        startDate: new Date('2025-04-01'),
-        endDate: new Date('2025-06-30'),
-        status: 'future',
-        isClosed: false
-      },
-      {
-        id: 3,
-        periodName: 'الربع الثالث 2025',
-        startDate: new Date('2025-07-01'),
-        endDate: new Date('2025-09-30'),
-        status: 'future',
-        isClosed: false
-      },
-      {
-        id: 4,
-        periodName: 'الربع الرابع 2024',
-        startDate: new Date('2024-10-01'),
-        endDate: new Date('2024-12-31'),
-        status: 'inactive',
-        isClosed: true,
-        closedBy: 'admin',
-        closedAt: new Date('2025-01-05')
+      error: (error) => {
+        console.error('Error loading fiscal periods:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'خطأ',
+          detail: 'فشل في تحميل الفترات المالية'
+        });
       }
-    ];
+    });
   }
 
   openNew() {
     this.period = {
-      periodName: '',
+      fiscalYearId: '2',
+      code: '',
+      nameAr: '',
       startDate: null,
       endDate: null,
-      status: 'future',
       isClosed: false
     };
     this.isEditMode = false;
@@ -552,24 +527,46 @@ export class FiscalPeriodsComponent implements OnInit {
 
   deletePeriod(period: FiscalPeriod) {
     if (confirm('هل أنت متأكد من حذف هذه الفترة المالية؟')) {
-      this.periods = this.periods.filter(p => p.id !== period.id);
-      this.messageService.add({
-        severity: 'success',
-        summary: 'نجح',
-        detail: 'تم حذف الفترة المالية بنجاح'
+      this.fiscalPeriodsService.delete(period.id).subscribe({
+        next: () => {
+          this.loadPeriods();
+          this.messageService.add({
+            severity: 'success',
+            summary: 'نجح',
+            detail: 'تم حذف الفترة المالية بنجاح'
+          });
+        },
+        error: (error) => {
+          console.error('Error deleting fiscal period:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'خطأ',
+            detail: 'فشل في حذف الفترة المالية'
+          });
+        }
       });
     }
   }
 
   closePeriod(period: FiscalPeriod) {
     if (confirm('هل أنت متأكد من إغلاق هذه الفترة المالية؟ لن تتمكن من إضافة أو تعديل القيود فيها بعد الإغلاق.')) {
-      period.isClosed = true;
-      period.closedBy = 'admin';
-      period.closedAt = new Date();
-      this.messageService.add({
-        severity: 'success',
-        summary: 'نجح',
-        detail: 'تم إغلاق الفترة المالية بنجاح'
+      this.fiscalPeriodsService.close(period.id, 'admin').subscribe({
+        next: () => {
+          this.loadPeriods();
+          this.messageService.add({
+            severity: 'success',
+            summary: 'نجح',
+            detail: 'تم إغلاق الفترة المالية بنجاح'
+          });
+        },
+        error: (error) => {
+          console.error('Error closing fiscal period:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'خطأ',
+            detail: 'فشل في إغلاق الفترة المالية'
+          });
+        }
       });
     }
   }
@@ -593,21 +590,35 @@ export class FiscalPeriodsComponent implements OnInit {
       return;
     }
 
-    if (this.isEditMode) {
-      const index = this.periods.findIndex(p => p.id === this.period.id);
-      this.periods[index] = this.period;
-    } else {
-      this.period.id = this.periods.length + 1;
-      this.periods.push(this.period);
-    }
+    const periodData = {
+      ...this.period,
+      startDate: this.period.startDate instanceof Date ? this.period.startDate.toISOString().split('T')[0] : this.period.startDate,
+      endDate: this.period.endDate instanceof Date ? this.period.endDate.toISOString().split('T')[0] : this.period.endDate
+    };
 
-    this.messageService.add({
-      severity: 'success',
-      summary: 'نجح',
-      detail: 'تم حفظ الفترة المالية بنجاح'
+    const request = this.isEditMode
+      ? this.fiscalPeriodsService.update(this.period.id, periodData)
+      : this.fiscalPeriodsService.create(periodData);
+
+    request.subscribe({
+      next: () => {
+        this.loadPeriods();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'نجح',
+          detail: 'تم حفظ الفترة المالية بنجاح'
+        });
+        this.hideDialog();
+      },
+      error: (error) => {
+        console.error('Error saving fiscal period:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'خطأ',
+          detail: 'فشل في حفظ الفترة المالية'
+        });
+      }
     });
-
-    this.hideDialog();
   }
 
   hideDialog() {
@@ -616,17 +627,17 @@ export class FiscalPeriodsComponent implements OnInit {
   }
 
   isValid(): boolean {
-    return this.period.periodName && 
+    return this.period.code && 
+           this.period.nameAr && 
            this.period.startDate && 
-           this.period.endDate &&
-           this.period.status;
+           this.period.endDate;
   }
 
   onDateChange() {
     // Trigger calculation when dates change
   }
 
-  calculateDuration(startDate: Date, endDate: Date): number {
+  calculateDuration(startDate: Date | string, endDate: Date | string): number {
     if (!startDate || !endDate) return 0;
     const start = new Date(startDate);
     const end = new Date(endDate);
@@ -637,14 +648,5 @@ export class FiscalPeriodsComponent implements OnInit {
 
   onSearch(event: any) {
     // Implement search logic
-  }
-
-  getStatusLabel(status: string): string {
-    const labels: any = {
-      'active': 'نشطة',
-      'future': 'مستقبلية',
-      'inactive': 'غير نشطة'
-    };
-    return labels[status] || status;
   }
 }
