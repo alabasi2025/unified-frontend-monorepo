@@ -1,0 +1,195 @@
+{
+  "stats": {
+    "using_barrel_exports": 22,
+    "total_services": 31,
+    "total_components": 119,
+    "standalone_components": 116,
+    "non_standalone_components": 3,
+    "total_interfaces": 41,
+    "duplicate_interfaces": 1,
+    "primeng_modules_used": 29
+  },
+  "issues": {
+    "naming_mismatch": [
+      {
+        "file": "account.service.ts",
+        "class": "AccountService",
+        "expected": "account-service.ts"
+      },
+      {
+        "file": "api.service.ts",
+        "class": "ApiService",
+        "expected": "api-service.ts"
+      },
+      {
+        "file": "attendance.service.ts",
+        "class": "AttendanceService",
+        "expected": "attendance-service.ts"
+      },
+      {
+        "file": "auth.service.ts",
+        "class": "AuthService",
+        "expected": "auth-service.ts"
+      },
+      {
+        "file": "config.service.ts",
+        "class": "ConfigService",
+        "expected": "config-service.ts"
+      },
+      {
+        "file": "cost-center.service.ts",
+        "class": "CostCenterService",
+        "expected": "cost-center-service.ts"
+      },
+      {
+        "file": "customer.service.ts",
+        "class": "CustomerService",
+        "expected": "customer-service.ts"
+      },
+      {
+        "file": "department.service.ts",
+        "class": "DepartmentService",
+        "expected": "department-service.ts"
+      },
+      {
+        "file": "employee.service.ts",
+        "class": "EmployeeService",
+        "expected": "employee-service.ts"
+      },
+      {
+        "file": "error-handler.service.ts",
+        "class": "ErrorHandlerService",
+        "expected": "error-handler-service.ts"
+      },
+      {
+        "file": "fiscal-year.service.ts",
+        "class": "FiscalYearService",
+        "expected": "fiscal-year-service.ts"
+      },
+      {
+        "file": "holding.service.ts",
+        "class": "HoldingService",
+        "expected": "holding-service.ts"
+      },
+      {
+        "file": "item.service.ts",
+        "class": "ItemService",
+        "expected": "item-service.ts"
+      },
+      {
+        "file": "journal-entry.service.ts",
+        "class": "JournalEntryService",
+        "expected": "journal-entry-service.ts"
+      },
+      {
+        "file": "leave-request.service.ts",
+        "class": "LeaveRequestService",
+        "expected": "leave-request-service.ts"
+      },
+      {
+        "file": "loading.service.ts",
+        "class": "LoadingService",
+        "expected": "loading-service.ts"
+      },
+      {
+        "file": "logger.service.ts",
+        "class": "LoggerService",
+        "expected": "logger-service.ts"
+      },
+      {
+        "file": "notification.service.ts",
+        "class": "NotificationService",
+        "expected": "notification-service.ts"
+      },
+      {
+        "file": "payroll.service.ts",
+        "class": "PayrollService",
+        "expected": "payroll-service.ts"
+      },
+      {
+        "file": "project.service.ts",
+        "class": "ProjectService",
+        "expected": "project-service.ts"
+      },
+      {
+        "file": "purchase-invoice.service.ts",
+        "class": "PurchaseInvoiceService",
+        "expected": "purchase-invoice-service.ts"
+      },
+      {
+        "file": "purchase-order.service.ts",
+        "class": "PurchaseOrderService",
+        "expected": "purchase-order-service.ts"
+      },
+      {
+        "file": "sales-invoice.service.ts",
+        "class": "SalesInvoiceService",
+        "expected": "sales-invoice-service.ts"
+      },
+      {
+        "file": "sales-order.service.ts",
+        "class": "SalesOrderService",
+        "expected": "sales-order-service.ts"
+      },
+      {
+        "file": "storage.service.ts",
+        "class": "StorageService",
+        "expected": "storage-service.ts"
+      },
+      {
+        "file": "supplier.service.ts",
+        "class": "SupplierService",
+        "expected": "supplier-service.ts"
+      },
+      {
+        "file": "token.service.ts",
+        "class": "TokenService",
+        "expected": "token-service.ts"
+      },
+      {
+        "file": "unit.service.ts",
+        "class": "UnitService",
+        "expected": "unit-service.ts"
+      },
+      {
+        "file": "user.service.ts",
+        "class": "UserService",
+        "expected": "user-service.ts"
+      },
+      {
+        "file": "warehouse.service.ts",
+        "class": "WarehouseService",
+        "expected": "warehouse-service.ts"
+      }
+    ],
+    "missing_injectable": [
+      "base-crud.service.ts"
+    ],
+    "non_standalone": [
+      "apps/platform-shell-ui/src/app/entities/projects/projects-detail.component.ts",
+      "apps/platform-shell-ui/src/app/entities/units/units-detail.component.ts",
+      "apps/platform-shell-ui/src/app/users/users/users-detail.component.ts"
+    ],
+    "missing_template": [
+      "projects-detail.component.ts",
+      "units-detail.component.ts",
+      "users-detail.component.ts"
+    ],
+    "duplicate_interfaces": [
+      {
+        "name": "User",
+        "count": 2,
+        "files": [
+          "apps/platform-shell-ui/src/app/core/services/auth.service.ts",
+          "apps/platform-shell-ui/src/app/core/services/user.service.ts"
+        ]
+      }
+    ],
+    "primeng_deprecated": [
+      {
+        "file": "apps/platform-shell-ui/src/app/shared/components/data-table.component.ts",
+        "issue": "responsive property is deprecated in PrimeNG 20"
+      }
+    ]
+  }
+}

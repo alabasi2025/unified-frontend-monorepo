@@ -7,9 +7,9 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
-import { PageHeaderComponent } from '../../shared/components/page-header.component';
-import { HoldingsService } from '../../core/services/api/holdings.service';
-import { NotificationService } from '../../core/services/notification.service';
+import { PageHeaderComponent } from '../../shared';
+import { HoldingsService } from '../../core';
+import { NotificationService } from '../../core';
 
 @Component({
   selector: 'app-holdings-form',
@@ -56,7 +56,7 @@ import { NotificationService } from '../../core/services/notification.service';
               <div class="col-12 md:col-6">
                 <div class="field">
                   <label for="status">الحالة *</label>
-                  <p-dropdown
+                  <p-select
                     id="status"
                     formControlName="status"
                     [options]="statusOptions"
@@ -64,7 +64,7 @@ import { NotificationService } from '../../core/services/notification.service';
                     optionValue="value"
                     placeholder="اختر الحالة"
                     class="w-full"
-                  ></p-dropdown>
+                  ></p-select>
                 </div>
               </div>
 
@@ -181,33 +181,39 @@ export class HoldingsFormComponent implements OnInit {
     }
   }
 
-  async loadHolding(id: string) {
-    try {
-      const holding = await this.holdingsService.findOne(id);
-      this.form.patchValue(holding);
-    } catch (error: any) {
-      this.notificationService.error('فشل تحميل البيانات');
-    }
+  loadHolding(id: string) {
+    this.holdingsService.getById(id).subscribe({
+      next: (holding) => {
+        this.form.patchValue(holding);
+      },
+      error: (error) => {
+        this.notificationService.error('فشل تحميل البيانات');
+      }
+    });
   }
 
-  async onSubmit() {
+  onSubmit() {
     if (this.form.invalid) return;
 
     this.loading = true;
-    try {
-      if (this.isEditMode && this.holdingId) {
-        await this.holdingsService.update(this.holdingId, this.form.value);
-        this.notificationService.success('تم تحديث الشركة القابضة بنجاح');
-      } else {
-        await this.holdingsService.create(this.form.value);
-        this.notificationService.success('تم إضافة الشركة القابضة بنجاح');
+    const operation = this.isEditMode && this.holdingId
+      ? this.holdingsService.update(this.holdingId, this.form.value)
+      : this.holdingsService.create(this.form.value);
+    
+    operation.subscribe({
+      next: () => {
+        const message = this.isEditMode 
+          ? 'تم تحديث الشركة القابضة بنجاح'
+          : 'تم إضافة الشركة القابضة بنجاح';
+        this.notificationService.success(message);
+        this.router.navigate(['/entities/holdings']);
+        this.loading = false;
+      },
+      error: (error) => {
+        this.notificationService.error(error.message || 'فشل حفظ البيانات');
+        this.loading = false;
       }
-      this.router.navigate(['/entities/holdings']);
-    } catch (error: any) {
-      this.notificationService.error(error.message || 'فشل حفظ البيانات');
-    } finally {
-      this.loading = false;
-    }
+    });
   }
 
   onCancel() {

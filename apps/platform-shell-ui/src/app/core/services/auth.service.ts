@@ -4,49 +4,23 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { StorageService } from './storage.service';
 import { environment } from '../../../environments/environment';
+import { 
+  User, 
+  LoginCredentials, 
+  RegisterRequest, 
+  ChangePasswordRequest, 
+  UpdateProfileRequest, 
+  UserPreferences,
+  AuthResponse
+} from '../models';
 
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
+// Legacy interfaces - keeping for backward compatibility
+export type LoginRequest = LoginCredentials;
 
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
-  user: any;
-}
-
-export interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  roles: string[];
-  permissions: string[];
-}
-
-export interface RegisterRequest {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-}
-
-export interface UpdateProfileRequest {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-}
-
-export interface ChangePasswordRequest {
-  oldPassword: string;
-  newPassword: string;
-}
-
-export interface UserPreferences {
-  language?: string;
-  theme?: string;
-  notifications?: boolean;
+  user: User;
 }
 
 @Injectable({ providedIn: 'root' })

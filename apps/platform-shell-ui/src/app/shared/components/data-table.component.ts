@@ -35,7 +35,7 @@ export interface TableAction {
       [lazy]="lazy"
       (onLazyLoad)="onLazyLoad.emit($event)"
       [globalFilterFields]="globalFilterFields"
-      [responsive]="true"
+      responsiveLayout="scroll"
       styleClass="p-datatable-gridlines"
     >
       <ng-template pTemplate="caption" *ngIf="showSearch">
@@ -55,7 +55,7 @@ export interface TableAction {
 
       <ng-template pTemplate="header">
         <tr>
-          <th *ngFor="let col of columns" [pSortableColumn]="col.sortable ? col.field : null" [style.width]="col.width">
+          <th *ngFor="let col of columns" [pSortableColumn]="col.sortable ? col.field : undefined" [style.width]="col.width">
             {{ col.header }}
             <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
           </th>

@@ -14,7 +14,7 @@ export interface Holding {
 }
 
 @Injectable({ providedIn: 'root' })
-export class HoldingService extends BaseCrudService<Holding> {
+export class HoldingsService extends BaseCrudService<Holding> {
   protected endpoint = '/holdings';
   constructor(api: ApiService) { super(api); }
 }

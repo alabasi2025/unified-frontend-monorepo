@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { TooltipModule } from 'primeng/tooltip';
 import { filter } from 'rxjs/operators';
-import { AuthService } from '../../core/services/auth.service';
+import { AuthService } from '../../core';
 
 interface MenuItem {
   label: string;

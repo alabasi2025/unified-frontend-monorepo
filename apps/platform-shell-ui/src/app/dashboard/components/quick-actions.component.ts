@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { CardComponent } from '../../shared/components/card.component';
+import { CardComponent } from '../../shared';
 import { ButtonModule } from 'primeng/button';
 
 @Component({

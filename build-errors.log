@@ -1,0 +1,296 @@
+
+> nx run platform-shell-ui:build:development
+
+[33m❯[39m Building...
+[32m✔[39m Building...
+[37mApplication bundle generation failed. [8.904 seconds] - 2025-11-20T08:24:09.839Z[39m
+[37m[39m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: CardComponent is not used within the template of DashboardComponent[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[33m[39m[22m
+[1m[33m    apps/platform-shell-ui/src/app/dashboard/components/dashboard.component.ts:20:4:[39m[22m
+[1m[33m[37m      20 │     [32mCardComponent[37m,[39m[22m
+[1m[33m         ╵     [32m~~~~~~~~~~~~~[0m[39m[22m
+[1m[33m[39m[22m
+[1m[33m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 1 arguments, but got 2.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/auth/components/login.component.ts:211:42:[39m[22m
+[1m[31m[37m      211 │       await this.authService.login(email, [32mpassword[37m);[39m[22m
+[1m[31m          ╵                                           [32m~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8001: 'p-tabPanel' is not a known element:[39m[22m
+[1m[31m1. If 'p-tabPanel' is an Angular component, then verify that it is included in the '@Component.imports' of this component.[39m[22m
+[1m[31m2. If 'p-tabPanel' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/auth/components/profile.component.ts:83:12:[39m[22m
+[1m[31m[37m      83 │             [32m<p-tabPanel header="المعلومات الشخصية"[37m...[39m[22m
+[1m[31m         ╵             [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8001: 'p-tabPanel' is not a known element:[39m[22m
+[1m[31m1. If 'p-tabPanel' is an Angular component, then verify that it is included in the '@Component.imports' of this component.[39m[22m
+[1m[31m2. If 'p-tabPanel' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/auth/components/profile.component.ts:153:12:[39m[22m
+[1m[31m[37m      153 │             [32m<p-tabPanel header="تغيير كلمة المرور"[37m...[39m[22m
+[1m[31m          ╵             [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8001: 'p-tabPanel' is not a known element:[39m[22m
+[1m[31m1. If 'p-tabPanel' is an Angular component, then verify that it is included in the '@Component.imports' of this component.[39m[22m
+[1m[31m2. If 'p-tabPanel' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.[0m [39m[22m
+[1m[31m[1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/auth/components/profile.component.ts:215:12:[39m[22m
+[1m[31m[37m      215 │             [32m<p-tabPanel header="التفضيلات" leftIcon="pi[37m ...[39m[22m
+[1m[31m          ╵             [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2554: Expected 1 arguments, but got 2.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/auth/components/profile.component.ts:387:61:[39m[22m
+[1m[31m[37m      387 │ ...it this.authService.changePassword(currentPassword, [32mnewPassword[37m);[39m[22m
+[1m[31m          ╵                                                        [32m~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2353: Object literal may only specify known properties, and 'name' does not exist in type 'RegisterRequest'.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/auth/components/register.component.ts:243:40:[39m[22m
+[1m[31m[37m      243 │       await this.authService.register({ [32mname[37m, email, password });[39m[22m
+[1m[31m          ╵                                         [32m~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type 'string' is not assignable to type '"success" | "info" | "warn" | "danger" | "secondary" | "contrast" | null | undefined'.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/dashboard/components/inventory-widget.component.ts:22:13:[39m[22m
+[1m[31m[37m      22 │             [[32mseverity[37m]="getStatusSeverity(item.status)"[39m[22m
+[1m[31m         ╵              [32m~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2307: Cannot find module '../../core/services/api/holdings.service' or its corresponding type declarations.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/holdings/holdings-form.component.ts:11:32:[39m[22m
+[1m[31m[37m      11 │ ...HoldingsService } from [32m'../../core/services/api/holdings.service'[37m;[39m[22m
+[1m[31m         ╵                           [32m[39m[22m[1m[31m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG2003: No suitable injection token for parameter 'holdingsService' of class 'HoldingsFormComponent'.[39m[22m
+[1m[31m  Consider using the @Inject decorator to specify an injection token.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/holdings/holdings-form.component.ts:161:12:[39m[22m
+[1m[31m[37m      161 │     private [32mholdingsService[37m: HoldingsService,[39m[22m
+[1m[31m          ╵             [32m~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m  This type does not have a value, so it cannot be used as injection token.[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/holdings/holdings-form.component.ts:161:29:[39m[22m
+[1m[31m[37m      161 │     private holdingsService: [32mHoldingsService[37m,[39m[22m
+[1m[31m          ╵                              [32m~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2307: Cannot find module '../../core/services/api/holdings.service' or its corresponding type declarations.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/holdings/holdings-list.component.ts:7:32:[39m[22m
+[1m[31m[37m      7 │ ... HoldingsService } from [32m'../../core/services/api/holdings.service'[37m;[39m[22m
+[1m[31m        ╵                            [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG2003: No suitable injection token for parameter 'holdingsService' of class 'HoldingsListComponent'.[39m[22m
+[1m[31m  Consider using the @Inject decorator to specify an injection token.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/holdings/holdings-list.component.ts:76:12:[39m[22m
+[1m[31m[37m      76 │     private [32mholdingsService[37m: HoldingsService,[39m[22m
+[1m[31m         ╵             [32m~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m  This type does not have a value, so it cannot be used as injection token.[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/holdings/holdings-list.component.ts:76:29:[39m[22m
+[1m[31m[37m      76 │     private holdingsService: [32mHoldingsServ[39m[22m[1m[31mice[37m,[39m[22m
+[1m[31m         ╵                              [32m~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2307: Cannot find module './holdings/holdings-detail.component' or its corresponding type declarations.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/index.ts:4:14:[39m[22m
+[1m[31m[37m      4 │ export * from [32m'./holdings/holdings-detail.component'[37m;[39m[22m
+[1m[31m        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2306: File '/home/ubuntu/SEMOP/unified-frontend-monorepo/apps/platform-shell-ui/src/app/entities/units/units-detail.component.ts' is not a module.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/index.ts:9:14:[39m[22m
+[1m[31m[37m      9 │ export * from [32m'./units/units-detail.component'[37m;[39m[22m
+[1m[31m        ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2306: File '/home/ubuntu/SEMOP/unified-frontend-monorepo/apps/platform-shell-ui/src/app/entities/projects/projects-detail.component.ts' is not a module.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/index.ts:14:14:[39m[22m
+[1m[31m[37m      14 │ export * from [32m'./projects/projects-detail.component'[37m;[39m[22m
+[1m[31m         ╵               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2307: Cannot find module '../../../shared/components/page-header.component' or its corresponding type declarations.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/projects/projects-form.component.ts:8:36:[39m[22m
+[1m[31m[37m      8 │ ...omponent } from [32m'../../../shared/components/page-header.component'[37m;[39m[22m
+[1m[31m        ╵                    [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG1010: 'imports' must be an array of components, directives, pipes, or NgModules.[39m[22m
+[1m[31m [39m[22m[1m[31m Value could not be determined statically.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/projects/projects-form.component.ts:13:90:[39m[22m
+[1m[31m[37m      13 │ ..., CardModule, InputTextModule, ButtonModule, [32mPageHeaderComponent[37m],[39m[22m
+[1m[31m         ╵                                                 [32m~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m  Unknown reference.[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/projects/projects-form.component.ts:13:90:[39m[22m
+[1m[31m[37m      13 │ ..., CardModule, InputTextModule, ButtonModule, [32mPageHeaderComponent[37m],[39m[22m
+[1m[31m         ╵                                                 [32m~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2307: Cannot find module '../../../shared/components/page-header.component' or its corresponding type declarations.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/projects/projects-list.component.ts:4:36:[39m[22m
+[1m[31m[37m      4 │ ...omponent } from [32m'../../../shared/components/page-header.component'[37m;[39m[22m
+[1m[31m        ╵                    [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2307: Cannot find module '../../../shared/components/data-table.component' or its corresponding type declarations.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/projects/projects-list.component.ts:5:61:[39m[22m
+[1m[31m[37m      5 │ ...bleAction } from [32m'../../../shared/components/data-table.component'[37m;[39m[22m
+[1m[31m        ╵                     [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG1010: 'imports' must be an array of components, directives, pipes, or NgModules.[39m[22m
+[1m[31m  Value could not be determined statically.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/projects/projects-list.component.ts:11:26:[39m[22m
+[1m[31m[37m      11 │ ...ports: [CommonModule, [32mPageHeaderComponent[37m, DataTa[39m[22m[1m[31mbleComponent, ...[39m[22m
+[1m[31m         ╵                          [32m~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m  Unknown reference.[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/projects/projects-list.component.ts:11:26:[39m[22m
+[1m[31m[37m      11 │ ...ports: [CommonModule, [32mPageHeaderComponent[37m, DataTableComponent, ...[39m[22m
+[1m[31m         ╵                          [32m~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG1010: 'imports' must be an array of components, directives, pipes, or NgModules.[39m[22m
+[1m[31m  Value could not be determined statically.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/projects/projects-list.component.ts:11:47:[39m[22m
+[1m[31m[37m      11 │ ...monModule, PageHeaderComponent, [32mDataTableComponent[37m, ButtonModule],[39m[22m
+[1m[31m         ╵                                    [32m~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m  Unknown reference.[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/projects/projects-list.component.ts:11:47:[39m[22m
+[1m[31m[37m      11 │ ...monModule, PageHeaderComponent, [32mDataTableComponent[37m, ButtonModule],[39m[22m
+[1m[31m         ╵                                    [32m~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2307: Cannot find module '../../../shared/components/page-header.component' or its corresponding type declarations.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/units/units-form.component.ts:8:36:[39m[22m
+[1m[31m[37m      8 │ ...omponent } from [32m'../../../shared/components/page-header.component'[37m;[39m[22m
+[1m[31m        ╵                    [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG1010: 'imports' must be an array of components, directives, pipes, or NgModules.[39m[22m
+[1m[31m  Value could not be determined statically.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/units/units-form.component.ts:13:90:[39m[22m
+[1m[31m[37m      13 │ ..., CardModule, InputTextModule, ButtonModule, [32mPageHeaderComponent[37m],[39m[22m
+[1m[31m         ╵      [39m[22m[1m[31m                                           [32m~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m  Unknown reference.[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/units/units-form.component.ts:13:90:[39m[22m
+[1m[31m[37m      13 │ ..., CardModule, InputTextModule, ButtonModule, [32mPageHeaderComponent[37m],[39m[22m
+[1m[31m         ╵                                                 [32m~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2307: Cannot find module '../../../shared/components/page-header.component' or its corresponding type declarations.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/units/units-list.component.ts:4:36:[39m[22m
+[1m[31m[37m      4 │ ...omponent } from [32m'../../../shared/components/page-header.component'[37m;[39m[22m
+[1m[31m        ╵                    [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2307: Cannot find module '../../../shared/components/data-table.component' or its corresponding type declarations.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/units/units-list.component.ts:5:61:[39m[22m
+[1m[31m[37m      5 │ ...bleAction } from [32m'../../../shared/components/data-table.component'[37m;[39m[22m
+[1m[31m        ╵                     [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG1010: 'imports' must be an array of components, directives, pipes, or NgModules.[39m[22m
+[1m[31m  Value could not be determined statically.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/units/units-list.component.ts:11:26:[39m[22m
+[1m[31m[37m      11 │ ...ports: [CommonModule, [32mPageHeaderComponent[37m, DataTableComponent, ...[39m[22m
+[1m[31m         ╵                          [32m~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m  Unknown reference.[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/units/units-list.component.ts:11:26:[39m[22m
+[1m[31m[37m      11 │ ...ports: [CommonModule, [32mPageHeaderComponent[37m, DataTableComponent, ...[39m[22m
+[1m[31m         ╵                 [39m[22m[1m[31m         [32m~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG1010: 'imports' must be an array of components, directives, pipes, or NgModules.[39m[22m
+[1m[31m  Value could not be determined statically.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/units/units-list.component.ts:11:47:[39m[22m
+[1m[31m[37m      11 │ ...monModule, PageHeaderComponent, [32mDataTableComponent[37m, ButtonModule],[39m[22m
+[1m[31m         ╵                                    [32m~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m  Unknown reference.[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/entities/units/units-list.component.ts:11:47:[39m[22m
+[1m[31m[37m      11 │ ...monModule, PageHeaderComponent, [32mDataTableComponent[37m, ButtonModule],[39m[22m
+[1m[31m         ╵                                    [32m~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'name' does not exist on type 'User'.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/layout/components/header.component.ts:112:31:[39m[22m
+[1m[31m[37m      112 │       this.userInitials = user.[32mname[37m?.charAt(0).toUpperCase() || 'U';[39m[22m
+[1m[31m          ╵                                [32m~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'responsive' since it isn't a known property of 'p-table'.[39m[22m
+[1m[31m1. If 'p-table' is an Angular component and it has 'responsive' input, then verify that it is included in the '@Component.imports' of this component.[39m[22m
+[1m[31m2. If 'p-table' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.[39m[22m
+[1m[31m3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/shared/components/data-table.component.ts:38:6:[39m[22m
+[1m[31m[37m      38 │       [32m[responsive]="true"[37m[39m[22m
+[1m[31m         ╵       [32m~~~~~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type 'string | null' is not assignabl[39m[22m
+[1m[31me to type 'string | undefined'.[39m[22m
+[1m[31m  Type 'null' is not assignable to type 'string | undefined'.[0m [1m[35m[plugin angular-compiler][0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m    apps/platform-shell-ui/src/app/shared/components/data-table.component.ts:58:43:[39m[22m
+[1m[31m[37m      58 │ ...r="let col of columns" [[32mpSortableColumn[37m]="col.sortable ? col.fi...[39m[22m
+[1m[31m         ╵                            [32m~~~~~~~~~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+[1m[31m[39m[22m
+
+
+
+ NX   Running target build for project platform-shell-ui failed
+
+Failed tasks:
+
+- platform-shell-ui:build:development
+
+Hint: run the command with --verbose for more details.
+

@@ -8,9 +8,9 @@ import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { FileUploadModule } from 'primeng/fileupload';
-import { AuthService } from '../../core/services/auth.service';
-import { NotificationService } from '../../core/services/notification.service';
-import { PageHeaderComponent } from '../../shared/components/page-header.component';
+import { AuthService } from '../../core';
+import { NotificationService } from '../../core';
+import { PageHeaderComponent } from '../../shared';
 
 @Component({
   selector: 'app-profile',
@@ -80,7 +80,7 @@ import { PageHeaderComponent } from '../../shared/components/page-header.compone
         <p-card>
           <p-tabs>
             <!-- Personal Information Tab -->
-            <p-tabPanel header="المعلومات الشخصية" leftIcon="pi pi-user">
+            <p-tabpanel header="المعلومات الشخصية" leftIcon="pi pi-user">
               <form [formGroup]="profileForm" (ngSubmit)="onUpdateProfile()">
                 <div class="grid">
                   <div class="col-12 md:col-6">
@@ -147,10 +147,10 @@ import { PageHeaderComponent } from '../../shared/components/page-header.compone
                   </div>
                 </div>
               </form>
-            </p-tabPanel>
+            </p-tabpanel>
 
             <!-- Change Password Tab -->
-            <p-tabPanel header="تغيير كلمة المرور" leftIcon="pi pi-lock">
+            <p-tabpanel header="تغيير كلمة المرور" leftIcon="pi pi-lock">
               <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()">
                 <div class="grid">
                   <div class="col-12">
@@ -209,10 +209,10 @@ import { PageHeaderComponent } from '../../shared/components/page-header.compone
                   </div>
                 </div>
               </form>
-            </p-tabPanel>
+            </p-tabpanel>
 
             <!-- Preferences Tab -->
-            <p-tabPanel header="التفضيلات" leftIcon="pi pi-cog">
+            <p-tabpanel header="التفضيلات" leftIcon="pi pi-cog">
               <form [formGroup]="preferencesForm" (ngSubmit)="onUpdatePreferences()">
                 <div class="grid">
                   <div class="col-12">
@@ -247,7 +247,7 @@ import { PageHeaderComponent } from '../../shared/components/page-header.compone
                   </div>
                 </div>
               </form>
-            </p-tabPanel>
+            </p-tabpanel>
           </p-tabs>
         </p-card>
       </div>
@@ -384,7 +384,7 @@ export class ProfileComponent implements OnInit {
     this.loadingPassword = true;
     try {
       const { currentPassword, newPassword } = this.passwordForm.value;
-      await this.authService.changePassword(currentPassword, newPassword);
+      await this.authService.changePassword({ currentPassword, newPassword }).toPromise();
       this.notificationService.success('تم تغيير كلمة المرور بنجاح');
       this.passwordForm.reset();
     } catch (error: any) {

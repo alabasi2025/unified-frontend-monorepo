@@ -6,7 +6,7 @@ import { MenuModule } from 'primeng/menu';
 import { BadgeModule } from 'primeng/badge';
 import { AvatarModule } from 'primeng/avatar';
 import { MenuItem } from 'primeng/api';
-import { AuthService } from '../../core/services/auth.service';
+import { AuthService } from '../../core';
 
 @Component({
   selector: 'app-header',
@@ -109,7 +109,7 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
     const user = this.authService.getCurrentUser();
     if (user) {
-      this.userInitials = user.name?.charAt(0).toUpperCase() || 'U';
+      this.userInitials = (user.name || user.firstName)?.charAt(0).toUpperCase() || 'U';
     }
 
     this.userMenuItems = [

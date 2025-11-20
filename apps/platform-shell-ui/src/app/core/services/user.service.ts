@@ -1,19 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
-
-export interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phone?: string;
-  isActive: boolean;
-  roles: string[];
-  permissions: string[];
-  createdAt: string;
-  updatedAt: string;
-}
+import { User } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {

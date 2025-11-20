@@ -5,7 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { PageHeaderComponent } from '../../../shared/components/page-header.component';
+import { PageHeaderComponent } from '../../shared';
 
 @Component({
   selector: 'app-projects-form',

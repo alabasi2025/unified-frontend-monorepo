@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { PageHeaderComponent } from '../../../shared/components/page-header.component';
-import { DataTableComponent, TableColumn, TableAction } from '../../../shared/components/data-table.component';
+import { PageHeaderComponent } from '../../shared';
+import { DataTableComponent, TableColumn, TableAction } from '../../shared';
 import { ButtonModule } from 'primeng/button';
 
 @Component({

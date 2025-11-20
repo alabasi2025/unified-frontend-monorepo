@@ -1,0 +1,1447 @@
+{
+  "stats": {
+    "total_files": 214,
+    "total_lines": 8910,
+    "total_components": 119,
+    "total_services": 30,
+    "total_interfaces": 42,
+    "total_imports": 704,
+    "total_exports": 296
+  },
+  "issues": {
+    "missing_import_statement": [
+      {
+        "file": "accounts-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "accounts-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "accounts-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "costcenters-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "costcenters-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "costcenters-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "fiscalyears-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "fiscalyears-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "fiscalyears-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "journalentrys-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "journalentrys-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "journalentrys-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "forgot-password.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "forgot-password.component.ts",
+        "missing": "CardModule"
+      },
+      {
+        "file": "forgot-password.component.ts",
+        "missing": "InputTextModule"
+      },
+      {
+        "file": "forgot-password.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "forgot-password.component.ts",
+        "missing": "MessageModule"
+      },
+      {
+        "file": "login.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "login.component.ts",
+        "missing": "CardModule"
+      },
+      {
+        "file": "login.component.ts",
+        "missing": "InputTextModule"
+      },
+      {
+        "file": "login.component.ts",
+        "missing": "PasswordModule"
+      },
+      {
+        "file": "login.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "login.component.ts",
+        "missing": "CheckboxModule"
+      },
+      {
+        "file": "login.component.ts",
+        "missing": "MessageModule"
+      },
+      {
+        "file": "profile.component.ts",
+        "missing": "CardModule"
+      },
+      {
+        "file": "profile.component.ts",
+        "missing": "TabsModule"
+      },
+      {
+        "file": "profile.component.ts",
+        "missing": "InputTextModule"
+      },
+      {
+        "file": "profile.component.ts",
+        "missing": "PasswordModule"
+      },
+      {
+        "file": "profile.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "profile.component.ts",
+        "missing": "AvatarModule"
+      },
+      {
+        "file": "profile.component.ts",
+        "missing": "FileUploadModule"
+      },
+      {
+        "file": "profile.component.ts",
+        "missing": "PageHeaderComponent"
+      },
+      {
+        "file": "register.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "register.component.ts",
+        "missing": "CardModule"
+      },
+      {
+        "file": "register.component.ts",
+        "missing": "InputTextModule"
+      },
+      {
+        "file": "register.component.ts",
+        "missing": "PasswordModule"
+      },
+      {
+        "file": "register.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "register.component.ts",
+        "missing": "MessageModule"
+      },
+      {
+        "file": "reset-password.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "reset-password.component.ts",
+        "missing": "CardModule"
+      },
+      {
+        "file": "reset-password.component.ts",
+        "missing": "PasswordModule"
+      },
+      {
+        "file": "reset-password.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "reset-password.component.ts",
+        "missing": "MessageModule"
+      },
+      {
+        "file": "dashboard.component.ts",
+        "missing": "StatCardComponent"
+      },
+      {
+        "file": "dashboard.component.ts",
+        "missing": "CardComponent"
+      },
+      {
+        "file": "dashboard.component.ts",
+        "missing": "PageHeaderComponent"
+      },
+      {
+        "file": "dashboard.component.ts",
+        "missing": "RevenueChartComponent"
+      },
+      {
+        "file": "dashboard.component.ts",
+        "missing": "ExpenseChartComponent"
+      },
+      {
+        "file": "dashboard.component.ts",
+        "missing": "SalesChartComponent"
+      },
+      {
+        "file": "dashboard.component.ts",
+        "missing": "InventoryWidgetComponent"
+      },
+      {
+        "file": "dashboard.component.ts",
+        "missing": "HrWidgetComponent"
+      },
+      {
+        "file": "dashboard.component.ts",
+        "missing": "RecentActivitiesComponent"
+      },
+      {
+        "file": "dashboard.component.ts",
+        "missing": "QuickActionsComponent"
+      },
+      {
+        "file": "expense-chart.component.ts",
+        "missing": "CardComponent"
+      },
+      {
+        "file": "expense-chart.component.ts",
+        "missing": "ChartModule"
+      },
+      {
+        "file": "hr-widget.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "hr-widget.component.ts",
+        "missing": "CardComponent"
+      },
+      {
+        "file": "hr-widget.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "inventory-widget.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "inventory-widget.component.ts",
+        "missing": "CardComponent"
+      },
+      {
+        "file": "inventory-widget.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "inventory-widget.component.ts",
+        "missing": "TagModule"
+      },
+      {
+        "file": "notifications-widget.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "notifications-widget.component.ts",
+        "missing": "CardComponent"
+      },
+      {
+        "file": "notifications-widget.component.ts",
+        "missing": "BadgeModule"
+      },
+      {
+        "file": "notifications-widget.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "performance-widget.component.ts",
+        "missing": "CardComponent"
+      },
+      {
+        "file": "performance-widget.component.ts",
+        "missing": "KnobModule"
+      },
+      {
+        "file": "quick-actions.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "quick-actions.component.ts",
+        "missing": "CardComponent"
+      },
+      {
+        "file": "quick-actions.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "recent-activities.component.ts",
+        "missing": "CardComponent"
+      },
+      {
+        "file": "recent-activities.component.ts",
+        "missing": "TimelineModule"
+      },
+      {
+        "file": "recent-activities.component.ts",
+        "missing": "AvatarModule"
+      },
+      {
+        "file": "revenue-chart.component.ts",
+        "missing": "CardComponent"
+      },
+      {
+        "file": "revenue-chart.component.ts",
+        "missing": "ChartModule"
+      },
+      {
+        "file": "sales-chart.component.ts",
+        "missing": "CardComponent"
+      },
+      {
+        "file": "sales-chart.component.ts",
+        "missing": "ChartModule"
+      },
+      {
+        "file": "holdings-form.component.ts",
+        "missing": "CardModule"
+      },
+      {
+        "file": "holdings-form.component.ts",
+        "missing": "InputTextModule"
+      },
+      {
+        "file": "holdings-form.component.ts",
+        "missing": "TextareaModule"
+      },
+      {
+        "file": "holdings-form.component.ts",
+        "missing": "SelectModule"
+      },
+      {
+        "file": "holdings-form.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "holdings-form.component.ts",
+        "missing": "PageHeaderComponent"
+      },
+      {
+        "file": "holdings-list.component.ts",
+        "missing": "PageHeaderComponent"
+      },
+      {
+        "file": "holdings-list.component.ts",
+        "missing": "DataTableComponent"
+      },
+      {
+        "file": "holdings-list.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "holdings-list.component.ts",
+        "missing": "ConfirmDialogComponent"
+      },
+      {
+        "file": "projects-form.component.ts",
+        "missing": "CardModule"
+      },
+      {
+        "file": "projects-form.component.ts",
+        "missing": "InputTextModule"
+      },
+      {
+        "file": "projects-form.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "projects-form.component.ts",
+        "missing": "PageHeaderComponent"
+      },
+      {
+        "file": "projects-list.component.ts",
+        "missing": "PageHeaderComponent"
+      },
+      {
+        "file": "projects-list.component.ts",
+        "missing": "DataTableComponent"
+      },
+      {
+        "file": "projects-list.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "units-form.component.ts",
+        "missing": "CardModule"
+      },
+      {
+        "file": "units-form.component.ts",
+        "missing": "InputTextModule"
+      },
+      {
+        "file": "units-form.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "units-form.component.ts",
+        "missing": "PageHeaderComponent"
+      },
+      {
+        "file": "units-list.component.ts",
+        "missing": "PageHeaderComponent"
+      },
+      {
+        "file": "units-list.component.ts",
+        "missing": "DataTableComponent"
+      },
+      {
+        "file": "units-list.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "attendances-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "attendances-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "attendances-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "departments-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "departments-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "departments-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "employees-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "employees-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "employees-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "leaves-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "leaves-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "leaves-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "items-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "items-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "items-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "movements-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "movements-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "movements-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "warehouses-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "warehouses-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "warehouses-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "header.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "header.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "header.component.ts",
+        "missing": "MenuModule"
+      },
+      {
+        "file": "header.component.ts",
+        "missing": "BadgeModule"
+      },
+      {
+        "file": "header.component.ts",
+        "missing": "AvatarModule"
+      },
+      {
+        "file": "main-layout.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "main-layout.component.ts",
+        "missing": "HeaderComponent"
+      },
+      {
+        "file": "main-layout.component.ts",
+        "missing": "SidebarComponent"
+      },
+      {
+        "file": "main-layout.component.ts",
+        "missing": "FooterComponent"
+      },
+      {
+        "file": "sidebar.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "sidebar.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "sidebar.component.ts",
+        "missing": "RippleModule"
+      },
+      {
+        "file": "sidebar.component.ts",
+        "missing": "TooltipModule"
+      },
+      {
+        "file": "topbar.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "topbar.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "payrollitems-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "payrollitems-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "payrollitems-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "payrollprocessings-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "payrollprocessings-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "payrollprocessings-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "purchaseinvoices-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "purchaseinvoices-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "purchaseinvoices-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "purchaseorders-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "purchaseorders-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "purchaseorders-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "suppliers-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "suppliers-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "suppliers-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "financialreports-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "financialreports-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "financialreports-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "hrreports-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "hrreports-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "hrreports-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "inventoryreports-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "inventoryreports-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "inventoryreports-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "customers-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "customers-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "customers-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "quotations-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "quotations-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "quotations-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "salesinvoices-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "salesinvoices-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "salesinvoices-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "salesorders-detail.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "salesorders-form.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "salesorders-list.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "breadcrumb.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "breadcrumb.component.ts",
+        "missing": "BreadcrumbModule"
+      },
+      {
+        "file": "button.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "button.component.ts",
+        "missing": "RippleModule"
+      },
+      {
+        "file": "card.component.ts",
+        "missing": "CardModule"
+      },
+      {
+        "file": "confirm-dialog.component.ts",
+        "missing": "ConfirmDialogModule"
+      },
+      {
+        "file": "data-table.component.ts",
+        "missing": "TableModule"
+      },
+      {
+        "file": "data-table.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "data-table.component.ts",
+        "missing": "InputTextModule"
+      },
+      {
+        "file": "data-table.component.ts",
+        "missing": "TooltipModule"
+      },
+      {
+        "file": "dialog.component.ts",
+        "missing": "DialogModule"
+      },
+      {
+        "file": "dialog.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "empty-state.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "error-state.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "file-upload.component.ts",
+        "missing": "FileUploadModule"
+      },
+      {
+        "file": "filter-panel.component.ts",
+        "missing": "PanelModule"
+      },
+      {
+        "file": "filter-panel.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "form-field.component.ts",
+        "missing": "InputTextModule"
+      },
+      {
+        "file": "form-field.component.ts",
+        "missing": "InputNumberModule"
+      },
+      {
+        "file": "form-field.component.ts",
+        "missing": "CheckboxModule"
+      },
+      {
+        "file": "form-field.component.ts",
+        "missing": "TextareaModule"
+      },
+      {
+        "file": "loading.component.ts",
+        "missing": "ProgressSpinnerModule"
+      },
+      {
+        "file": "page-header.component.ts",
+        "missing": "RouterModule"
+      },
+      {
+        "file": "page-header.component.ts",
+        "missing": "BreadcrumbComponent"
+      },
+      {
+        "file": "page-header.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "pagination.component.ts",
+        "missing": "PaginatorModule"
+      },
+      {
+        "file": "search-bar.component.ts",
+        "missing": "InputTextModule"
+      },
+      {
+        "file": "search-bar.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "stat-card.component.ts",
+        "missing": "CardModule"
+      },
+      {
+        "file": "permissions-list.component.ts",
+        "missing": "PageHeaderComponent"
+      },
+      {
+        "file": "permissions-list.component.ts",
+        "missing": "DataTableComponent"
+      },
+      {
+        "file": "permissions-list.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "roles-form.component.ts",
+        "missing": "CardModule"
+      },
+      {
+        "file": "roles-form.component.ts",
+        "missing": "InputTextModule"
+      },
+      {
+        "file": "roles-form.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "roles-form.component.ts",
+        "missing": "PageHeaderComponent"
+      },
+      {
+        "file": "roles-list.component.ts",
+        "missing": "PageHeaderComponent"
+      },
+      {
+        "file": "roles-list.component.ts",
+        "missing": "DataTableComponent"
+      },
+      {
+        "file": "roles-list.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "users-form.component.ts",
+        "missing": "CardModule"
+      },
+      {
+        "file": "users-form.component.ts",
+        "missing": "InputTextModule"
+      },
+      {
+        "file": "users-form.component.ts",
+        "missing": "ButtonModule"
+      },
+      {
+        "file": "users-form.component.ts",
+        "missing": "PageHeaderComponent"
+      },
+      {
+        "file": "users-list.component.ts",
+        "missing": "PageHeaderComponent"
+      },
+      {
+        "file": "users-list.component.ts",
+        "missing": "DataTableComponent"
+      },
+      {
+        "file": "users-list.component.ts",
+        "missing": "ButtonModule"
+      }
+    ],
+    "missing_component_decorator": [
+      {
+        "file": "projects-detail.component.ts",
+        "class": "ProjectsDetailComponent"
+      },
+      {
+        "file": "units-detail.component.ts",
+        "class": "UnitsDetailComponent"
+      },
+      {
+        "file": "users-detail.component.ts",
+        "class": "UsersDetailComponent"
+      }
+    ],
+    "non_standalone_components": [
+      {
+        "file": "apps/platform-shell-ui/src/app/entities/projects/projects-detail.component.ts",
+        "class": "ProjectsDetailComponent"
+      },
+      {
+        "file": "apps/platform-shell-ui/src/app/entities/units/units-detail.component.ts",
+        "class": "UnitsDetailComponent"
+      },
+      {
+        "file": "apps/platform-shell-ui/src/app/users/users/users-detail.component.ts",
+        "class": "UsersDetailComponent"
+      }
+    ],
+    "missing_template": [
+      {
+        "file": "projects-detail.component.ts",
+        "class": "ProjectsDetailComponent"
+      },
+      {
+        "file": "units-detail.component.ts",
+        "class": "UnitsDetailComponent"
+      },
+      {
+        "file": "users-detail.component.ts",
+        "class": "UsersDetailComponent"
+      }
+    ],
+    "duplicate_different_interfaces": [
+      {
+        "name": "User",
+        "count": 2,
+        "files": [
+          "apps/platform-shell-ui/src/app/core/services/auth.service.ts",
+          "apps/platform-shell-ui/src/app/core/services/user.service.ts"
+        ]
+      }
+    ],
+    "primeng_deprecated": [
+      {
+        "file": "apps/platform-shell-ui/src/app/auth/components/profile.component.ts",
+        "line": 83,
+        "issue": "p-tabPanel should be p-tabpanel (lowercase) in PrimeNG 20",
+        "code": "<p-tabPanel"
+      },
+      {
+        "file": "apps/platform-shell-ui/src/app/auth/components/profile.component.ts",
+        "line": 153,
+        "issue": "p-tabPanel should be p-tabpanel (lowercase) in PrimeNG 20",
+        "code": "<p-tabPanel"
+      },
+      {
+        "file": "apps/platform-shell-ui/src/app/auth/components/profile.component.ts",
+        "line": 215,
+        "issue": "p-tabPanel should be p-tabpanel (lowercase) in PrimeNG 20",
+        "code": "<p-tabPanel"
+      },
+      {
+        "file": "apps/platform-shell-ui/src/app/shared/components/data-table.component.ts",
+        "line": 38,
+        "issue": "responsive property is deprecated, use responsiveLayout=\"scroll\"",
+        "code": "[responsive]=\"true\""
+      },
+      {
+        "file": "apps/platform-shell-ui/src/app/store/auth/auth.reducer.ts",
+        "line": 13,
+        "issue": "PrimeNG 20 prefers undefined over null for optional properties",
+        "code": ": null"
+      },
+      {
+        "file": "apps/platform-shell-ui/src/app/store/auth/auth.reducer.ts",
+        "line": 14,
+        "issue": "PrimeNG 20 prefers undefined over null for optional properties",
+        "code": ": null"
+      },
+      {
+        "file": "apps/platform-shell-ui/src/app/store/auth/auth.reducer.ts",
+        "line": 17,
+        "issue": "PrimeNG 20 prefers undefined over null for optional properties",
+        "code": ": null"
+      },
+      {
+        "file": "apps/platform-shell-ui/src/app/store/auth/auth.reducer.ts",
+        "line": 27,
+        "issue": "PrimeNG 20 prefers undefined over null for optional properties",
+        "code": ": null"
+      },
+      {
+        "file": "apps/platform-shell-ui/src/app/store/auth/auth.reducer.ts",
+        "line": 36,
+        "issue": "PrimeNG 20 prefers undefined over null for optional properties",
+        "code": ": null"
+      },
+      {
+        "file": "apps/platform-shell-ui/src/app/store/user/user.reducer.ts",
+        "line": 13,
+        "issue": "PrimeNG 20 prefers undefined over null for optional properties",
+        "code": ": null"
+      },
+      {
+        "file": "apps/platform-shell-ui/src/app/store/user/user.reducer.ts",
+        "line": 15,
+        "issue": "PrimeNG 20 prefers undefined over null for optional properties",
+        "code": ": null"
+      },
+      {
+        "file": "apps/platform-shell-ui/src/app/store/user/user.reducer.ts",
+        "line": 27,
+        "issue": "PrimeNG 20 prefers undefined over null for optional properties",
+        "code": ": null"
+      }
+    ],
+    "async_without_await": [
+      {
+        "file": "apps/platform-shell-ui/src/app/entities/projects/projects-form.component.ts",
+        "warning": "Function marked as async but no await found"
+      },
+      {
+        "file": "apps/platform-shell-ui/src/app/entities/units/units-form.component.ts",
+        "warning": "Function marked as async but no await found"
+      },
+      {
+        "file": "apps/platform-shell-ui/src/app/users/roles/roles-form.component.ts",
+        "warning": "Function marked as async but no await found"
+      },
+      {
+        "file": "apps/platform-shell-ui/src/app/users/users/users-form.component.ts",
+        "warning": "Function marked as async but no await found"
+      }
+    ],
+    "potential_memory_leak": [
+      {
+        "file": "apps/platform-shell-ui/src/app/layout/components/sidebar.component.ts",
+        "warning": "Subscription without unsubscribe or takeUntil"
+      }
+    ]
+  },
+  "services_map": {
+    "AccountService": "apps/platform-shell-ui/src/app/core/services/account.service.ts",
+    "ApiService": "apps/platform-shell-ui/src/app/core/services/api.service.ts",
+    "AttendanceService": "apps/platform-shell-ui/src/app/core/services/attendance.service.ts",
+    "AuthService": "apps/platform-shell-ui/src/app/core/services/auth.service.ts",
+    "ConfigService": "apps/platform-shell-ui/src/app/core/services/config.service.ts",
+    "CostCenterService": "apps/platform-shell-ui/src/app/core/services/cost-center.service.ts",
+    "CustomerService": "apps/platform-shell-ui/src/app/core/services/customer.service.ts",
+    "DepartmentService": "apps/platform-shell-ui/src/app/core/services/department.service.ts",
+    "EmployeeService": "apps/platform-shell-ui/src/app/core/services/employee.service.ts",
+    "ErrorHandlerService": "apps/platform-shell-ui/src/app/core/services/error-handler.service.ts",
+    "FiscalYearService": "apps/platform-shell-ui/src/app/core/services/fiscal-year.service.ts",
+    "HoldingService": "apps/platform-shell-ui/src/app/core/services/holding.service.ts",
+    "ItemService": "apps/platform-shell-ui/src/app/core/services/item.service.ts",
+    "JournalEntryService": "apps/platform-shell-ui/src/app/core/services/journal-entry.service.ts",
+    "LeaveRequestService": "apps/platform-shell-ui/src/app/core/services/leave-request.service.ts",
+    "LoadingService": "apps/platform-shell-ui/src/app/core/services/loading.service.ts",
+    "LoggerService": "apps/platform-shell-ui/src/app/core/services/logger.service.ts",
+    "NotificationService": "apps/platform-shell-ui/src/app/core/services/notification.service.ts",
+    "PayrollService": "apps/platform-shell-ui/src/app/core/services/payroll.service.ts",
+    "ProjectService": "apps/platform-shell-ui/src/app/core/services/project.service.ts",
+    "PurchaseInvoiceService": "apps/platform-shell-ui/src/app/core/services/purchase-invoice.service.ts",
+    "PurchaseOrderService": "apps/platform-shell-ui/src/app/core/services/purchase-order.service.ts",
+    "SalesInvoiceService": "apps/platform-shell-ui/src/app/core/services/sales-invoice.service.ts",
+    "SalesOrderService": "apps/platform-shell-ui/src/app/core/services/sales-order.service.ts",
+    "StorageService": "apps/platform-shell-ui/src/app/core/services/storage.service.ts",
+    "SupplierService": "apps/platform-shell-ui/src/app/core/services/supplier.service.ts",
+    "TokenService": "apps/platform-shell-ui/src/app/core/services/token.service.ts",
+    "UnitService": "apps/platform-shell-ui/src/app/core/services/unit.service.ts",
+    "UserService": "apps/platform-shell-ui/src/app/core/services/user.service.ts",
+    "WarehouseService": "apps/platform-shell-ui/src/app/core/services/warehouse.service.ts"
+  },
+  "components_map": {
+    "AccountsDetailComponent": "apps/platform-shell-ui/src/app/accounting/accounts/accounts-detail.component.ts",
+    "AccountsFormComponent": "apps/platform-shell-ui/src/app/accounting/accounts/accounts-form.component.ts",
+    "AccountsListComponent": "apps/platform-shell-ui/src/app/accounting/accounts/accounts-list.component.ts",
+    "CostCentersDetailComponent": "apps/platform-shell-ui/src/app/accounting/costcenters/costcenters-detail.component.ts",
+    "CostCentersFormComponent": "apps/platform-shell-ui/src/app/accounting/costcenters/costcenters-form.component.ts",
+    "CostCentersListComponent": "apps/platform-shell-ui/src/app/accounting/costcenters/costcenters-list.component.ts",
+    "FiscalYearsDetailComponent": "apps/platform-shell-ui/src/app/accounting/fiscalyears/fiscalyears-detail.component.ts",
+    "FiscalYearsFormComponent": "apps/platform-shell-ui/src/app/accounting/fiscalyears/fiscalyears-form.component.ts",
+    "FiscalYearsListComponent": "apps/platform-shell-ui/src/app/accounting/fiscalyears/fiscalyears-list.component.ts",
+    "JournalEntrysDetailComponent": "apps/platform-shell-ui/src/app/accounting/journalentrys/journalentrys-detail.component.ts",
+    "JournalEntrysFormComponent": "apps/platform-shell-ui/src/app/accounting/journalentrys/journalentrys-form.component.ts",
+    "JournalEntrysListComponent": "apps/platform-shell-ui/src/app/accounting/journalentrys/journalentrys-list.component.ts",
+    "ForgotPasswordComponent": "apps/platform-shell-ui/src/app/auth/components/forgot-password.component.ts",
+    "LoginComponent": "apps/platform-shell-ui/src/app/auth/components/login.component.ts",
+    "ProfileComponent": "apps/platform-shell-ui/src/app/auth/components/profile.component.ts",
+    "RegisterComponent": "apps/platform-shell-ui/src/app/auth/components/register.component.ts",
+    "ResetPasswordComponent": "apps/platform-shell-ui/src/app/auth/components/reset-password.component.ts",
+    "DashboardComponent": "apps/platform-shell-ui/src/app/dashboard/components/dashboard.component.ts",
+    "ExpenseChartComponent": "apps/platform-shell-ui/src/app/dashboard/components/expense-chart.component.ts",
+    "HrWidgetComponent": "apps/platform-shell-ui/src/app/dashboard/components/hr-widget.component.ts",
+    "InventoryWidgetComponent": "apps/platform-shell-ui/src/app/dashboard/components/inventory-widget.component.ts",
+    "NotificationsWidgetComponent": "apps/platform-shell-ui/src/app/dashboard/components/notifications-widget.component.ts",
+    "PerformanceWidgetComponent": "apps/platform-shell-ui/src/app/dashboard/components/performance-widget.component.ts",
+    "QuickActionsComponent": "apps/platform-shell-ui/src/app/dashboard/components/quick-actions.component.ts",
+    "RecentActivitiesComponent": "apps/platform-shell-ui/src/app/dashboard/components/recent-activities.component.ts",
+    "RevenueChartComponent": "apps/platform-shell-ui/src/app/dashboard/components/revenue-chart.component.ts",
+    "SalesChartComponent": "apps/platform-shell-ui/src/app/dashboard/components/sales-chart.component.ts",
+    "HoldingsFormComponent": "apps/platform-shell-ui/src/app/entities/holdings/holdings-form.component.ts",
+    "HoldingsListComponent": "apps/platform-shell-ui/src/app/entities/holdings/holdings-list.component.ts",
+    "ProjectsDetailComponent": "apps/platform-shell-ui/src/app/entities/projects/projects-detail.component.ts",
+    "ProjectsFormComponent": "apps/platform-shell-ui/src/app/entities/projects/projects-form.component.ts",
+    "ProjectsListComponent": "apps/platform-shell-ui/src/app/entities/projects/projects-list.component.ts",
+    "UnitsDetailComponent": "apps/platform-shell-ui/src/app/entities/units/units-detail.component.ts",
+    "UnitsFormComponent": "apps/platform-shell-ui/src/app/entities/units/units-form.component.ts",
+    "UnitsListComponent": "apps/platform-shell-ui/src/app/entities/units/units-list.component.ts",
+    "AttendancesDetailComponent": "apps/platform-shell-ui/src/app/hr/attendances/attendances-detail.component.ts",
+    "AttendancesFormComponent": "apps/platform-shell-ui/src/app/hr/attendances/attendances-form.component.ts",
+    "AttendancesListComponent": "apps/platform-shell-ui/src/app/hr/attendances/attendances-list.component.ts",
+    "DepartmentsDetailComponent": "apps/platform-shell-ui/src/app/hr/departments/departments-detail.component.ts",
+    "DepartmentsFormComponent": "apps/platform-shell-ui/src/app/hr/departments/departments-form.component.ts",
+    "DepartmentsListComponent": "apps/platform-shell-ui/src/app/hr/departments/departments-list.component.ts",
+    "EmployeesDetailComponent": "apps/platform-shell-ui/src/app/hr/employees/employees-detail.component.ts",
+    "EmployeesFormComponent": "apps/platform-shell-ui/src/app/hr/employees/employees-form.component.ts",
+    "EmployeesListComponent": "apps/platform-shell-ui/src/app/hr/employees/employees-list.component.ts",
+    "LeavesDetailComponent": "apps/platform-shell-ui/src/app/hr/leaves/leaves-detail.component.ts",
+    "LeavesFormComponent": "apps/platform-shell-ui/src/app/hr/leaves/leaves-form.component.ts",
+    "LeavesListComponent": "apps/platform-shell-ui/src/app/hr/leaves/leaves-list.component.ts",
+    "ItemsDetailComponent": "apps/platform-shell-ui/src/app/inventory/items/items-detail.component.ts",
+    "ItemsFormComponent": "apps/platform-shell-ui/src/app/inventory/items/items-form.component.ts",
+    "ItemsListComponent": "apps/platform-shell-ui/src/app/inventory/items/items-list.component.ts",
+    "MovementsDetailComponent": "apps/platform-shell-ui/src/app/inventory/movements/movements-detail.component.ts",
+    "MovementsFormComponent": "apps/platform-shell-ui/src/app/inventory/movements/movements-form.component.ts",
+    "MovementsListComponent": "apps/platform-shell-ui/src/app/inventory/movements/movements-list.component.ts",
+    "WarehousesDetailComponent": "apps/platform-shell-ui/src/app/inventory/warehouses/warehouses-detail.component.ts",
+    "WarehousesFormComponent": "apps/platform-shell-ui/src/app/inventory/warehouses/warehouses-form.component.ts",
+    "WarehousesListComponent": "apps/platform-shell-ui/src/app/inventory/warehouses/warehouses-list.component.ts",
+    "FooterComponent": "apps/platform-shell-ui/src/app/layout/components/footer.component.ts",
+    "HeaderComponent": "apps/platform-shell-ui/src/app/layout/components/header.component.ts",
+    "MainLayoutComponent": "apps/platform-shell-ui/src/app/layout/components/main-layout.component.ts",
+    "SidebarComponent": "apps/platform-shell-ui/src/app/layout/components/sidebar.component.ts",
+    "TopbarComponent": "apps/platform-shell-ui/src/app/layout/components/topbar.component.ts",
+    "PayrollItemsDetailComponent": "apps/platform-shell-ui/src/app/payroll/payrollitems/payrollitems-detail.component.ts",
+    "PayrollItemsFormComponent": "apps/platform-shell-ui/src/app/payroll/payrollitems/payrollitems-form.component.ts",
+    "PayrollItemsListComponent": "apps/platform-shell-ui/src/app/payroll/payrollitems/payrollitems-list.component.ts",
+    "PayrollProcessingsDetailComponent": "apps/platform-shell-ui/src/app/payroll/payrollprocessings/payrollprocessings-detail.component.ts",
+    "PayrollProcessingsFormComponent": "apps/platform-shell-ui/src/app/payroll/payrollprocessings/payrollprocessings-form.component.ts",
+    "PayrollProcessingsListComponent": "apps/platform-shell-ui/src/app/payroll/payrollprocessings/payrollprocessings-list.component.ts",
+    "PurchaseInvoicesDetailComponent": "apps/platform-shell-ui/src/app/purchases/purchaseinvoices/purchaseinvoices-detail.component.ts",
+    "PurchaseInvoicesFormComponent": "apps/platform-shell-ui/src/app/purchases/purchaseinvoices/purchaseinvoices-form.component.ts",
+    "PurchaseInvoicesListComponent": "apps/platform-shell-ui/src/app/purchases/purchaseinvoices/purchaseinvoices-list.component.ts",
+    "PurchaseOrdersDetailComponent": "apps/platform-shell-ui/src/app/purchases/purchaseorders/purchaseorders-detail.component.ts",
+    "PurchaseOrdersFormComponent": "apps/platform-shell-ui/src/app/purchases/purchaseorders/purchaseorders-form.component.ts",
+    "PurchaseOrdersListComponent": "apps/platform-shell-ui/src/app/purchases/purchaseorders/purchaseorders-list.component.ts",
+    "SuppliersDetailComponent": "apps/platform-shell-ui/src/app/purchases/suppliers/suppliers-detail.component.ts",
+    "SuppliersFormComponent": "apps/platform-shell-ui/src/app/purchases/suppliers/suppliers-form.component.ts",
+    "SuppliersListComponent": "apps/platform-shell-ui/src/app/purchases/suppliers/suppliers-list.component.ts",
+    "FinancialReportsDetailComponent": "apps/platform-shell-ui/src/app/reports/financialreports/financialreports-detail.component.ts",
+    "FinancialReportsFormComponent": "apps/platform-shell-ui/src/app/reports/financialreports/financialreports-form.component.ts",
+    "FinancialReportsListComponent": "apps/platform-shell-ui/src/app/reports/financialreports/financialreports-list.component.ts",
+    "HRReportsDetailComponent": "apps/platform-shell-ui/src/app/reports/hrreports/hrreports-detail.component.ts",
+    "HRReportsFormComponent": "apps/platform-shell-ui/src/app/reports/hrreports/hrreports-form.component.ts",
+    "HRReportsListComponent": "apps/platform-shell-ui/src/app/reports/hrreports/hrreports-list.component.ts",
+    "InventoryReportsDetailComponent": "apps/platform-shell-ui/src/app/reports/inventoryreports/inventoryreports-detail.component.ts",
+    "InventoryReportsFormComponent": "apps/platform-shell-ui/src/app/reports/inventoryreports/inventoryreports-form.component.ts",
+    "InventoryReportsListComponent": "apps/platform-shell-ui/src/app/reports/inventoryreports/inventoryreports-list.component.ts",
+    "CustomersDetailComponent": "apps/platform-shell-ui/src/app/sales/customers/customers-detail.component.ts",
+    "CustomersFormComponent": "apps/platform-shell-ui/src/app/sales/customers/customers-form.component.ts",
+    "CustomersListComponent": "apps/platform-shell-ui/src/app/sales/customers/customers-list.component.ts",
+    "QuotationsDetailComponent": "apps/platform-shell-ui/src/app/sales/quotations/quotations-detail.component.ts",
+    "QuotationsFormComponent": "apps/platform-shell-ui/src/app/sales/quotations/quotations-form.component.ts",
+    "QuotationsListComponent": "apps/platform-shell-ui/src/app/sales/quotations/quotations-list.component.ts",
+    "SalesInvoicesDetailComponent": "apps/platform-shell-ui/src/app/sales/salesinvoices/salesinvoices-detail.component.ts",
+    "SalesInvoicesFormComponent": "apps/platform-shell-ui/src/app/sales/salesinvoices/salesinvoices-form.component.ts",
+    "SalesInvoicesListComponent": "apps/platform-shell-ui/src/app/sales/salesinvoices/salesinvoices-list.component.ts",
+    "SalesOrdersDetailComponent": "apps/platform-shell-ui/src/app/sales/salesorders/salesorders-detail.component.ts",
+    "SalesOrdersFormComponent": "apps/platform-shell-ui/src/app/sales/salesorders/salesorders-form.component.ts",
+    "SalesOrdersListComponent": "apps/platform-shell-ui/src/app/sales/salesorders/salesorders-list.component.ts",
+    "BreadcrumbComponent": "apps/platform-shell-ui/src/app/shared/components/breadcrumb.component.ts",
+    "ButtonComponent": "apps/platform-shell-ui/src/app/shared/components/button.component.ts",
+    "CardComponent": "apps/platform-shell-ui/src/app/shared/components/card.component.ts",
+    "ConfirmDialogComponent": "apps/platform-shell-ui/src/app/shared/components/confirm-dialog.component.ts",
+    "DataTableComponent": "apps/platform-shell-ui/src/app/shared/components/data-table.component.ts",
+    "DialogComponent": "apps/platform-shell-ui/src/app/shared/components/dialog.component.ts",
+    "EmptyStateComponent": "apps/platform-shell-ui/src/app/shared/components/empty-state.component.ts",
+    "ErrorStateComponent": "apps/platform-shell-ui/src/app/shared/components/error-state.component.ts",
+    "FileUploadComponent": "apps/platform-shell-ui/src/app/shared/components/file-upload.component.ts",
+    "FilterPanelComponent": "apps/platform-shell-ui/src/app/shared/components/filter-panel.component.ts",
+    "FormFieldComponent": "apps/platform-shell-ui/src/app/shared/components/form-field.component.ts",
+    "LoadingComponent": "apps/platform-shell-ui/src/app/shared/components/loading.component.ts",
+    "PageHeaderComponent": "apps/platform-shell-ui/src/app/shared/components/page-header.component.ts",
+    "PaginationComponent": "apps/platform-shell-ui/src/app/shared/components/pagination.component.ts",
+    "SearchBarComponent": "apps/platform-shell-ui/src/app/shared/components/search-bar.component.ts",
+    "StatCardComponent": "apps/platform-shell-ui/src/app/shared/components/stat-card.component.ts",
+    "PermissionsListComponent": "apps/platform-shell-ui/src/app/users/permissions/permissions-list.component.ts",
+    "RolesFormComponent": "apps/platform-shell-ui/src/app/users/roles/roles-form.component.ts",
+    "RolesListComponent": "apps/platform-shell-ui/src/app/users/roles/roles-list.component.ts",
+    "UsersDetailComponent": "apps/platform-shell-ui/src/app/users/users/users-detail.component.ts",
+    "UsersFormComponent": "apps/platform-shell-ui/src/app/users/users/users-form.component.ts",
+    "UsersListComponent": "apps/platform-shell-ui/src/app/users/users/users-list.component.ts"
+  },
+  "interfaces_summary": {
+    "Account": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/account.service.ts"
+      ]
+    },
+    "ApiRequestOptions": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/api.service.ts"
+      ]
+    },
+    "AttendanceRecord": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/attendance.service.ts"
+      ]
+    },
+    "LoginRequest": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/auth.service.ts"
+      ]
+    },
+    "LoginResponse": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/auth.service.ts"
+      ]
+    },
+    "User": {
+      "count": 2,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/auth.service.ts",
+        "apps/platform-shell-ui/src/app/core/services/user.service.ts"
+      ]
+    },
+    "RegisterRequest": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/auth.service.ts"
+      ]
+    },
+    "UpdateProfileRequest": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/auth.service.ts"
+      ]
+    },
+    "ChangePasswordRequest": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/auth.service.ts"
+      ]
+    },
+    "UserPreferences": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/auth.service.ts"
+      ]
+    },
+    "CostCenter": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/cost-center.service.ts"
+      ]
+    },
+    "Customer": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/customer.service.ts"
+      ]
+    },
+    "Department": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/department.service.ts"
+      ]
+    },
+    "Employee": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/employee.service.ts"
+      ]
+    },
+    "FiscalYear": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/fiscal-year.service.ts"
+      ]
+    },
+    "FiscalPeriod": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/fiscal-year.service.ts"
+      ]
+    },
+    "Holding": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/holding.service.ts"
+      ]
+    },
+    "Item": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/item.service.ts"
+      ]
+    },
+    "JournalEntry": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/journal-entry.service.ts"
+      ]
+    },
+    "JournalEntryLine": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/journal-entry.service.ts"
+      ]
+    },
+    "LeaveRequest": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/leave-request.service.ts"
+      ]
+    },
+    "Notification": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/notification.service.ts"
+      ]
+    },
+    "PayrollPeriod": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/payroll.service.ts"
+      ]
+    },
+    "Project": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/project.service.ts"
+      ]
+    },
+    "PurchaseInvoice": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/purchase-invoice.service.ts"
+      ]
+    },
+    "PurchaseOrder": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/purchase-order.service.ts"
+      ]
+    },
+    "SalesInvoice": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/sales-invoice.service.ts"
+      ]
+    },
+    "SalesOrder": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/sales-order.service.ts"
+      ]
+    },
+    "Supplier": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/supplier.service.ts"
+      ]
+    },
+    "Unit": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/unit.service.ts"
+      ]
+    },
+    "Warehouse": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/core/services/warehouse.service.ts"
+      ]
+    },
+    "TableColumn": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/shared/components/data-table.component.ts"
+      ]
+    },
+    "TableAction": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/shared/components/data-table.component.ts"
+      ]
+    },
+    "FilterField": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/shared/components/filter-panel.component.ts"
+      ]
+    },
+    "AppState": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/store/index.ts"
+      ]
+    },
+    "AccountingState": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/store/accounting/accounting.reducer.ts"
+      ]
+    },
+    "AuthState": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/store/auth/auth.reducer.ts"
+      ]
+    },
+    "EntityState": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/store/entity/entity.reducer.ts"
+      ]
+    },
+    "HrState": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/store/hr/hr.reducer.ts"
+      ]
+    },
+    "InventoryState": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/store/inventory/inventory.reducer.ts"
+      ]
+    },
+    "UserState": {
+      "count": 1,
+      "files": [
+        "apps/platform-shell-ui/src/app/store/user/user.reducer.ts"
+      ]
+    }
+  }
+}

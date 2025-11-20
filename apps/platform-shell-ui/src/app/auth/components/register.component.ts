@@ -7,8 +7,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { MessageModule } from 'primeng/message';
-import { AuthService } from '../../core/services/auth.service';
-import { NotificationService } from '../../core/services/notification.service';
+import { AuthService } from '../../core';
+import { NotificationService } from '../../core';
 
 @Component({
   selector: 'app-register',
@@ -240,7 +240,7 @@ export class RegisterComponent implements OnInit {
 
     try {
       const { name, email, password } = this.registerForm.value;
-      await this.authService.register({ name, email, password });
+      await this.authService.register({ name, email, password }).toPromise();
       
       this.notificationService.success('تم إنشاء الحساب بنجاح');
       this.router.navigate(['/auth/login']);

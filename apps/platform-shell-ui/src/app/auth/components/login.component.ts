@@ -8,8 +8,8 @@ import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { MessageModule } from 'primeng/message';
-import { AuthService } from '../../core/services/auth.service';
-import { NotificationService } from '../../core/services/notification.service';
+import { AuthService } from '../../core';
+import { NotificationService } from '../../core';
 
 @Component({
   selector: 'app-login',
@@ -208,7 +208,7 @@ export class LoginComponent implements OnInit {
 
     try {
       const { email, password } = this.loginForm.value;
-      await this.authService.login(email, password);
+      await this.authService.login({ email, password }).toPromise();
       
       this.notificationService.success('تم تسجيل الدخول بنجاح');
       this.router.navigate(['/dashboard']);

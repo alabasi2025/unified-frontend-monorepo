@@ -6,8 +6,8 @@ import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { MessageModule } from 'primeng/message';
-import { AuthService } from '../../core/services/auth.service';
-import { NotificationService } from '../../core/services/notification.service';
+import { AuthService } from '../../core';
+import { NotificationService } from '../../core';
 
 @Component({
   selector: 'app-forgot-password',

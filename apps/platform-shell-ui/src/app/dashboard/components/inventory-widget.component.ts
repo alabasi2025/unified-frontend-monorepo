@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { CardComponent } from '../../shared/components/card.component';
+import { CardComponent } from '../../shared';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 
@@ -75,10 +75,10 @@ export class InventoryWidgetComponent implements OnInit {
 
   ngOnInit() {}
 
-  getStatusSeverity(status: string): string {
-    const severityMap: Record<string, string> = {
+  getStatusSeverity(status: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' {
+    const severityMap: Record<string, 'success' | 'info' | 'warn' | 'danger'> = {
       'متوفر': 'success',
-      'منخفض': 'warning',
+      'منخفض': 'warn',
       'نفذ': 'danger'
     };
     return severityMap[status] || 'info';

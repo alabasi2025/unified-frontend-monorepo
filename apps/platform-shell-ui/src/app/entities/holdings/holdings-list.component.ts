@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { PageHeaderComponent } from '../../shared/components/page-header.component';
-import { DataTableComponent, TableColumn, TableAction } from '../../shared/components/data-table.component';
+import { PageHeaderComponent } from '../../shared';
+import { DataTableComponent, TableColumn, TableAction } from '../../shared';
 import { ButtonModule } from 'primeng/button';
-import { HoldingsService } from '../../core/services/api/holdings.service';
-import { NotificationService } from '../../core/services/notification.service';
-import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog.component';
+import { HoldingsService } from '../../core';
+import { NotificationService } from '../../core';
+import { ConfirmDialogComponent } from '../../shared';
 
 @Component({
   selector: 'app-holdings-list',
@@ -82,22 +82,25 @@ export class HoldingsListComponent implements OnInit {
     this.loadHoldings({});
   }
 
-  async loadHoldings(event: any) {
+  loadHoldings(event: any) {
     this.loading = true;
-    try {
-      const result = await this.holdingsService.findAll({
-        page: event.first ? Math.floor(event.first / event.rows) + 1 : 1,
-        limit: event.rows || 10,
-        sortBy: event.sortField,
-        sortOrder: event.sortOrder === 1 ? 'ASC' : 'DESC'
-      });
-      this.holdings = result.data;
-      this.totalRecords = result.total;
-    } catch (error: any) {
-      this.notificationService.error('فشل تحميل البيانات');
-    } finally {
-      this.loading = false;
-    }
+    const page = event.first ? Math.floor(event.first / event.rows) + 1 : 1;
+    const pageSize = event.rows || 10;
+    
+    this.holdingsService.getPaginated(page, pageSize, {
+      sortBy: event.sortField,
+      sortOrder: event.sortOrder === 1 ? 'ASC' : 'DESC'
+    }).subscribe({
+      next: (result) => {
+        this.holdings = result.data;
+        this.totalRecords = result.total;
+        this.loading = false;
+      },
+      error: (error) => {
+        this.notificationService.error('فشل تحميل البيانات');
+        this.loading = false;
+      }
+    });
   }
 
   onSearch(term: string) {

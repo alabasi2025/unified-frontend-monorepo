@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StatCardComponent } from '../../shared/components/stat-card.component';
-import { CardComponent } from '../../shared/components/card.component';
-import { PageHeaderComponent } from '../../shared/components/page-header.component';
+import { StatCardComponent } from '../../shared';
+import { CardComponent } from '../../shared';
+import { PageHeaderComponent } from '../../shared';
 import { RevenueChartComponent } from './revenue-chart.component';
 import { ExpenseChartComponent } from './expense-chart.component';
 import { SalesChartComponent } from './sales-chart.component';
