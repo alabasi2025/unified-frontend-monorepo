@@ -438,6 +438,14 @@ export class MainLayoutComponent implements OnInit {
       ]
     },
     {
+      title: 'نظام الجينات',
+      icon: 'pi pi-sparkles',
+      expanded: false,
+      items: [
+        { label: '🧬 إدارة الجينات', icon: 'pi pi-cog', routerLink: '/genes' }
+      ]
+    },
+    {
       title: 'التطوير',
       icon: 'pi pi-code',
       expanded: false,
@@ -487,6 +495,7 @@ export class MainLayoutComponent implements OnInit {
       '/suppliers': 'الموردين',
       '/items': 'الأصناف',
       '/reports': 'التقارير',
+      '/genes': 'نظام الجينات',
       '/developer': 'المطور (AI)',
       '/documentation': 'التوثيق'
     };
