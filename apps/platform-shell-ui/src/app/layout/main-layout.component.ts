@@ -6,12 +6,14 @@ import { AvatarModule } from 'primeng/avatar';
 import { TooltipModule } from 'primeng/tooltip';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from '../services/auth.service';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 interface MenuSection {
   title: string;
   icon: string;
   items: MenuItem[];
   expanded?: boolean;
+  color?: string; // لون مخصص لكل قسم
 }
 
 @Component({
@@ -23,6 +25,19 @@ interface MenuSection {
     ButtonModule,
     AvatarModule,
     TooltipModule
+  ],
+  animations: [
+    trigger('slideDown', [
+      state('collapsed', style({
+        height: '0',
+        opacity: '0'
+      })),
+      state('expanded', style({
+        height: '*',
+        opacity: '1'
+      })),
+      transition('collapsed <=> expanded', animate('300ms cubic-bezier(0.4, 0, 0.2, 1)'))
+    ])
   ],
   template: `
     <div class="layout-wrapper rtl">
@@ -36,17 +51,22 @@ interface MenuSection {
             (click)="toggleSidebar()">
           </button>
           <div class="logo">
-            <i class="pi pi-building"></i>
-            <span *ngIf="!sidebarCollapsed">SEMOP ERP</span>
+            <div class="logo-icon">
+              <i class="pi pi-bolt"></i>
+            </div>
+            <span *ngIf="!sidebarCollapsed" class="logo-text">SEMOP ERP</span>
           </div>
         </div>
 
         <div class="sidebar-menu">
           <!-- الرئيسية -->
           <div class="menu-section">
-            <a routerLink="/dashboard" routerLinkActive="active" class="menu-item">
-              <i class="pi pi-home"></i>
+            <a routerLink="/dashboard" routerLinkActive="active" class="menu-item dashboard-item">
+              <div class="menu-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <i class="pi pi-home"></i>
+              </div>
               <span *ngIf="!sidebarCollapsed">لوحة التحكم</span>
+              <div class="menu-glow"></div>
             </a>
           </div>
 
@@ -55,12 +75,15 @@ interface MenuSection {
             <div class="menu-item parent" 
                  [class.active]="section.expanded"
                  (click)="toggleSection(section)">
-              <i [class]="section.icon"></i>
+              <div class="menu-icon" [style.background]="section.color">
+                <i [class]="section.icon"></i>
+              </div>
               <span *ngIf="!sidebarCollapsed">{{ section.title }}</span>
               <i *ngIf="!sidebarCollapsed" 
                  class="pi toggle-icon"
                  [class.pi-chevron-down]="!section.expanded"
                  [class.pi-chevron-up]="section.expanded"></i>
+              <div class="menu-glow"></div>
             </div>
             
             <div class="submenu" 
@@ -72,6 +95,7 @@ interface MenuSection {
                  class="menu-item sub">
                 <i [class]="item.icon"></i>
                 <span>{{ item.label }}</span>
+                <div class="sub-glow"></div>
               </a>
             </div>
           </div>
@@ -90,7 +114,7 @@ interface MenuSection {
               <button 
                 pButton 
                 icon="pi pi-sign-out" 
-                class="p-button-text p-button-rounded"
+                class="p-button-text p-button-rounded logout-btn"
                 (click)="logout()"
                 pTooltip="تسجيل خروج"
                 tooltipPosition="bottom">
@@ -102,7 +126,8 @@ interface MenuSection {
               <p-avatar 
                 [label]="currentUser?.username?.charAt(0).toUpperCase()" 
                 shape="circle" 
-                [style]="{'background-color':'#2196F3', 'color': '#ffffff'}">
+                class="user-avatar"
+                [style]="{'background':'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 'color': '#ffffff'}">
               </p-avatar>
             </div>
           </div>
@@ -119,20 +144,20 @@ interface MenuSection {
     .layout-wrapper {
       display: flex;
       min-height: 100vh;
-      background: #f5f5f5;
+      background: #f8f9fa;
     }
 
     .layout-wrapper.rtl {
       direction: rtl;
     }
 
-    /* Sidebar */
+    /* Sidebar - تصميم جديد مبهج */
     .layout-sidebar {
       width: 280px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
       color: white;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      box-shadow: 4px 0 20px rgba(0,0,0,0.15);
       position: fixed;
       right: 0;
       top: 0;
@@ -143,7 +168,7 @@ interface MenuSection {
     }
 
     .layout-sidebar.collapsed {
-      width: 70px;
+      width: 80px;
     }
 
     .layout-sidebar::-webkit-scrollbar {
@@ -151,41 +176,85 @@ interface MenuSection {
     }
 
     .layout-sidebar::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.3);
-      border-radius: 3px;
+      background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+      border-radius: 10px;
     }
 
-    /* Sidebar Header */
+    .layout-sidebar::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* Sidebar Header - تصميم جديد */
     .sidebar-header {
       padding: 1.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
       gap: 1rem;
+      border-bottom: 2px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
     }
 
     .logo {
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      font-size: 1.25rem;
-      font-weight: 700;
       white-space: nowrap;
     }
 
-    .logo i {
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .logo-icon i {
       font-size: 1.5rem;
+      color: white;
+    }
+
+    .logo-text {
+      font-size: 1.25rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+      }
     }
 
     .toggle-btn {
       color: white !important;
       flex-shrink: 0;
+      background: rgba(255,255,255,0.1) !important;
+      transition: all 0.3s ease;
     }
 
-    /* Sidebar Menu */
+    .toggle-btn:hover {
+      background: rgba(255,255,255,0.2) !important;
+      transform: rotate(90deg);
+    }
+
+    /* Sidebar Menu - تصميم جديد */
     .sidebar-menu {
-      padding: 1rem 0;
+      padding: 1rem 0.5rem;
     }
 
     .menu-section {
@@ -196,18 +265,48 @@ interface MenuSection {
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      padding: 0.875rem 1.5rem;
-      color: rgba(255,255,255,0.9);
+      padding: 0.75rem 1rem;
+      color: rgba(255,255,255,0.85);
       text-decoration: none;
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
       cursor: pointer;
       position: relative;
       white-space: nowrap;
+      border-radius: 12px;
+      margin: 0 0.5rem;
+      overflow: hidden;
     }
 
-    .menu-item i {
-      font-size: 1.125rem;
+    .menu-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+    }
+
+    .menu-icon i {
+      font-size: 1.125rem;
+      color: white;
+    }
+
+    .menu-glow {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transform: translateX(100%);
+      transition: transform 0.6s ease;
+    }
+
+    .menu-item:hover .menu-glow {
+      transform: translateX(-100%);
     }
 
     .menu-item.parent {
@@ -223,39 +322,72 @@ interface MenuSection {
 
     .menu-item:hover {
       background: rgba(255,255,255,0.1);
+      transform: translateX(-3px);
+    }
+
+    .menu-item:hover .menu-icon {
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.3);
     }
 
     .menu-item.active {
       background: rgba(255,255,255,0.15);
-      border-right: 3px solid white;
+      border-right: 4px solid #ffd700;
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    }
+
+    .menu-item.dashboard-item:hover {
+      background: linear-gradient(90deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
     }
 
     .menu-item.sub {
       padding-right: 3rem;
       font-size: 0.9rem;
-      color: rgba(255,255,255,0.8);
+      color: rgba(255,255,255,0.75);
+      margin: 0.25rem 0.5rem;
+    }
+
+    .menu-item.sub i {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .sub-glow {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 0;
+      background: linear-gradient(180deg, #667eea, #764ba2);
+      transition: height 0.3s ease;
+      border-radius: 2px;
     }
 
     .menu-item.sub:hover {
       background: rgba(255,255,255,0.08);
       padding-right: 2.9rem;
+      color: white;
+    }
+
+    .menu-item.sub:hover .sub-glow {
+      height: 70%;
     }
 
     .menu-item.sub.active {
-      background: rgba(255,255,255,0.12);
+      background: linear-gradient(90deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
       color: white;
       border-right: 3px solid #ffd700;
+      font-weight: 500;
+    }
+
+    .menu-item.sub.active .sub-glow {
+      height: 100%;
     }
 
     /* Submenu */
     .submenu {
-      max-height: 0;
       overflow: hidden;
-      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .submenu.expanded {
-      max-height: 1000px;
     }
 
     /* Main Content */
@@ -266,32 +398,47 @@ interface MenuSection {
     }
 
     .layout-main.expanded {
-      margin-right: 70px;
+      margin-right: 80px;
     }
 
-    /* Topbar */
+    /* Topbar - تصميم محسّن */
     .layout-topbar {
       background: white;
       padding: 1rem 2rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
       display: flex;
       justify-content: space-between;
       align-items: center;
       position: sticky;
       top: 0;
       z-index: 100;
+      border-bottom: 2px solid #f0f0f0;
     }
 
     .page-title {
       margin: 0;
       font-size: 1.5rem;
-      color: #333;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .user-info {
       display: flex;
       align-items: center;
       gap: 1rem;
+    }
+
+    .user-avatar {
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .user-avatar:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
     }
 
     .user-details {
@@ -308,11 +455,37 @@ interface MenuSection {
     .role {
       font-size: 0.875rem;
       color: #666;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .logout-btn {
+      color: #e74c3c !important;
+      transition: all 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      background: rgba(231, 76, 60, 0.1) !important;
+      transform: rotate(15deg);
     }
 
     /* Content */
     .layout-content {
       padding: 2rem;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     /* Collapsed State */
@@ -330,7 +503,12 @@ interface MenuSection {
 
     .layout-sidebar.collapsed .menu-item {
       justify-content: center;
-      padding: 0.875rem 0;
+      padding: 0.75rem 0;
+      margin: 0.5rem 0.5rem;
+    }
+
+    .layout-sidebar.collapsed .menu-icon {
+      margin: 0 auto;
     }
 
     /* Responsive */
@@ -358,6 +536,7 @@ export class MainLayoutComponent implements OnInit {
     {
       title: 'الإدارة',
       icon: 'pi pi-users',
+      color: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
       expanded: false,
       items: [
         { label: 'المستخدمين', icon: 'pi pi-user', routerLink: '/users' },
@@ -368,6 +547,7 @@ export class MainLayoutComponent implements OnInit {
     {
       title: 'الهيكل التنظيمي',
       icon: 'pi pi-sitemap',
+      color: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
       expanded: false,
       items: [
         { label: 'الشركات القابضة', icon: 'pi pi-building', routerLink: '/holdings' },
@@ -378,6 +558,7 @@ export class MainLayoutComponent implements OnInit {
     {
       title: 'المحاسبة',
       icon: 'pi pi-wallet',
+      color: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
       expanded: false,
       items: [
         { label: 'دليل الحسابات', icon: 'pi pi-list', routerLink: '/accounts' },
@@ -392,6 +573,7 @@ export class MainLayoutComponent implements OnInit {
     {
       title: 'المخزون',
       icon: 'pi pi-database',
+      color: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
       expanded: false,
       items: [
         { label: 'المستودعات', icon: 'pi pi-home', routerLink: '/warehouses' },
@@ -403,6 +585,7 @@ export class MainLayoutComponent implements OnInit {
     {
       title: 'المشتريات',
       icon: 'pi pi-shopping-cart',
+      color: 'linear-gradient(135deg, #30cfd0 0%, #330867 100%)',
       expanded: false,
       items: [
         { label: 'أوامر الشراء', icon: 'pi pi-file', routerLink: '/purchase-orders' },
@@ -413,6 +596,7 @@ export class MainLayoutComponent implements OnInit {
     {
       title: 'المبيعات',
       icon: 'pi pi-dollar',
+      color: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
       expanded: false,
       items: [
         { label: 'أوامر البيع', icon: 'pi pi-file', routerLink: '/sales-orders' },
@@ -423,6 +607,7 @@ export class MainLayoutComponent implements OnInit {
     {
       title: 'العملاء والموردين',
       icon: 'pi pi-users',
+      color: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)',
       expanded: false,
       items: [
         { label: 'العملاء', icon: 'pi pi-user', routerLink: '/customers' },
@@ -432,6 +617,7 @@ export class MainLayoutComponent implements OnInit {
     {
       title: 'التقارير',
       icon: 'pi pi-chart-bar',
+      color: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
       expanded: false,
       items: [
         { label: 'التقارير المالية', icon: 'pi pi-chart-line', routerLink: '/reports' }
@@ -440,6 +626,7 @@ export class MainLayoutComponent implements OnInit {
     {
       title: 'نظام الجينات',
       icon: 'pi pi-sparkles',
+      color: 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)',
       expanded: false,
       items: [
         { label: '🧬 إدارة الجينات', icon: 'pi pi-cog', routerLink: '/genes' }
@@ -448,6 +635,7 @@ export class MainLayoutComponent implements OnInit {
     {
       title: 'إدارة المهام',
       icon: 'pi pi-check-square',
+      color: 'linear-gradient(135deg, #d299c2 0%, #fef9d7 100%)',
       expanded: false,
       items: [
         { label: 'قائمة المهام', icon: 'pi pi-list', routerLink: '/tasks' },
@@ -459,6 +647,7 @@ export class MainLayoutComponent implements OnInit {
     {
       title: 'التوثيق',
       icon: 'pi pi-book',
+      color: 'linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)',
       expanded: false,
       items: [
         { label: 'المخطط الشامل', icon: 'pi pi-file', routerLink: '/documentation' },
@@ -469,6 +658,7 @@ export class MainLayoutComponent implements OnInit {
     {
       title: 'التطوير',
       icon: 'pi pi-code',
+      color: 'linear-gradient(135deg, #fdcbf1 0%, #e6dee9 100%)',
       expanded: false,
       items: [
         { label: 'المطور (AI)', icon: 'pi pi-sparkles', routerLink: '/developer' },
