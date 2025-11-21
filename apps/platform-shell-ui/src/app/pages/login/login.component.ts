@@ -963,7 +963,7 @@ export class LoginComponent {
     this.loading = true;
     this.errorMessage = '';
 
-    this.authService.login(this.username, this.password).subscribe({
+    this.authService.login({ username: this.username, password: this.password }).subscribe({
       next: (response) => {
         this.loading = false;
         this.router.navigate([this.returnUrl]);
