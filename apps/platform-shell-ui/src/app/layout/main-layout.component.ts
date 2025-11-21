@@ -446,12 +446,33 @@ export class MainLayoutComponent implements OnInit {
       ]
     },
     {
+      title: 'إدارة المهام',
+      icon: 'pi pi-check-square',
+      expanded: false,
+      items: [
+        { label: 'قائمة المهام', icon: 'pi pi-list', routerLink: '/tasks' },
+        { label: 'المهام النشطة', icon: 'pi pi-play', routerLink: '/tasks/active' },
+        { label: 'المهام المكتملة', icon: 'pi pi-check', routerLink: '/tasks/completed' },
+        { label: 'لوحة كانبان', icon: 'pi pi-th-large', routerLink: '/tasks/kanban' }
+      ]
+    },
+    {
+      title: 'التوثيق',
+      icon: 'pi pi-book',
+      expanded: false,
+      items: [
+        { label: 'المخطط الشامل', icon: 'pi pi-file', routerLink: '/documentation' },
+        { label: 'دليل المستخدم', icon: 'pi pi-question-circle', routerLink: '/documentation/user-guide' },
+        { label: 'دليل المطور', icon: 'pi pi-code', routerLink: '/documentation/developer-guide' }
+      ]
+    },
+    {
       title: 'التطوير',
       icon: 'pi pi-code',
       expanded: false,
       items: [
         { label: 'المطور (AI)', icon: 'pi pi-sparkles', routerLink: '/developer' },
-        { label: 'التوثيق', icon: 'pi pi-book', routerLink: '/documentation' }
+        { label: 'API Explorer', icon: 'pi pi-server', routerLink: '/developer/api' }
       ]
     }
   ];
@@ -496,8 +517,14 @@ export class MainLayoutComponent implements OnInit {
       '/items': 'الأصناف',
       '/reports': 'التقارير',
       '/genes': 'نظام الجينات',
+      '/tasks': 'إدارة المهام',
+      '/tasks/active': 'المهام النشطة',
+      '/tasks/completed': 'المهام المكتملة',
+      '/tasks/kanban': 'لوحة كانبان',
       '/developer': 'المطور (AI)',
-      '/documentation': 'التوثيق'
+      '/documentation': 'التوثيق',
+      '/documentation/user-guide': 'دليل المستخدم',
+      '/documentation/developer-guide': 'دليل المطور'
     };
     this.pageTitle = titles[url] || 'SEMOP ERP';
   }

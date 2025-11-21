@@ -273,16 +273,31 @@ import { MarkdownModule } from 'ngx-markdown';
               <div class="article-actions">
                 <button
                   pButton
-                  icon="pi pi-heart"
-                  label="أعجبني"
-                  class="p-button-text"
-                  (click)="likeDocument()"
+                  icon="pi pi-download"
+                  label="تصدير PDF"
+                  class="p-button-text p-button-success"
+                  (click)="exportToPDF()"
                 ></button>
                 <button
                   pButton
-                  icon="pi pi-share-alt"
-                  label="مشاركة"
+                  icon="pi pi-file-word"
+                  label="تصدير Word"
+                  class="p-button-text p-button-info"
+                  (click)="exportToWord()"
+                ></button>
+                <button
+                  pButton
+                  icon="pi pi-code"
+                  label="تصدير HTML"
+                  class="p-button-text p-button-warning"
+                  (click)="exportToHTML()"
+                ></button>
+                <button
+                  pButton
+                  icon="pi pi-file"
+                  label="تصدير Markdown"
                   class="p-button-text"
+                  (click)="exportToMarkdown()"
                 ></button>
                 <button
                   pButton
@@ -955,6 +970,280 @@ export class DocumentationViewerComponent implements OnInit {
 
   printDocument() {
     window.print();
+  }
+
+  exportToPDF() {
+    if (!this.currentDocument) return;
+
+    this.messageService.add({
+      severity: 'info',
+      summary: 'جاري التصدير',
+      detail: 'جاري إنشاء ملف PDF...'
+    });
+
+    // Create HTML content
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html dir="rtl" lang="ar">
+      <head>
+        <meta charset="UTF-8">
+        <title>${this.currentDocument.title}</title>
+        <style>
+          body {
+            font-family: 'Arial', sans-serif;
+            direction: rtl;
+            padding: 40px;
+            line-height: 1.8;
+          }
+          h1 { color: #667eea; border-bottom: 3px solid #667eea; padding-bottom: 10px; }
+          h2 { color: #764ba2; margin-top: 30px; }
+          h3 { color: #555; }
+          code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; }
+          pre { background: #f5f5f5; padding: 15px; border-radius: 5px; overflow-x: auto; }
+          table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+          th, td { border: 1px solid #ddd; padding: 12px; text-align: right; }
+          th { background: #667eea; color: white; }
+        </style>
+      </head>
+      <body>
+        <h1>${this.currentDocument.title}</h1>
+        <div class="meta">
+          <p><strong>الفئة:</strong> ${this.currentDocument.category}</p>
+          <p><strong>النسخة:</strong> ${this.currentDocument.version}</p>
+          <p><strong>التاريخ:</strong> ${new Date().toLocaleDateString('ar-EG')}</p>
+        </div>
+        <hr>
+        ${this.markdownToHTML(this.currentDocument.content)}
+      </body>
+      </html>
+    `;
+
+    // Create blob and download
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${this.sanitizeFilename(this.currentDocument.title)}.html`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+
+    setTimeout(() => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'تم التصدير',
+        detail: 'تم تصدير الملف بنجاح (افتحه في المتصفح واطبعه ك PDF)'
+      });
+    }, 500);
+  }
+
+  exportToWord() {
+    if (!this.currentDocument) return;
+
+    this.messageService.add({
+      severity: 'info',
+      summary: 'جاري التصدير',
+      detail: 'جاري إنشاء ملف Word...'
+    });
+
+    // Create Word-compatible HTML
+    const wordHTML = `
+      <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+      <head>
+        <meta charset='utf-8'>
+        <title>${this.currentDocument.title}</title>
+        <style>
+          body { font-family: 'Arial'; direction: rtl; }
+          h1 { color: #667eea; }
+          h2 { color: #764ba2; }
+        </style>
+      </head>
+      <body>
+        <h1>${this.currentDocument.title}</h1>
+        ${this.markdownToHTML(this.currentDocument.content)}
+      </body>
+      </html>
+    `;
+
+    const blob = new Blob([wordHTML], { type: 'application/msword' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${this.sanitizeFilename(this.currentDocument.title)}.doc`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+
+    setTimeout(() => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'تم التصدير',
+        detail: 'تم تصدير ملف Word بنجاح'
+      });
+    }, 500);
+  }
+
+  exportToHTML() {
+    if (!this.currentDocument) return;
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html dir="rtl" lang="ar">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${this.currentDocument.title}</title>
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: rtl;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+          }
+          .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+          }
+          h1 {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+          }
+          h2 { color: #764ba2; margin-top: 30px; margin-bottom: 15px; }
+          h3 { color: #555; margin-top: 20px; margin-bottom: 10px; }
+          p { line-height: 1.8; margin-bottom: 15px; }
+          code {
+            background: #f5f5f5;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+          }
+          pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+          }
+          table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+          }
+          th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: right;
+          }
+          th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+          }
+          .meta {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+          }
+          .meta p { margin-bottom: 5px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1>${this.currentDocument.title}</h1>
+          <div class="meta">
+            <p><strong>الفئة:</strong> ${this.currentDocument.category}</p>
+            <p><strong>النسخة:</strong> ${this.currentDocument.version}</p>
+            <p><strong>تاريخ التصدير:</strong> ${new Date().toLocaleDateString('ar-EG')}</p>
+          </div>
+          ${this.markdownToHTML(this.currentDocument.content)}
+        </div>
+      </body>
+      </html>
+    `;
+
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${this.sanitizeFilename(this.currentDocument.title)}.html`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'تم التصدير',
+      detail: 'تم تصدير ملف HTML بنجاح'
+    });
+  }
+
+  exportToMarkdown() {
+    if (!this.currentDocument) return;
+
+    const markdownContent = `# ${this.currentDocument.title}\n\n` +
+      `**الفئة:** ${this.currentDocument.category}\n` +
+      `**النسخة:** ${this.currentDocument.version}\n` +
+      `**التاريخ:** ${new Date().toLocaleDateString('ar-EG')}\n\n` +
+      `---\n\n` +
+      this.currentDocument.content;
+
+    const blob = new Blob([markdownContent], { type: 'text/markdown' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${this.sanitizeFilename(this.currentDocument.title)}.md`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'تم التصدير',
+      detail: 'تم تصدير ملف Markdown بنجاح'
+    });
+  }
+
+  private markdownToHTML(markdown: string): string {
+    // Basic markdown to HTML conversion
+    let html = markdown;
+    
+    // Headers
+    html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+    html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+    html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+    
+    // Bold
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    // Italic
+    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    
+    // Code blocks
+    html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+    
+    // Inline code
+    html = html.replace(/`(.*?)`/g, '<code>$1</code>');
+    
+    // Lists
+    html = html.replace(/^\- (.*$)/gim, '<li>$1</li>');
+    html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+    
+    // Paragraphs
+    html = html.replace(/\n\n/g, '</p><p>');
+    html = '<p>' + html + '</p>';
+    
+    return html;
+  }
+
+  private sanitizeFilename(filename: string): string {
+    return filename
+      .replace(/[^\u0600-\u06FFa-zA-Z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .substring(0, 100);
   }
 
   submitFeedback() {
