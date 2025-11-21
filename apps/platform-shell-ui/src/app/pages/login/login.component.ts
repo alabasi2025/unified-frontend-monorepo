@@ -4,132 +4,169 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { PasswordModule } from 'primeng/password';
 import { CardModule } from 'primeng/card';
-import { MessageModule } from 'primeng/message';
 import { CheckboxModule } from 'primeng/checkbox';
-import { DividerModule } from 'primeng/divider';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
+  standalone: true,
   imports: [
     CommonModule, 
     FormsModule, 
     ButtonModule, 
     InputTextModule, 
-    PasswordModule, 
     CardModule, 
-    MessageModule,
-    CheckboxModule,
-    DividerModule
+    CheckboxModule
   ],
   template: `
-    <div class="login-wrapper">
-      <!-- Animated Background -->
-      <div class="background-animation">
-        <div class="circle circle-1"></div>
-        <div class="circle circle-2"></div>
-        <div class="circle circle-3"></div>
-        <div class="circle circle-4"></div>
+    <div class="iot-login-wrapper">
+      <!-- IoT Animated Background -->
+      <canvas id="iot-canvas" class="iot-canvas"></canvas>
+      
+      <!-- Network Grid -->
+      <div class="network-grid"></div>
+      
+      <!-- Floating Particles -->
+      <div class="particles">
+        <div class="particle" *ngFor="let p of particles" [style.left.%]="p.x" [style.top.%]="p.y" [style.animation-delay.s]="p.delay"></div>
       </div>
 
-      <!-- Login Container -->
-      <div class="login-container">
-        <!-- Left Side - Branding -->
-        <div class="branding-section">
-          <div class="logo-container">
-            <div class="logo-circle">
-              <i class="pi pi-building" style="font-size: 4rem; color: white;"></i>
+      <!-- Main Container -->
+      <div class="iot-container">
+        <!-- Left Panel - IoT Dashboard Style -->
+        <div class="iot-panel left-panel">
+          <div class="panel-glow"></div>
+          
+          <!-- Logo Section -->
+          <div class="iot-logo-section">
+            <div class="logo-hexagon">
+              <div class="hexagon-inner">
+                <i class="pi pi-bolt"></i>
+              </div>
+              <div class="hexagon-ring"></div>
+              <div class="hexagon-ring ring-2"></div>
             </div>
-            <h1 class="brand-title">SEMOP ERP</h1>
-            <p class="brand-subtitle">نظام إدارة موارد المؤسسات المتكامل</p>
+            <h1 class="iot-title">SEMOP ERP</h1>
+            <p class="iot-subtitle">Smart Enterprise Resource Planning</p>
           </div>
 
-          <div class="features-list">
-            <div class="feature-item">
-              <i class="pi pi-check-circle"></i>
-              <span>إدارة محاسبية متكاملة</span>
+          <!-- Status Indicators -->
+          <div class="status-grid">
+            <div class="status-card">
+              <div class="status-icon online">
+                <i class="pi pi-check-circle"></i>
+              </div>
+              <div class="status-info">
+                <span class="status-label">System Status</span>
+                <span class="status-value">Online</span>
+              </div>
             </div>
-            <div class="feature-item">
-              <i class="pi pi-check-circle"></i>
-              <span>نظام مخزون ذكي</span>
+            
+            <div class="status-card">
+              <div class="status-icon">
+                <i class="pi pi-server"></i>
+              </div>
+              <div class="status-info">
+                <span class="status-label">Server</span>
+                <span class="status-value">Active</span>
+              </div>
             </div>
-            <div class="feature-item">
-              <i class="pi pi-check-circle"></i>
-              <span>تقارير تحليلية متقدمة</span>
+            
+            <div class="status-card">
+              <div class="status-icon">
+                <i class="pi pi-shield"></i>
+              </div>
+              <div class="status-info">
+                <span class="status-label">Security</span>
+                <span class="status-value">Secured</span>
+              </div>
             </div>
-            <div class="feature-item">
-              <i class="pi pi-check-circle"></i>
-              <span>واجهة عربية احترافية</span>
+            
+            <div class="status-card">
+              <div class="status-icon">
+                <i class="pi pi-users"></i>
+              </div>
+              <div class="status-info">
+                <span class="status-label">Users</span>
+                <span class="status-value">{{ activeUsers }}</span>
+              </div>
             </div>
           </div>
 
-          <div class="version-info">
-            <span>الإصدار 2.0.0</span>
+          <!-- Version Info -->
+          <div class="version-badge">
+            <span class="version-label">v1.7.0</span>
+            <div class="version-pulse"></div>
           </div>
         </div>
 
-        <!-- Right Side - Login Form -->
-        <div class="form-section">
-          <div class="form-card">
-            <div class="form-header">
-              <h2>مرحباً بك</h2>
-              <p>سجل دخولك للمتابعة</p>
+        <!-- Right Panel - Login Form -->
+        <div class="iot-panel right-panel">
+          <div class="panel-glow"></div>
+          
+          <div class="login-card">
+            <div class="card-header">
+              <div class="header-icon">
+                <i class="pi pi-lock"></i>
+              </div>
+              <h2>تسجيل الدخول</h2>
+              <p>الوصول إلى لوحة التحكم الذكية</p>
             </div>
 
             @if (errorMessage) {
-              <div class="error-message">
-                <i class="pi pi-exclamation-circle"></i>
+              <div class="alert-box error">
+                <i class="pi pi-exclamation-triangle"></i>
                 <span>{{ errorMessage }}</span>
               </div>
             }
 
-            <form class="login-form" (ngSubmit)="login()">
-              <div class="form-group">
-                <label for="username">
+            <form class="iot-form" (ngSubmit)="login()">
+              <div class="form-field">
+                <label class="field-label">
                   <i class="pi pi-user"></i>
-                  اسم المستخدم
+                  <span>اسم المستخدم</span>
                 </label>
-                <input 
-                  pInputText 
-                  id="username" 
-                  [(ngModel)]="username"
-                  name="username"
-                  [disabled]="loading"
-                  placeholder="أدخل اسم المستخدم"
-                  class="form-input"
-                  (keyup.enter)="login()" />
+                <div class="input-wrapper">
+                  <input 
+                    pInputText 
+                    [(ngModel)]="username"
+                    name="username"
+                    [disabled]="loading"
+                    placeholder="أدخل اسم المستخدم"
+                    class="iot-input"
+                    (keyup.enter)="login()" />
+                  <div class="input-border"></div>
+                </div>
               </div>
 
-              <div class="form-group">
-                <label for="password">
+              <div class="form-field">
+                <label class="field-label">
                   <i class="pi pi-lock"></i>
-                  كلمة المرور
+                  <span>كلمة المرور</span>
                 </label>
-                <div class="password-input-wrapper">
+                <div class="input-wrapper">
                   <input 
                     [type]="showPassword ? 'text' : 'password'"
                     pInputText 
-                    id="password" 
                     [(ngModel)]="password"
                     name="password"
                     [disabled]="loading"
                     placeholder="أدخل كلمة المرور"
-                    class="form-input"
+                    class="iot-input"
                     (keyup.enter)="login()" />
                   <button 
                     type="button"
-                    class="password-toggle"
-                    (click)="showPassword = !showPassword"
-                    [disabled]="loading">
+                    class="toggle-password"
+                    (click)="showPassword = !showPassword">
                     <i [class]="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
                   </button>
+                  <div class="input-border"></div>
                 </div>
               </div>
 
               <div class="form-options">
-                <div class="remember-me">
+                <div class="checkbox-wrapper">
                   <p-checkbox 
                     [(ngModel)]="rememberMe" 
                     name="rememberMe"
@@ -138,50 +175,56 @@ import { AuthService } from '../../services/auth.service';
                   </p-checkbox>
                   <label for="rememberMe">تذكرني</label>
                 </div>
-                <a href="#" class="forgot-password" (click)="forgotPassword($event)">
+                <a href="#" class="link-text" (click)="forgotPassword($event)">
                   نسيت كلمة المرور؟
                 </a>
               </div>
 
-              <p-button 
-                label="تسجيل الدخول" 
-                icon="pi pi-sign-in" 
+              <button 
                 type="submit"
-                [loading]="loading"
-                styleClass="login-button w-full">
-              </p-button>
+                class="iot-button primary"
+                [disabled]="loading">
+                <span class="button-content">
+                  <i class="pi pi-sign-in"></i>
+                  <span>{{ loading ? 'جاري التحقق...' : 'تسجيل الدخول' }}</span>
+                </span>
+                <div class="button-glow"></div>
+              </button>
 
-              <p-divider align="center" styleClass="divider-text">
-                <span class="divider-content">أو</span>
-              </p-divider>
+              <div class="divider">
+                <span>أو</span>
+              </div>
 
-              <div class="demo-credentials">
+              <div class="demo-section">
                 <div class="demo-header">
                   <i class="pi pi-info-circle"></i>
                   <span>حساب تجريبي</span>
                 </div>
-                <div class="demo-details">
-                  <div class="demo-item">
-                    <span class="demo-label">المستخدم:</span>
-                    <code>admin</code>
+                <div class="demo-credentials">
+                  <div class="credential-item">
+                    <span class="label">المستخدم:</span>
+                    <code class="value">admin</code>
                   </div>
-                  <div class="demo-item">
-                    <span class="demo-label">كلمة المرور:</span>
-                    <code>admin123</code>
+                  <div class="credential-item">
+                    <span class="label">كلمة المرور:</span>
+                    <code class="value">admin123</code>
                   </div>
                 </div>
                 <button 
                   type="button" 
-                  class="use-demo-btn"
+                  class="iot-button secondary"
                   (click)="useDemoCredentials()"
                   [disabled]="loading">
-                  <i class="pi pi-bolt"></i>
-                  استخدام الحساب التجريبي
+                  <span class="button-content">
+                    <i class="pi pi-bolt"></i>
+                    <span>استخدام الحساب التجريبي</span>
+                  </span>
+                  <div class="button-glow"></div>
                 </button>
               </div>
             </form>
 
-            <div class="form-footer">
+            <div class="card-footer">
               <p>© 2025 SEMOP ERP. جميع الحقوق محفوظة.</p>
             </div>
           </div>
@@ -190,490 +233,629 @@ import { AuthService } from '../../services/auth.service';
     </div>
   `,
   styles: [`
-    /* Main Wrapper */
-    .login-wrapper {
+    /* IoT Smart System Design */
+    .iot-login-wrapper {
       position: relative;
       min-height: 100vh;
+      background: #0a0e27;
       overflow: hidden;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      direction: rtl;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    /* Animated Background */
-    .background-animation {
+    /* Animated Canvas Background */
+    .iot-canvas {
       position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      overflow: hidden;
       z-index: 0;
     }
 
-    .circle {
+    /* Network Grid */
+    .network-grid {
       position: absolute;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-      animation: float 20s infinite ease-in-out;
-    }
-
-    .circle-1 {
-      width: 300px;
-      height: 300px;
-      top: 10%;
-      left: 10%;
-      animation-delay: 0s;
-    }
-
-    .circle-2 {
-      width: 200px;
-      height: 200px;
-      top: 60%;
-      right: 15%;
-      animation-delay: 2s;
-    }
-
-    .circle-3 {
-      width: 150px;
-      height: 150px;
-      bottom: 20%;
-      left: 20%;
-      animation-delay: 4s;
-    }
-
-    .circle-4 {
-      width: 250px;
-      height: 250px;
-      top: 30%;
-      right: 30%;
-      animation-delay: 6s;
-    }
-
-    @keyframes float {
-      0%, 100% {
-        transform: translateY(0) scale(1);
-        opacity: 0.3;
-      }
-      50% {
-        transform: translateY(-50px) scale(1.1);
-        opacity: 0.5;
-      }
-    }
-
-    /* Login Container */
-    .login-container {
-      position: relative;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
       z-index: 1;
+      animation: gridMove 20s linear infinite;
+    }
+
+    @keyframes gridMove {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 50px); }
+    }
+
+    /* Floating Particles */
+    .particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(0, 255, 255, 0.6);
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+      animation: particleFloat 15s infinite ease-in-out;
+    }
+
+    @keyframes particleFloat {
+      0%, 100% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+      }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% {
+        transform: translateY(-100vh) translateX(50px);
+        opacity: 0;
+      }
+    }
+
+    /* Main Container */
+    .iot-container {
+      position: relative;
+      z-index: 10;
       display: flex;
       min-height: 100vh;
       max-width: 1400px;
       margin: 0 auto;
+      padding: 40px 20px;
+      gap: 40px;
     }
 
-    /* Branding Section */
-    .branding-section {
+    /* IoT Panel */
+    .iot-panel {
+      position: relative;
       flex: 1;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 40px;
+      backdrop-filter: blur(20px);
+      box-shadow: 
+        0 0 40px rgba(0, 255, 255, 0.1),
+        inset 0 0 40px rgba(0, 255, 255, 0.05);
+    }
+
+    .panel-glow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(0, 255, 255, 0.8) 50%, 
+        transparent 100%);
+      animation: glowMove 3s ease-in-out infinite;
+    }
+
+    @keyframes glowMove {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    /* Left Panel - Dashboard */
+    .left-panel {
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 3rem;
-      color: white;
+      gap: 40px;
     }
 
-    .logo-container {
+    /* Logo Section */
+    .iot-logo-section {
       text-align: center;
-      margin-bottom: 3rem;
-      animation: fadeInUp 1s ease-out;
     }
 
-    .logo-circle {
+    .logo-hexagon {
+      position: relative;
       width: 120px;
       height: 120px;
-      margin: 0 auto 1.5rem;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
+      margin: 0 auto 30px;
+    }
+
+    .hexagon-inner {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #00ffff 0%, #0080ff 100%);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
       display: flex;
       align-items: center;
       justify-content: center;
-      backdrop-filter: blur(10px);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s ease;
+      animation: hexagonPulse 3s ease-in-out infinite;
     }
 
-    .logo-circle:hover {
-      transform: scale(1.1) rotate(5deg);
+    .hexagon-inner i {
+      font-size: 50px;
+      color: #0a0e27;
+      font-weight: bold;
     }
 
-    .brand-title {
-      font-size: 3rem;
-      font-weight: 700;
-      margin: 0 0 0.5rem 0;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    .brand-subtitle {
-      font-size: 1.1rem;
-      opacity: 0.9;
-      margin: 0;
-    }
-
-    .features-list {
-      width: 100%;
-      max-width: 400px;
-      animation: fadeInUp 1s ease-out 0.2s backwards;
-    }
-
-    .feature-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      transition: all 0.3s ease;
-    }
-
-    .feature-item:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateX(-10px);
-    }
-
-    .feature-item i {
-      font-size: 1.5rem;
-      color: #4ade80;
-    }
-
-    .version-info {
-      margin-top: 2rem;
-      padding: 0.75rem 1.5rem;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      font-size: 0.9rem;
-      animation: fadeInUp 1s ease-out 0.4s backwards;
-    }
-
-    /* Form Section */
-    .form-section {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-    }
-
-    .form-card {
-      width: 100%;
-      max-width: 480px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px);
-      border-radius: 24px;
-      padding: 3rem;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      animation: fadeInRight 0.8s ease-out;
-    }
-
-    .form-header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
-    .form-header h2 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #1f2937;
-      margin: 0 0 0.5rem 0;
-    }
-
-    .form-header p {
-      color: #6b7280;
-      margin: 0;
-    }
-
-    .error-message {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 1rem;
-      background: #fee2e2;
-      border: 1px solid #fecaca;
-      border-radius: 12px;
-      color: #dc2626;
-      margin-bottom: 1.5rem;
-      animation: shake 0.5s ease;
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-10px); }
-      75% { transform: translateX(10px); }
-    }
-
-    .login-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .form-group label {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-weight: 600;
-      color: #374151;
-      font-size: 0.95rem;
-    }
-
-    .form-group label i {
-      color: #667eea;
-    }
-
-    .form-input {
-      width: 100%;
-      padding: 0.875rem 1rem;
-      border: 2px solid #e5e7eb;
-      border-radius: 12px;
-      font-size: 1rem;
-      transition: all 0.3s ease;
-    }
-
-    .form-input:focus {
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-      outline: none;
-    }
-
-    .password-input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
-    .password-input-wrapper .form-input {
-      padding-right: 3rem;
-    }
-
-    .password-toggle {
+    .hexagon-ring {
       position: absolute;
-      right: 1rem;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      border: 2px solid rgba(0, 255, 255, 0.3);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      animation: ringRotate 10s linear infinite;
+    }
+
+    .ring-2 {
+      top: -20px;
+      left: -20px;
+      right: -20px;
+      bottom: -20px;
+      border-color: rgba(0, 255, 255, 0.2);
+      animation-duration: 15s;
+      animation-direction: reverse;
+    }
+
+    @keyframes hexagonPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes ringRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .iot-title {
+      font-size: 42px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #00ffff 0%, #0080ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0 0 10px 0;
+      letter-spacing: 2px;
+    }
+
+    .iot-subtitle {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 14px;
+      margin: 0;
+      letter-spacing: 1px;
+    }
+
+    /* Status Grid */
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .status-card {
+      background: rgba(0, 255, 255, 0.05);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .status-card:hover {
+      background: rgba(0, 255, 255, 0.1);
+      border-color: rgba(0, 255, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .status-icon {
+      width: 50px;
+      height: 50px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 2px solid rgba(0, 255, 255, 0.3);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #00ffff;
+    }
+
+    .status-icon.online {
+      background: rgba(0, 255, 0, 0.1);
+      border-color: rgba(0, 255, 0, 0.3);
+      color: #00ff00;
+      animation: statusPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes statusPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7); }
+      50% { box-shadow: 0 0 0 10px rgba(0, 255, 0, 0); }
+    }
+
+    .status-info {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .status-label {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .status-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: #00ffff;
+    }
+
+    /* Version Badge */
+    .version-badge {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      border-radius: 20px;
+      margin-top: auto;
+    }
+
+    .version-label {
+      color: #00ffff;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .version-pulse {
+      width: 8px;
+      height: 8px;
+      background: #00ff00;
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Right Panel - Login Form */
+    .right-panel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 450px;
+    }
+
+    .card-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, #00ffff 0%, #0080ff 100%);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      color: #0a0e27;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+      animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes iconFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .card-header h2 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0 0 10px 0;
+    }
+
+    .card-header p {
+      color: rgba(255, 255, 255, 0.6);
+      margin: 0;
+      font-size: 14px;
+    }
+
+    /* Alert Box */
+    .alert-box {
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+    }
+
+    .alert-box.error {
+      background: rgba(255, 0, 0, 0.1);
+      border: 1px solid rgba(255, 0, 0, 0.3);
+      color: #ff4444;
+    }
+
+    /* IoT Form */
+    .iot-form {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .field-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .field-label i {
+      color: #00ffff;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .iot-input {
+      width: 100%;
+      padding: 15px 20px;
+      background: rgba(0, 255, 255, 0.05);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      border-radius: 10px;
+      color: #ffffff;
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .iot-input:focus {
+      outline: none;
+      background: rgba(0, 255, 255, 0.1);
+      border-color: #00ffff;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    }
+
+    .iot-input::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    .input-border {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #00ffff 0%, #0080ff 100%);
+      transition: width 0.3s ease;
+    }
+
+    .iot-input:focus + .input-border {
+      width: 100%;
+    }
+
+    .toggle-password {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
       background: none;
       border: none;
-      color: #9ca3af;
+      color: rgba(255, 255, 255, 0.5);
       cursor: pointer;
-      padding: 0.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      font-size: 18px;
       transition: color 0.3s ease;
     }
 
-    .password-toggle:hover {
-      color: #667eea;
+    .toggle-password:hover {
+      color: #00ffff;
     }
 
-    .password-toggle:disabled {
-      cursor: not-allowed;
-      opacity: 0.5;
-    }
-
+    /* Form Options */
     .form-options {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: -0.5rem;
+      font-size: 14px;
     }
 
-    .remember-me {
+    .checkbox-wrapper {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 8px;
+      color: rgba(255, 255, 255, 0.7);
     }
 
-    .remember-me label {
-      font-size: 0.9rem;
-      color: #6b7280;
-      cursor: pointer;
-    }
-
-    .forgot-password {
-      font-size: 0.9rem;
-      color: #667eea;
+    .link-text {
+      color: #00ffff;
       text-decoration: none;
-      font-weight: 500;
-      transition: color 0.3s ease;
-    }
-
-    .forgot-password:hover {
-      color: #764ba2;
-      text-decoration: underline;
-    }
-
-    ::ng-deep .login-button {
-      height: 3rem;
-      font-size: 1.1rem;
-      font-weight: 600;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border: none;
-      border-radius: 12px;
       transition: all 0.3s ease;
     }
 
-    ::ng-deep .login-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    .link-text:hover {
+      color: #0080ff;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
     }
 
-    ::ng-deep .divider-text {
-      margin: 1.5rem 0;
-    }
-
-    .divider-content {
-      color: #9ca3af;
-      font-size: 0.875rem;
-      padding: 0 1rem;
-    }
-
-    .demo-credentials {
-      background: #f3f4f6;
+    /* IoT Button */
+    .iot-button {
+      position: relative;
+      padding: 16px 32px;
+      border: none;
       border-radius: 12px;
-      padding: 1.25rem;
-      border: 1px solid #e5e7eb;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .iot-button.primary {
+      background: linear-gradient(135deg, #00ffff 0%, #0080ff 100%);
+      color: #0a0e27;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+    }
+
+    .iot-button.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.6);
+    }
+
+    .iot-button.secondary {
+      background: rgba(0, 255, 255, 0.1);
+      color: #00ffff;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+    }
+
+    .iot-button.secondary:hover {
+      background: rgba(0, 255, 255, 0.2);
+      border-color: #00ffff;
+    }
+
+    .iot-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .button-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .button-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.5s ease;
+    }
+
+    .iot-button:active .button-glow {
+      transform: translate(-50%, -50%) scale(2);
+    }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 14px;
+      margin: 10px 0;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(0, 255, 255, 0.3) 50%, 
+        transparent 100%);
+    }
+
+    /* Demo Section */
+    .demo-section {
+      background: rgba(0, 255, 255, 0.05);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 20px;
     }
 
     .demo-header {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-      color: #374151;
+      gap: 8px;
+      color: #00ffff;
       font-weight: 600;
+      margin-bottom: 15px;
     }
 
-    .demo-header i {
-      color: #667eea;
-    }
-
-    .demo-details {
+    .demo-credentials {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
+      gap: 10px;
+      margin-bottom: 15px;
     }
 
-    .demo-item {
+    .credential-item {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      font-size: 0.9rem;
+      gap: 10px;
+      font-size: 14px;
     }
 
-    .demo-label {
-      color: #6b7280;
-      min-width: 80px;
+    .credential-item .label {
+      color: rgba(255, 255, 255, 0.6);
     }
 
-    code {
-      background: white;
-      padding: 0.25rem 0.75rem;
+    .credential-item .value {
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      padding: 4px 12px;
       border-radius: 6px;
+      color: #00ffff;
       font-family: 'Courier New', monospace;
-      color: #667eea;
-      font-weight: 600;
-      border: 1px solid #e5e7eb;
     }
 
-    .use-demo-btn {
-      width: 100%;
-      padding: 0.75rem;
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      transition: all 0.3s ease;
-    }
-
-    .use-demo-btn:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-    }
-
-    .use-demo-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .form-footer {
+    /* Card Footer */
+    .card-footer {
+      margin-top: 30px;
       text-align: center;
-      margin-top: 2rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid #e5e7eb;
-    }
-
-    .form-footer p {
-      color: #9ca3af;
-      font-size: 0.875rem;
-      margin: 0;
-    }
-
-    /* Animations */
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes fadeInRight {
-      from {
-        opacity: 0;
-        transform: translateX(50px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 12px;
     }
 
     /* Responsive */
     @media (max-width: 1024px) {
-      .branding-section {
-        display: none;
-      }
-      
-      .form-section {
-        flex: 1;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .form-card {
-        padding: 2rem 1.5rem;
+      .iot-container {
+        flex-direction: column;
       }
 
-      .brand-title {
-        font-size: 2rem;
+      .left-panel {
+        order: 2;
       }
 
-      .form-header h2 {
-        font-size: 1.5rem;
+      .right-panel {
+        order: 1;
       }
     }
   `]
@@ -681,24 +863,95 @@ import { AuthService } from '../../services/auth.service';
 export class LoginComponent {
   username = '';
   password = '';
+  showPassword = false;
+  rememberMe = false;
   loading = false;
   errorMessage = '';
-  rememberMe = false;
-  showPassword = false;
-  returnUrl = '/dashboard';
+  returnUrl = '';
+  activeUsers = 127;
+  particles: any[] = [];
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute
   ) {
-    // Get return url from route parameters or default to '/dashboard'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
-    
-    // Redirect if already logged in
-    if (this.authService.isAuthenticated()) {
-      this.router.navigate([this.returnUrl]);
+    this.generateParticles();
+    this.initCanvas();
+  }
+
+  generateParticles() {
+    for (let i = 0; i < 30; i++) {
+      this.particles.push({
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        delay: Math.random() * 15
+      });
     }
+  }
+
+  initCanvas() {
+    setTimeout(() => {
+      const canvas = document.getElementById('iot-canvas') as HTMLCanvasElement;
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const nodes: any[] = [];
+      const nodeCount = 50;
+
+      for (let i = 0; i < nodeCount; i++) {
+        nodes.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5
+        });
+      }
+
+      function animate() {
+        ctx!.clearRect(0, 0, canvas.width, canvas.height);
+
+        nodes.forEach(node => {
+          node.x += node.vx;
+          node.y += node.vy;
+
+          if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
+          if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
+
+          ctx!.beginPath();
+          ctx!.arc(node.x, node.y, 2, 0, Math.PI * 2);
+          ctx!.fillStyle = 'rgba(0, 255, 255, 0.5)';
+          ctx!.fill();
+        });
+
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const dx = nodes[i].x - nodes[j].x;
+            const dy = nodes[i].y - nodes[j].y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < 150) {
+              ctx!.beginPath();
+              ctx!.moveTo(nodes[i].x, nodes[i].y);
+              ctx!.lineTo(nodes[j].x, nodes[j].y);
+              ctx!.strokeStyle = `rgba(0, 255, 255, ${0.2 * (1 - distance / 150)})`;
+              ctx!.lineWidth = 1;
+              ctx!.stroke();
+            }
+          }
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    }, 100);
   }
 
   login() {
@@ -710,14 +963,14 @@ export class LoginComponent {
     this.loading = true;
     this.errorMessage = '';
 
-    this.authService.login({ username: this.username, password: this.password }).subscribe({
-      next: () => {
+    this.authService.login(this.username, this.password).subscribe({
+      next: (response) => {
+        this.loading = false;
         this.router.navigate([this.returnUrl]);
       },
       error: (error) => {
         this.loading = false;
-        this.errorMessage = error.error?.message || 'فشل تسجيل الدخول. الرجاء التحقق من البيانات والمحاولة مرة أخرى.';
-        console.error('Login error:', error);
+        this.errorMessage = error.error?.message || 'فشل تسجيل الدخول. تحقق من بياناتك.';
       }
     });
   }
@@ -730,6 +983,6 @@ export class LoginComponent {
 
   forgotPassword(event: Event) {
     event.preventDefault();
-    this.errorMessage = 'ميزة استعادة كلمة المرور قيد التطوير. للتجربة استخدم: admin / admin123';
+    alert('سيتم إضافة هذه الميزة قريباً');
   }
 }
