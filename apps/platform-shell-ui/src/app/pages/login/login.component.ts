@@ -180,6 +180,43 @@ import { AuthService } from '../../services/auth.service';
                 </a>
               </div>
 
+              <!-- CAPTCHA Section -->
+              <div class="captcha-section">
+                <label class="field-label">
+                  <i class="pi pi-shield"></i>
+                  <span>رمز التحقق</span>
+                </label>
+                <div class="captcha-wrapper">
+                  <canvas 
+                    id="captcha-canvas" 
+                    width="250" 
+                    height="80"
+                    class="captcha-canvas"
+                    [class.error]="captchaError">
+                  </canvas>
+                  <button 
+                    type="button" 
+                    class="refresh-captcha"
+                    (click)="generateCaptcha()"
+                    title="تحديث رمز التحقق">
+                    <i class="pi pi-refresh"></i>
+                  </button>
+                </div>
+                <div class="input-wrapper">
+                  <input 
+                    pInputText 
+                    [(ngModel)]="captchaInput"
+                    name="captcha"
+                    [disabled]="loading"
+                    placeholder="أدخل رمز التحقق"
+                    class="iot-input"
+                    [class.error]="captchaError"
+                    maxlength="6"
+                    (keyup.enter)="login()" />
+                  <div class="input-border"></div>
+                </div>
+              </div>
+
               <button 
                 type="submit"
                 class="iot-button primary"
@@ -707,6 +744,63 @@ import { AuthService } from '../../services/auth.service';
       text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
     }
 
+    /* CAPTCHA Section */
+    .captcha-section {
+      margin: 20px 0;
+    }
+
+    .captcha-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .captcha-canvas {
+      border: 2px solid rgba(0, 255, 255, 0.3);
+      border-radius: 8px;
+      background: #0f1419;
+      transition: all 0.3s ease;
+    }
+
+    .captcha-canvas.error {
+      border-color: rgba(255, 0, 0, 0.5);
+      animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    .refresh-captcha {
+      background: rgba(0, 255, 255, 0.1);
+      border: 2px solid rgba(0, 255, 255, 0.3);
+      color: #00ffff;
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .refresh-captcha:hover {
+      background: rgba(0, 255, 255, 0.2);
+      border-color: #00ffff;
+      transform: rotate(180deg);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+    }
+
+    .iot-input.error {
+      border-color: rgba(255, 0, 0, 0.5) !important;
+    }
+
     /* IoT Button */
     .iot-button {
       position: relative;
@@ -870,6 +964,9 @@ export class LoginComponent {
   returnUrl = '';
   activeUsers = 127;
   particles: any[] = [];
+  captchaText = '';
+  captchaInput = '';
+  captchaError = false;
 
   constructor(
     private authService: AuthService,
@@ -879,6 +976,7 @@ export class LoginComponent {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
     this.generateParticles();
     this.initCanvas();
+    this.generateCaptcha();
   }
 
   generateParticles() {
@@ -888,6 +986,81 @@ export class LoginComponent {
         y: Math.random() * 100,
         delay: Math.random() * 15
       });
+    }
+  }
+
+  generateCaptcha() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let captcha = '';
+    for (let i = 0; i < 6; i++) {
+      captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    this.captchaText = captcha;
+    this.captchaInput = '';
+    this.captchaError = false;
+    
+    setTimeout(() => {
+      this.drawCaptcha();
+    }, 100);
+  }
+
+  drawCaptcha() {
+    const canvas = document.getElementById('captcha-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Background with gradient
+    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    gradient.addColorStop(0, '#1a1a2e');
+    gradient.addColorStop(1, '#16213e');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Add noise
+    for (let i = 0; i < 100; i++) {
+      ctx.fillStyle = `rgba(0, 255, 255, ${Math.random() * 0.1})`;
+      ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 2, 2);
+    }
+    
+    // Draw lines
+    for (let i = 0; i < 3; i++) {
+      ctx.strokeStyle = `rgba(0, 255, 255, ${Math.random() * 0.3 + 0.2})`;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+      ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+      ctx.stroke();
+    }
+    
+    // Draw text
+    ctx.font = 'bold 32px Arial';
+    ctx.textBaseline = 'middle';
+    
+    const spacing = canvas.width / (this.captchaText.length + 1);
+    for (let i = 0; i < this.captchaText.length; i++) {
+      const x = spacing * (i + 1);
+      const y = canvas.height / 2 + (Math.random() - 0.5) * 10;
+      const angle = (Math.random() - 0.5) * 0.3;
+      
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      
+      // Text shadow
+      ctx.fillStyle = 'rgba(0, 255, 255, 0.5)';
+      ctx.fillText(this.captchaText[i], 2, 2);
+      
+      // Main text
+      const hue = Math.random() * 60 + 160;
+      ctx.fillStyle = `hsl(${hue}, 100%, 60%)`;
+      ctx.fillText(this.captchaText[i], 0, 0);
+      
+      ctx.restore();
     }
   }
 
@@ -960,8 +1133,16 @@ export class LoginComponent {
       return;
     }
 
+    if (this.captchaInput.toUpperCase() !== this.captchaText) {
+      this.captchaError = true;
+      this.errorMessage = 'رمز التحقق غير صحيح';
+      this.generateCaptcha();
+      return;
+    }
+
     this.loading = true;
     this.errorMessage = '';
+    this.captchaError = false;
 
     this.authService.login({ username: this.username, password: this.password }).subscribe({
       next: (response) => {
