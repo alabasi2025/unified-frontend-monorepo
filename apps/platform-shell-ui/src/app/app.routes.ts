@@ -48,6 +48,14 @@ export const appRoutes: Route[] = [
       // Maps System
       { path: 'maps', loadComponent: () => import('./features/maps/maps.component').then(m => m.MapsComponent) },
       
+      // Smart Notebook System
+      { path: 'smart-notebook', redirectTo: 'smart-notebook/dashboard', pathMatch: 'full' },
+      { path: 'smart-notebook/dashboard', loadComponent: () => import('./pages/smart-notebook/dashboard/smart-dashboard.component').then(m => m.SmartDashboardComponent) },
+      { path: 'smart-notebook/ideas', loadComponent: () => import('./pages/smart-notebook/ideas/ideas-bank.component').then(m => m.IdeasBankComponent) },
+      { path: 'smart-notebook/chats', loadComponent: () => import('./pages/smart-notebook/chats/chat-logs.component').then(m => m.ChatLogsComponent) },
+      { path: 'smart-notebook/reports', loadComponent: () => import('./pages/smart-notebook/reports/reports-library.component').then(m => m.ReportsLibraryComponent) },
+      { path: 'smart-notebook/tasks', loadComponent: () => import('./pages/smart-notebook/notebook-tasks/notebook-tasks.component').then(m => m.NotebookTasksComponent) },
+      
       { path: 'developer', loadComponent: () => import('./pages/developer/developer-chat.component').then(m => m.DeveloperChatComponent) },
       { path: 'documentation', loadComponent: () => import('./pages/documentation/documentation-viewer.component').then(m => m.DocumentationViewerComponent) },
       { path: 'documentation/user-guide', loadComponent: () => import('./pages/documentation/documentation-viewer.component').then(m => m.DocumentationViewerComponent) },

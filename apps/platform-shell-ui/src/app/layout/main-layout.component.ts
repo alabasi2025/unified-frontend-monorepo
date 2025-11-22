@@ -704,6 +704,20 @@ export class MainLayoutComponent implements OnInit {
         ]
       },
       {
+        title: '📓 Smart Notebook',
+        icon: 'pi pi-book',
+        color: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+        iconBg: '0 4px 20px rgba(240, 147, 251, 0.5)',
+        expanded: false,
+        items: [
+          { label: '📊 Dashboard', icon: 'pi pi-chart-bar', routerLink: '/smart-notebook/dashboard' },
+          { label: '💡 بنك الأفكار', icon: 'pi pi-lightbulb', routerLink: '/smart-notebook/ideas' },
+          { label: '💬 سجل المحادثات', icon: 'pi pi-comments', routerLink: '/smart-notebook/chats' },
+          { label: '📊 مكتبة التقارير', icon: 'pi pi-file', routerLink: '/smart-notebook/reports' },
+          { label: '✅ المهام', icon: 'pi pi-check-square', routerLink: '/smart-notebook/tasks' }
+        ]
+      },
+      {
         title: 'التوثيق',
         icon: 'pi pi-book',
         color: 'linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)',
