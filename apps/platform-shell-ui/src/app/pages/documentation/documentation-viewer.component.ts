@@ -779,6 +779,7 @@ export class DocumentationViewerComponent implements OnInit {
     this.architectureTree = [
       { label: 'الفكرة الأساسية', data: 'architecture-concept', icon: 'pi pi-lightbulb' },
       { label: 'البنية المعمارية', data: 'architecture-structure', icon: 'pi pi-sitemap' },
+      { label: '🗺️ نظام الخرائط', data: 'maps-system-guide', icon: 'pi pi-map', styleClass: 'maps-system-node' },
       // ... more items
     ];
 
@@ -837,6 +838,12 @@ export class DocumentationViewerComponent implements OnInit {
       return;
     }
     
+    // Special handling for maps system guide
+    if (slug === 'maps-system-guide') {
+      this.loadMapsSystemGuide();
+      return;
+    }
+    
     this.http.get<any>(`/api/documentation/slug/${slug}`).subscribe({
       next: (data) => {
         this.currentDocument = data;
@@ -866,6 +873,30 @@ export class DocumentationViewerComponent implements OnInit {
           severity: 'error',
           summary: 'خطأ',
           detail: 'فشل تحميل دليل بناء النظام',
+        });
+      },
+    });
+  }
+
+  loadMapsSystemGuide() {
+    this.http.get<any>('/api/documentation/maps/system-guide').subscribe({
+      next: (response) => {
+        this.currentDocument = {
+          title: '🗺️ دليل نظام الخرائط الشامل - SEMOP Maps System',
+          content: response.content,
+          category: 'ARCHITECTURE',
+          type: 'SYSTEM_GUIDE',
+          viewCount: 0,
+          updatedAt: new Date('2025-11-21'),
+          version: '1.6.0',
+        };
+      },
+      error: (error) => {
+        console.error('Error loading maps system guide:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'خطأ',
+          detail: 'فشل تحميل دليل نظام الخرائط',
         });
       },
     });

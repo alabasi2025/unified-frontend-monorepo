@@ -694,6 +694,16 @@ export class MainLayoutComponent implements OnInit {
         ]
       },
       {
+        title: '🗺️ نظام الخرائط',
+        icon: 'pi pi-map',
+        color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        iconBg: '0 4px 20px rgba(102, 126, 234, 0.5)',
+        expanded: false,
+        items: [
+          { label: '🇾🇪 خريطة اليمن', icon: 'pi pi-map-marker', routerLink: '/maps' }
+        ]
+      },
+      {
         title: 'التوثيق',
         icon: 'pi pi-book',
         color: 'linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)',

@@ -45,6 +45,9 @@ export const appRoutes: Route[] = [
       { path: 'tasks/list', loadComponent: () => import('./pages/tasks/tasks-list.component').then(m => m.TasksListComponent) },
       { path: 'tasks/kanban', loadComponent: () => import('./pages/tasks/tasks-kanban.component').then(m => m.TasksKanbanComponent) },
       
+      // Maps System
+      { path: 'maps', loadComponent: () => import('./features/maps/maps.component').then(m => m.MapsComponent) },
+      
       { path: 'developer', loadComponent: () => import('./pages/developer/developer-chat.component').then(m => m.DeveloperChatComponent) },
       { path: 'documentation', loadComponent: () => import('./pages/documentation/documentation-viewer.component').then(m => m.DocumentationViewerComponent) },
       { path: 'documentation/user-guide', loadComponent: () => import('./pages/documentation/documentation-viewer.component').then(m => m.DocumentationViewerComponent) },
