@@ -769,26 +769,76 @@ export class DocumentationViewerComponent implements OnInit {
   }
 
   loadDocumentationTree() {
-    // TODO: Load from API
+    // Load documentation list from API
+    this.http.get<any[]>('/api/documentation').subscribe({
+      next: (docs) => {
+        // Group by category
+        this.userGuideTree = docs
+          .filter(d => d.category === 'USER_GUIDE')
+          .map(d => ({
+            label: d.title,
+            data: d.slug,
+            icon: this.getCategoryIcon(d.type)
+          }));
+
+        this.architectureTree = docs
+          .filter(d => d.category === 'ARCHITECTURE')
+          .map(d => ({
+            label: d.title,
+            data: d.slug,
+            icon: this.getCategoryIcon(d.type),
+            styleClass: d.slug === 'maps-system-guide' ? 'maps-system-node' : ''
+          }));
+
+        this.developerTree = docs
+          .filter(d => d.category === 'DEVELOPER')
+          .map(d => ({
+            label: d.title,
+            data: d.slug,
+            icon: this.getCategoryIcon(d.type),
+            styleClass: d.slug === 'master-blueprint' ? 'master-blueprint-node' : ''
+          }));
+      },
+      error: (error) => {
+        console.error('Error loading documentation tree:', error);
+        // Fallback to hardcoded tree
+        this.loadFallbackTree();
+      }
+    });
+  }
+
+  loadFallbackTree() {
     this.userGuideTree = [
       { label: 'نظرة عامة', data: 'user-guide-overview', icon: 'pi pi-home' },
       { label: 'البدء السريع', data: 'user-guide-quickstart', icon: 'pi pi-bolt' },
-      // ... more items
     ];
 
     this.architectureTree = [
       { label: 'الفكرة الأساسية', data: 'architecture-concept', icon: 'pi pi-lightbulb' },
       { label: 'البنية المعمارية', data: 'architecture-structure', icon: 'pi pi-sitemap' },
       { label: '🗺️ نظام الخرائط', data: 'maps-system-guide', icon: 'pi pi-map', styleClass: 'maps-system-node' },
-      // ... more items
     ];
 
     this.developerTree = [
       { label: 'دليل بناء النظام الشامل', data: 'master-blueprint', icon: 'pi pi-sitemap', styleClass: 'master-blueprint-node' },
       { label: 'البدء السريع', data: 'developer-quickstart', icon: 'pi pi-bolt' },
       { label: 'خطوات التطوير', data: 'developer-steps', icon: 'pi pi-list' },
-      // ... more items
     ];
+  }
+
+  getCategoryIcon(type: string): string {
+    const icons: any = {
+      'GUIDE': 'pi pi-book',
+      'TUTORIAL': 'pi pi-play',
+      'REFERENCE': 'pi pi-file',
+      'ARCHITECTURE': 'pi pi-sitemap',
+      'API': 'pi pi-code',
+      'SYSTEM_GUIDE': 'pi pi-map',
+      'COMPREHENSIVE': 'pi pi-book',
+      'SUMMARY': 'pi pi-list',
+      'REPORT': 'pi pi-file-edit'
+    };
+    return icons[type] || 'pi pi-file';
   }
 
   loadChangelogEntries() {
