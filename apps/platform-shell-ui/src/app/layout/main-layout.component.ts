@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -64,6 +64,18 @@ interface MenuSection {
               <i class="pi pi-bolt"></i>
             </div>
             <span class="logo-text">SEMOP ERP</span>
+          </div>
+          
+          <!-- Version & DateTime Info -->
+          <div class="system-info" *ngIf="!sidebarCollapsed" @fadeIn>
+            <div class="version-badge">
+              <i class="pi pi-tag"></i>
+              <span>v1.9</span>
+            </div>
+            <div class="datetime-display">
+              <div class="time">{{ currentTime }}</div>
+              <div class="date">{{ currentDate }}</div>
+            </div>
           </div>
         </div>
 
@@ -252,6 +264,77 @@ interface MenuSection {
     @keyframes pulse {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.05); }
+    }
+
+    /* System Info - Version & DateTime */
+    .system-info {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .version-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      align-self: flex-start;
+    }
+
+    .version-badge:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    }
+
+    .version-badge i {
+      font-size: 12px;
+      animation: rotate 3s linear infinite;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .datetime-display {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .datetime-display .time {
+      font-size: 24px;
+      font-weight: 700;
+      color: #ffffff;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 2px;
+      text-align: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .datetime-display .date {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.7);
+      text-align: center;
+      font-weight: 500;
     }
 
     /* Sidebar Menu */
@@ -568,10 +651,13 @@ interface MenuSection {
     }
   `]
 })
-export class MainLayoutComponent implements OnInit {
+export class MainLayoutComponent implements OnInit, OnDestroy {
   sidebarCollapsed = false;
   currentUser: any;
   menuSections: MenuSection[] = [];
+  currentTime: string = '';
+  currentDate: string = '';
+  private timeInterval: any;
 
   constructor(
     private router: Router,
@@ -581,6 +667,34 @@ export class MainLayoutComponent implements OnInit {
   ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
     this.initializeMenu();
+    this.updateDateTime();
+    this.timeInterval = setInterval(() => this.updateDateTime(), 1000);
+  }
+
+  ngOnDestroy() {
+    if (this.timeInterval) {
+      clearInterval(this.timeInterval);
+    }
+  }
+
+  updateDateTime() {
+    const now = new Date();
+    
+    // Format time (HH:MM:SS)
+    this.currentTime = now.toLocaleTimeString('ar-YE', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+    
+    // Format date (Arabic)
+    this.currentDate = now.toLocaleDateString('ar-YE', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   }
 
   initializeMenu() {
