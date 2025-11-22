@@ -718,16 +718,6 @@ export class MainLayoutComponent implements OnInit {
         ]
       },
       {
-        title: 'التوثيق',
-        icon: 'pi pi-book',
-        color: 'linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)',
-        iconBg: '0 4px 20px rgba(251, 194, 235, 0.5)',
-        expanded: false,
-        items: [
-          { label: 'المخطط الشامل', icon: 'pi pi-file', routerLink: '/documentation' }
-        ]
-      },
-      {
         title: 'التطوير',
         icon: 'pi pi-code',
         color: 'linear-gradient(135deg, #fdcbf1 0%, #e6dee9 100%)',
@@ -765,7 +755,6 @@ export class MainLayoutComponent implements OnInit {
     if (url.includes('warehouses')) return 'المستودعات';
     if (url.includes('fiscal-periods')) return 'الفترات المالية';
     if (url.includes('genes')) return 'نظام الجينات';
-    if (url.includes('documentation')) return 'التوثيق';
     return 'SEMOP ERP';
   }
 

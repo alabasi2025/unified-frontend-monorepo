@@ -57,9 +57,6 @@ export const appRoutes: Route[] = [
       { path: 'smart-notebook/tasks', loadComponent: () => import('./pages/smart-notebook/notebook-tasks/notebook-tasks.component').then(m => m.NotebookTasksComponent) },
       
       { path: 'developer', loadComponent: () => import('./pages/developer/developer-chat.component').then(m => m.DeveloperChatComponent) },
-      { path: 'documentation', loadComponent: () => import('./pages/documentation/documentation-viewer.component').then(m => m.DocumentationViewerComponent) },
-      { path: 'documentation/user-guide', loadComponent: () => import('./pages/documentation/documentation-viewer.component').then(m => m.DocumentationViewerComponent) },
-      { path: 'documentation/developer-guide', loadComponent: () => import('./pages/documentation/documentation-viewer.component').then(m => m.DocumentationViewerComponent) }
     ]
   },
   { path: '**', redirectTo: 'dashboard' }
