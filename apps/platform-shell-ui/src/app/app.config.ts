@@ -6,6 +6,7 @@ import {
 import { provideRouter } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideMarkdown } from 'ngx-markdown';
 import { appRoutes } from './app.routes';
 import { authInterceptor } from './interceptors/auth.interceptor';
 
@@ -18,5 +19,6 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([authInterceptor])
     ),
+    provideMarkdown(),
   ],
 };
