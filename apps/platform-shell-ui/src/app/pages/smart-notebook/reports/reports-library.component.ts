@@ -377,7 +377,7 @@ export class ReportsLibraryComponent implements OnInit {
 
   formData: Partial<Report> = this.getEmptyFormData();
 
-  private apiUrl = `${environment.apiUrl}/api/smart-notebook/reports`;
+  private apiUrl = `${environment.apiUrl}/api/reports`;
 
   constructor(private http: HttpClient) {}
 
