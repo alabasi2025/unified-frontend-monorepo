@@ -38,7 +38,7 @@ import { MarkdownModule } from 'ngx-markdown';
         <button type="button" class="toolbar-btn" (click)="insertMarkdown('![alt](', ')')" title="صورة">
           🖼️
         </button>
-        <button type="button" class="toolbar-btn" (click)="insertMarkdown('\\`\\`\\`\\n', '\\n\\`\\`\\`')" title="كود">
+        <button type="button" class="toolbar-btn" (click)="insertMarkdown('```\n', '\n```')" title="كود">
           &lt;/&gt;
         </button>
         <div class="toolbar-divider"></div>
