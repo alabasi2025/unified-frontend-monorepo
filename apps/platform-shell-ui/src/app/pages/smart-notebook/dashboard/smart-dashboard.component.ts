@@ -101,6 +101,10 @@ interface DashboardStats {
             <span class="action-icon">✅</span>
             <span class="action-label">إضافة مهمة</span>
           </button>
+          <button class="action-btn search" (click)="navigate('/smart-notebook/search')">
+            <span class="action-icon">🔍</span>
+            <span class="action-label">البحث الشامل</span>
+          </button>
         </div>
       </div>
 

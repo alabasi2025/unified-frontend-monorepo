@@ -55,6 +55,7 @@ export const appRoutes: Route[] = [
       { path: 'smart-notebook/chats', loadComponent: () => import('./pages/smart-notebook/chats/chat-logs.component').then(m => m.ChatLogsComponent) },
       { path: 'smart-notebook/reports', loadComponent: () => import('./pages/smart-notebook/reports/reports-library.component').then(m => m.ReportsLibraryComponent) },
       { path: 'smart-notebook/tasks', loadComponent: () => import('./pages/smart-notebook/notebook-tasks/notebook-tasks.component').then(m => m.NotebookTasksComponent) },
+      { path: 'smart-notebook/search', loadComponent: () => import('./pages/smart-notebook/global-search/global-search.component').then(m => m.GlobalSearchComponent) },
       
       { path: 'developer', loadComponent: () => import('./pages/developer/developer-chat.component').then(m => m.DeveloperChatComponent) },
     ]
