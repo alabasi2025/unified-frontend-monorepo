@@ -8,6 +8,7 @@ import { MenuItem } from 'primeng/api';
 import { AuthService } from '../services/auth.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { NotificationsComponent } from '../shared/notifications/notifications.component';
+import { environment } from '../../environments/environment';
 
 interface MenuSection {
   title: string;
@@ -72,7 +73,7 @@ interface MenuSection {
           <div class="system-info" *ngIf="!sidebarCollapsed" @fadeIn>
             <div class="version-badge">
               <i class="pi pi-tag"></i>
-              <span>v1.9</span>
+              <span>v{{ appVersion }}</span>
             </div>
             <div class="datetime-display">
               <div class="time">{{ currentTime }}</div>
@@ -657,6 +658,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   menuSections: MenuSection[] = [];
   currentTime: string = '';
   currentDate: string = '';
+  appVersion: string = environment.version;
   private timeInterval: any;
 
   constructor(
@@ -828,7 +830,10 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
           { label: '💡 بنك الأفكار', icon: 'pi pi-lightbulb', routerLink: '/smart-notebook/ideas' },
           { label: '💬 سجل المحادثات', icon: 'pi pi-comments', routerLink: '/smart-notebook/chats' },
           { label: '📊 مكتبة التقارير', icon: 'pi pi-file', routerLink: '/smart-notebook/reports' },
-          { label: '✅ المهام', icon: 'pi pi-check-square', routerLink: '/smart-notebook/tasks' }
+          { label: '✅ المهام', icon: 'pi pi-check-square', routerLink: '/smart-notebook/tasks' },
+          { label: '📄 صفحات الدفتر', icon: 'pi pi-book', routerLink: '/smart-notebook/pages' },
+          { label: '📌 الملصقات', icon: 'pi pi-bookmark', routerLink: '/smart-notebook/sticky-notes' },
+          { label: '⏱️ الخط الزمني', icon: 'pi pi-clock', routerLink: '/smart-notebook/timeline' }
         ]
       },
       {
