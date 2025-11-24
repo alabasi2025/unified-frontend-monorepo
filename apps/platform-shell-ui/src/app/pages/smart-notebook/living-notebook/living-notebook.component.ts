@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import { TabViewModule } from 'primeng/tabview';
+
 import { TimelineModule } from 'primeng/timeline';
 import { TagModule } from 'primeng/tag';
 
@@ -28,7 +28,7 @@ interface NotebookEntry {
     FormsModule,
     ButtonModule,
     CardModule,
-    TabViewModule,
+
     TimelineModule,
     TagModule
   ],
@@ -80,9 +80,16 @@ interface NotebookEntry {
       </div>
 
       <!-- Main Content -->
-      <p-tabView>
-        <!-- Tab 1: Timeline View -->
-        <p-tabPanel header="الخط الزمني">
+      <div class="tabs-container">
+        <div class="tabs-header">
+          <button class="tab-button active">الخط الزمني</button>
+          <button class="tab-button">التدفق</button>
+          <button class="tab-button">دليل البناء</button>
+          <button class="tab-button">التقارير</button>
+        </div>
+        <div class="tabs-content">
+        <!-- Timeline View -->
+        <div class="tab-panel active">
           <div class="timeline-view">
             <p-timeline [value]="timelineEntries" align="alternate">
               <ng-template pTemplate="content" let-entry>
@@ -117,10 +124,10 @@ interface NotebookEntry {
               </ng-template>
             </p-timeline>
           </div>
-        </p-tabPanel>
+        </div>
 
-        <!-- Tab 2: Flow View (محادثة → فكرة → مهمة) -->
-        <p-tabPanel header="التدفق">
+        <!-- Flow View -->
+        <div class="tab-panel">
           <div class="flow-view">
             <div class="flow-diagram">
               <div class="flow-step">
@@ -175,10 +182,10 @@ interface NotebookEntry {
               </div>
             </div>
           </div>
-        </p-tabPanel>
+        </div>
 
-        <!-- Tab 3: System Build Guide -->
-        <p-tabPanel header="دليل البناء">
+        <!-- Build Guide -->
+        <div class="tab-panel">
           <div class="build-guide">
             <h2>📖 دليل بناء النظام</h2>
             <p>هذا الدليل يتم تحديثه تلقائياً مع كل خطوة في بناء النظام</p>
@@ -188,10 +195,10 @@ interface NotebookEntry {
             <button pButton label="تحديث الدليل" icon="pi pi-refresh" 
                     (click)="updateBuildGuide()"></button>
           </div>
-        </p-tabPanel>
+        </div>
 
-        <!-- Tab 4: Reports -->
-        <p-tabPanel header="التقارير">
+        <!-- Reports -->
+        <div class="tab-panel">
           <div class="reports-view">
             <div class="reports-actions">
               <button pButton label="تقرير يومي" (click)="generateDailyReport()"></button>
@@ -217,8 +224,9 @@ interface NotebookEntry {
               </p-card>
             </div>
           </div>
-        </p-tabPanel>
-      </p-tabView>
+        </div>
+        </div>
+      </div>
     </div>
   `,
   styles: [`
@@ -353,6 +361,47 @@ interface NotebookEntry {
       border-radius: 12px;
       font-size: 0.875rem;
       margin-right: 0.5rem;
+    }
+
+    .tabs-container {
+      margin-top: 2rem;
+    }
+
+    .tabs-header {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 2px solid #e0e0e0;
+      margin-bottom: 2rem;
+    }
+
+    .tab-button {
+      padding: 1rem 2rem;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 1rem;
+      color: #666;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .tab-button:hover {
+      color: #667eea;
+      background: #f5f5f5;
+    }
+
+    .tab-button.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+      font-weight: bold;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
     }
 
     .build-guide {
