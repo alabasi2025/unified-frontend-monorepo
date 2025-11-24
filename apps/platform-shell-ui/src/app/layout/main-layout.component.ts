@@ -7,7 +7,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from '../services/auth.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { NotificationsComponent } from '../shared/notifications/notifications.component';
+// import { NotificationsComponent } from '../shared/notifications/notifications.component';
 import { environment } from '../../environments/environment';
 
 interface MenuSection {
@@ -28,7 +28,7 @@ interface MenuSection {
     ButtonModule,
     AvatarModule,
     TooltipModule,
-    NotificationsComponent
+    // NotificationsComponent
   ],
   animations: [
     trigger('slideDown', [
@@ -164,7 +164,8 @@ interface MenuSection {
             <h2 class="page-title">{{ getPageTitle() }}</h2>
           </div>
           <div class="topbar-right">
-            <app-notifications></app-notifications>
+            <!-- <app-notifications></app-notifications> -->
+            <button pButton icon="pi pi-bell" class="p-button-text p-button-rounded" title="الإشعارات"></button>
             <button pButton icon="pi pi-cog" class="p-button-text p-button-rounded" routerLink="/settings"></button>
           </div>
         </div>
