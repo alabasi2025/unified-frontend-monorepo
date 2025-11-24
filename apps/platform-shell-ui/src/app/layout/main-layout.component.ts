@@ -827,6 +827,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         expanded: false,
         items: [
           { label: '📊 Dashboard', icon: 'pi pi-chart-bar', routerLink: '/smart-notebook/dashboard' },
+          { label: '📓 الدفتر الشامل', icon: 'pi pi-book', routerLink: '/smart-notebook/living-notebook' },
           { label: '💡 بنك الأفكار', icon: 'pi pi-lightbulb', routerLink: '/smart-notebook/ideas' },
           { label: '💬 سجل المحادثات', icon: 'pi pi-comments', routerLink: '/smart-notebook/chats' },
           { label: '📊 مكتبة التقارير', icon: 'pi pi-file', routerLink: '/smart-notebook/reports' },

@@ -51,6 +51,7 @@ export const appRoutes: Route[] = [
       // Smart Notebook System
       { path: 'smart-notebook', redirectTo: 'smart-notebook/dashboard', pathMatch: 'full' },
       { path: 'smart-notebook/dashboard', loadComponent: () => import('./pages/smart-notebook/dashboard/smart-dashboard.component').then(m => m.SmartDashboardComponent) },
+      { path: 'smart-notebook/living-notebook', loadComponent: () => import('./pages/smart-notebook/living-notebook/living-notebook.component').then(m => m.LivingNotebookComponent) },
       { path: 'smart-notebook/ideas', loadComponent: () => import('./pages/smart-notebook/ideas/ideas-bank.component').then(m => m.IdeasBankComponent) },
       { path: 'smart-notebook/chats', loadComponent: () => import('./pages/smart-notebook/chats/chat-logs.component').then(m => m.ChatLogsComponent) },
       { path: 'smart-notebook/reports', loadComponent: () => import('./pages/smart-notebook/reports/reports-library.component').then(m => m.ReportsLibraryComponent) },

@@ -232,27 +232,25 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         id: '1',
         title: 'مهمة جديدة',
         message: 'تم تعيين مهمة جديدة لك: مراجعة كود نظام الخرائط',
-        type: 'info',
+        type: 'task',
         isRead: false,
         userId: '1',
-        createdAt: new Date(Date.now() - 5 * 60000), // 5 minutes ago
-        updatedAt: new Date()
+        createdAt: new Date(Date.now() - 5 * 60000) // 5 minutes ago
       },
       {
         id: '2',
         title: 'تم إكمال مهمة',
         message: 'تم إكمال مهمة "تطوير واجهة المستخدم" بنجاح',
-        type: 'success',
+        type: 'idea',
         isRead: false,
         userId: '1',
-        createdAt: new Date(Date.now() - 30 * 60000), // 30 minutes ago
-        updatedAt: new Date()
+        createdAt: new Date(Date.now() - 30 * 60000) // 30 minutes ago
       },
       {
         id: '3',
         title: 'تعليق جديد',
         message: 'علق أحمد على فكرتك "نظام الإشعارات المتقدم"',
-        type: 'info',
+        type: 'task',
         isRead: true,
         userId: '1',
         createdAt: new Date(Date.now() - 2 * 3600000), // 2 hours ago
@@ -274,16 +272,8 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   }
 
   subscribeToNewNotifications() {
-    this.subscription = this.notificationsService.onNewNotification().subscribe({
-      next: (notification) => {
-        this.notifications.unshift(notification);
-        this.unreadCount++;
-        this.showBrowserNotification(notification);
-      },
-      error: (error) => {
-        console.error('Error in notification subscription:', error);
-      }
-    });
+    // TODO: Implement WebSocket connection for real-time notifications
+    // this.subscription = this.notificationsService.onNewNotification().subscribe(...);
   }
 
   showBrowserNotification(notification: Notification) {

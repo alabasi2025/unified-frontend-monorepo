@@ -1,12 +1,13 @@
 import { Component, forwardRef, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { EditorModule } from 'primeng/editor';
 
 @Component({
   selector: 'app-rich-text-editor',
   standalone: true,
-  imports: [CommonModule, EditorModule],
+  imports: [CommonModule, FormsModule, EditorModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
