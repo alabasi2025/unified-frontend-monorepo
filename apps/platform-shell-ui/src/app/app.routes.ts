@@ -36,6 +36,7 @@ export const appRoutes: Route[] = [
       
       // Inventory Module Routes
       { path: 'warehouses', loadComponent: () => import('./pages/warehouses/warehouses.component').then(m => m.WarehousesComponent) },
+      { path: 'stock-movements', loadComponent: () => import('./pages/stock-movements/stock-movements.component').then(m => m.StockMovementsComponent) },
       
       // Genes System
       { path: 'genes', loadComponent: () => import('./pages/genes/genes.component').then(m => m.GenesComponent) },
