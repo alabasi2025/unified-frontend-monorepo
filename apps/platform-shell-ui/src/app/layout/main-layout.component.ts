@@ -439,9 +439,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   private timeInterval: any;
 
   menuItems: MenuItem[] = [
-    {
-      title: 'الإدارة',
-      icon: '⚙️',
+    { title: 'الإدارة',      icon: '⚙️',
       color: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
       children: [
         { title: 'المستخدمين', route: '/users', icon: '', color: '' },
@@ -449,8 +447,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         { title: 'الصلاحيات', route: '/permissions', icon: '', color: '' }
       ]
     },
-    {
-      title: 'الهيكل التنظيمي',
+    { title: 'الهيكل التنظيمي',
       icon: '🏢',
       color: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
       children: [
@@ -459,8 +456,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         { title: 'المشاريع', route: '/projects', icon: '', color: '' }
       ]
     },
-    {
-      title: 'المحاسبة',
+    { title: 'المحاسبة',
       icon: '🧮',
       color: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
       children: [
@@ -473,9 +469,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         { title: 'الفترات المالية', route: '/fiscal-periods', icon: '', color: '' }
       ]
     },
-    {
-      title: 'المخزون',
-      icon: '📦',
+    { title: 'المخزون',      icon: '📦',
       color: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
       children: [
         { title: 'المستودعات', route: '/warehouses', icon: '', color: '' },
@@ -484,8 +478,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         { title: 'جرد المخزون', route: '/stock-taking', icon: '', color: '' }
       ]
     },
-    {
-      title: 'المشتريات',
+    { title: 'المشتريات',
       icon: '🛒',
       color: 'linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)',
       children: [
@@ -494,9 +487,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         { title: 'مرتجعات المشتريات', route: '/purchase-returns', icon: '', color: '' }
       ]
     },
-    {
-      title: 'المبيعات',
-      icon: '📊',
+    { title: 'المبيعات',      icon: '📊',
       color: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
       children: [
         { title: 'أوامر البيع', route: '/sales-orders', icon: '', color: '' },
@@ -504,47 +495,43 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         { title: 'مرتجعات المبيعات', route: '/sales-returns', icon: '', color: '' }
       ]
     },
-    {
-      title: 'العملاء والموردين',
-      icon: '👥',
+    { title: 'العملاء والموردين',      icon: '👥',
       color: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
       children: [
         { title: 'العملاء', route: '/customers', icon: '', color: '' },
         { title: 'الموردين', route: '/suppliers', icon: '', color: '' }
       ]
     },
-    {
-      title: 'التقارير',
-      icon: '📈',
+    { title: 'التقارير',      icon: '📈',
       color: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
       children: [
         { title: 'التقارير المالية', route: '/financial-reports', icon: '', color: '' }
       ]
     },
     {
-      title: 'نظام الجينات',
+      title: 'المهام وسير العمل',
+      icon: '✅',
+      color: 'linear-gradient(135deg, #34d399 0%, #059669 100%)',
+      children: [
+        { title: 'قائمة المهام', route: '/tasks/list', icon: '', color: '' },
+        { title: 'لوحة كانبان', route: '/tasks/kanban', icon: '', color: '' },
+        { title: 'سير العمل', route: '/tasks/workflows', icon: '', color: '' }
+      ]
+    },
+    { title: 'نظام الجينات',
       icon: '🧬',
       color: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
       children: [
         { title: 'إدارة الجينات', route: '/genes', icon: '', color: '' }
       ]
     },
-    {
-      title: 'نظام الخرائط',
-      icon: '🗺️',
+    { title: 'نظام الخرائط',      icon: '🗺️',
       color: 'linear-gradient(135deg, #84cc16 0%, #65a30d 100%)',
       children: [
         { title: 'خريطة اليمن', route: '/maps', icon: '', color: '' }
       ]
     },
-    {
-      title: 'نظام المطور',
-      icon: '💻',
-      color: 'linear-gradient(135deg, #a855f7 0%, #9333ea 100%)',
-      children: [
-        { title: 'الوحدة المركزية للذكاء الاصطناعي', route: '/ai-hub', icon: '', color: '' },
-        { title: 'الدفتر السحري', route: '/magic-notebook', icon: '', color: '' }
-      ]
+    { title: 'نظام المطور', icon: '💻', color: 'linear-gradient(135deg, #a855f7 0%, #9333ea 100%)', children: [ { title: 'الوحدة المركزية للذكاء الاصطناعي', route: '/developer', icon: '', color: '' }, { title: 'الدفتر السحري', route: '/magic-notebook', icon: '', color: '' } ] }
     }
   ];
 

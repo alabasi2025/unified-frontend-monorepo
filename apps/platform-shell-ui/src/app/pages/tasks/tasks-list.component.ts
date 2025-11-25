@@ -21,10 +21,14 @@ interface Task {
   template: `
     <div class="tasks-container">
       <div class="tasks-header">
-        <h1>📋 إدارة المهام</h1>
+        <h1>📋 المهام وسير العمل</h1>
         <button class="btn-primary" (click)="createTask()">
           ➕ مهمة جديدة
         </button>
+      </div>
+      <div class="tab-navigation">
+        <button class="tab-button active">قائمة المهام</button>
+        <button class="tab-button" (click)="navigateToWorkflows()">سير العمل</button>
       </div>
 
       <div class="filters">
@@ -114,7 +118,7 @@ interface Task {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 2rem;
+      margin-bottom: 1rem; /* تقليل المسافة */
     }
 
     .tasks-header h1 {
@@ -123,7 +127,32 @@ interface Task {
       margin: 0;
     }
 
-    .btn-primary {
+    .tab-navigation {
+      display: flex;
+      border-bottom: 2px solid #e0e0e0;
+      margin-bottom: 2rem;
+    }
+
+    .tab-button {
+      background: none;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      color: #555;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .tab-button:hover {
+      color: #667eea;
+    }
+
+    .tab-button.active {
+      color: #667eea;
+      border-bottom: 3px solid #667eea;
+      font-weight: 600;
+    }ary {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       border: none;
@@ -315,6 +344,10 @@ export class TasksListComponent implements OnInit {
   searchTerm = '';
 
   constructor(private router: Router) {}
+
+  navigateToWorkflows() {
+    this.router.navigate(['/tasks/workflows']);
+  }
 
   ngOnInit() {
     this.loadTasks();
