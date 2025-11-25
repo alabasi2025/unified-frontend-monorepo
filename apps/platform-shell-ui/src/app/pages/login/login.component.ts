@@ -96,7 +96,7 @@ import { AuthService } from '../../services/auth.service';
 
           <!-- Version Info -->
           <div class="version-badge">
-            <span class="version-label">v1.7.0</span>
+            <span class="version-label">v2.1.1</span>
             <div class="version-pulse"></div>
           </div>
         </div>
