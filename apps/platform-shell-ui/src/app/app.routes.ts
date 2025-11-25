@@ -48,18 +48,8 @@ export const appRoutes: Route[] = [
       // Maps System
       { path: 'maps', loadComponent: () => import('./features/maps/maps.component').then(m => m.MapsComponent) },
       
-      // Smart Notebook System
-      { path: 'smart-notebook', redirectTo: 'smart-notebook/dashboard', pathMatch: 'full' },
-      { path: 'smart-notebook/dashboard', loadComponent: () => import('./pages/smart-notebook/dashboard/smart-dashboard.component').then(m => m.SmartDashboardComponent) },
-      { path: 'smart-notebook/living-notebook', loadComponent: () => import('./pages/smart-notebook/living-notebook/living-notebook.component').then(m => m.LivingNotebookComponent) },
-      { path: 'smart-notebook/ideas', loadComponent: () => import('./pages/smart-notebook/ideas/ideas-bank.component').then(m => m.IdeasBankComponent) },
-      { path: 'smart-notebook/chats', loadComponent: () => import('./pages/smart-notebook/chats/chat-logs.component').then(m => m.ChatLogsComponent) },
-      { path: 'smart-notebook/reports', loadComponent: () => import('./pages/smart-notebook/reports/reports-library.component').then(m => m.ReportsLibraryComponent) },
-      { path: 'smart-notebook/tasks', loadComponent: () => import('./pages/smart-notebook/notebook-tasks/notebook-tasks.component').then(m => m.NotebookTasksComponent) },
-      { path: 'smart-notebook/pages', loadComponent: () => import('./pages/smart-notebook/pages/notebook-pages.component').then(m => m.NotebookPagesComponent) },
-      { path: 'smart-notebook/sticky-notes', loadComponent: () => import('./pages/smart-notebook/sticky-notes/sticky-notes.component').then(m => m.StickyNotesComponent) },
-      { path: 'smart-notebook/timeline', loadComponent: () => import('./pages/smart-notebook/timeline/timeline.component').then(m => m.TimelineComponent) },
-      { path: 'smart-notebook/search', loadComponent: () => import('./pages/smart-notebook/global-search/global-search.component').then(m => m.GlobalSearchComponent) },
+      // Smart Notebook System (OneNote-like)
+      { path: 'smart-notebook', loadComponent: () => import('./features/smart-notebook/notebooks-list/notebooks-list.component').then(m => m.NotebooksListComponent) },
       
       { path: 'developer', loadComponent: () => import('./pages/developer/developer-chat.component').then(m => m.DeveloperChatComponent) },
     ]
