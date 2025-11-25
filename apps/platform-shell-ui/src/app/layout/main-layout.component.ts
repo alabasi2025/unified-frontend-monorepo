@@ -1,672 +1,552 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
-import { AvatarModule } from 'primeng/avatar';
-import { TooltipModule } from 'primeng/tooltip';
-import { MenuItem } from 'primeng/api';
 import { AuthService } from '../services/auth.service';
-import { trigger, state, style, transition, animate } from '@angular/animations';
-// import { NotificationsComponent } from '../shared/notifications/notifications.component';
 import { environment } from '../../environments/environment';
 
-interface MenuSection {
+interface MenuItem {
   title: string;
   icon: string;
-  items: MenuItem[];
+  route?: string;
+  color: string;
+  children?: MenuItem[];
   expanded?: boolean;
-  color?: string;
-  iconBg?: string;
 }
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    ButtonModule,
-    AvatarModule,
-    TooltipModule,
-    // NotificationsComponent
-  ],
-  animations: [
-    trigger('slideDown', [
-      state('collapsed', style({
-        height: '0',
-        opacity: '0',
-        overflow: 'hidden'
-      })),
-      state('expanded', style({
-        height: '*',
-        opacity: '1',
-        overflow: 'visible'
-      })),
-      transition('collapsed <=> expanded', animate('350ms cubic-bezier(0.4, 0, 0.2, 1)'))
-    ]),
-    trigger('fadeIn', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(-10px)' }),
-        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
-      ])
-    ])
-  ],
+  imports: [CommonModule, RouterModule],
   template: `
-    <div class="layout-wrapper rtl">
-      <!-- Sidebar -->
-      <div class="layout-sidebar" [class.collapsed]="sidebarCollapsed">
+    <div class="app-container">
+      <aside class="sidebar">
         <div class="sidebar-header">
-          <button 
-            pButton 
-            icon="pi pi-bars" 
-            class="p-button-text p-button-rounded toggle-btn"
-            (click)="toggleSidebar()">
-          </button>
-          <div class="logo" *ngIf="!sidebarCollapsed" @fadeIn>
-            <div class="logo-icon">
-              <i class="pi pi-bolt"></i>
-            </div>
-            <span class="logo-text">SEMOP ERP</span>
-          </div>
-          
-          <!-- Version & DateTime Info -->
-          <div class="system-info" *ngIf="!sidebarCollapsed" @fadeIn>
-            <div class="version-badge">
-              <i class="pi pi-tag"></i>
-              <span>v{{ appVersion }}</span>
-            </div>
-            <div class="datetime-display">
-              <div class="time">{{ currentTime }}</div>
-              <div class="date">{{ currentDate }}</div>
-            </div>
+          <div class="version-badge">v{{appVersion}}</div>
+          <h1 class="logo">
+            <span class="logo-semop">SEMOP</span>
+            <span class="logo-erp">ERP</span>
+          </h1>
+          <div class="datetime">
+            <div class="time">{{currentTime}}</div>
+            <div class="date">{{currentDate}}</div>
           </div>
         </div>
 
-        <div class="sidebar-menu">
-          <!-- الرئيسية -->
-          <div class="menu-section">
-            <a routerLink="/dashboard" routerLinkActive="active" class="menu-item dashboard-item">
-              <div class="menu-icon-wrapper">
-                <div class="menu-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
-                  <i class="pi pi-home"></i>
+        <nav class="sidebar-menu">
+          <div class="menu-item-wrapper" 
+               [class.active]="isActive('/dashboard')"
+               (click)="navigate('/dashboard')">
+            <div class="menu-item">
+              <div class="menu-content">
+                <span class="menu-title">لوحة التحكم</span>
+                <div class="menu-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                  <span class="icon-text">🏠</span>
                 </div>
               </div>
-              <span *ngIf="!sidebarCollapsed" class="menu-label">لوحة التحكم</span>
-              <div class="menu-ripple"></div>
-            </a>
+            </div>
           </div>
 
-          <!-- الأنظمة مع تبويبات منبثقة -->
-          <div class="menu-section" *ngFor="let section of menuSections">
-            <div class="menu-item parent" 
-                 [class.active]="section.expanded"
-                 [class.has-glow]="section.expanded"
-                 (click)="toggleSection(section)">
-              <div class="menu-icon-wrapper">
-                <div class="menu-icon" 
-                     [style.background]="section.color"
-                     [style.box-shadow]="section.expanded ? section.iconBg : 'none'">
-                  <i [class]="section.icon"></i>
+          <div *ngFor="let item of menuItems" class="menu-item-wrapper">
+            <div class="menu-item" 
+                 [class.active]="isActive(item.route)"
+                 [class.has-children]="item.children"
+                 (click)="handleMenuClick(item)">
+              <div class="menu-content">
+                <span class="menu-title">{{item.title}}</span>
+                <div class="menu-icon" [style.background]="item.color">
+                  <span class="icon-text">{{item.icon}}</span>
                 </div>
               </div>
-              <span *ngIf="!sidebarCollapsed" class="menu-label">{{ section.title }}</span>
-              <i *ngIf="!sidebarCollapsed" 
-                 class="pi toggle-icon"
-                 [class.pi-chevron-down]="!section.expanded"
-                 [class.pi-chevron-up]="section.expanded"></i>
-              <div class="menu-ripple" [style.background]="section.color"></div>
+              <i *ngIf="item.children" class="expand-icon" 
+                 [class.expanded]="item.expanded">▲</i>
             </div>
             
-            <div class="submenu" 
-                 [class.expanded]="section.expanded && !sidebarCollapsed"
-                 [@slideDown]="section.expanded && !sidebarCollapsed ? 'expanded' : 'collapsed'">
-              <a *ngFor="let item of section.items" 
-                 [routerLink]="item.routerLink" 
-                 routerLinkActive="active"
-                 class="menu-item sub">
-                <div class="sub-icon">
-                  <i [class]="item.icon"></i>
-                </div>
-                <span>{{ item.label }}</span>
-                <div class="sub-ripple"></div>
-              </a>
+            <div *ngIf="item.children && item.expanded" class="submenu">
+              <div *ngFor="let child of item.children" 
+                   class="submenu-item"
+                   [class.active]="isActive(child.route)"
+                   (click)="navigate(child.route)">
+                <span>{{child.title}}</span>
+                <i class="arrow">›</i>
+              </div>
             </div>
           </div>
-        </div>
+        </nav>
 
-        <div class="sidebar-footer" *ngIf="!sidebarCollapsed">
-          <div class="user-info">
-            <p-avatar 
-              [label]="getUserInitial()" 
-              shape="circle" 
-              [style]="{'background-color': '#667eea', 'color': '#ffffff', 'font-weight': 'bold'}">
-            </p-avatar>
-            <div class="user-details">
-              <span class="user-name">{{ currentUser?.username }}</span>
-              <span class="user-role">{{ currentUser?.role }}</span>
-            </div>
-          </div>
-          <button 
-            pButton 
-            icon="pi pi-sign-out" 
-            class="p-button-text p-button-rounded logout-btn"
-            (click)="logout()"
-            pTooltip="تسجيل الخروج"
-            tooltipPosition="top">
-          </button>
-        </div>
-      </div>
-
-      <!-- Main Content -->
-      <div class="layout-main" [class.expanded]="sidebarCollapsed">
-        <div class="layout-topbar">
-          <div class="topbar-left">
-            <h2 class="page-title">{{ getPageTitle() }}</h2>
-          </div>
-          <div class="topbar-right">
-            <!-- <app-notifications></app-notifications> -->
-            <button pButton icon="pi pi-bell" class="p-button-text p-button-rounded" title="الإشعارات"></button>
-            <button pButton icon="pi pi-cog" class="p-button-text p-button-rounded" routerLink="/settings"></button>
+        <div class="sidebar-footer">
+          <div class="user-profile">
+            <div class="user-avatar">{{getUserInitial()}}</div>
+            <span class="user-name">{{currentUser?.username || 'admin'}}</span>
           </div>
         </div>
+      </aside>
 
-        <div class="layout-content">
+      <main class="main-content">
+        <header class="topbar">
+          <button class="menu-toggle">☰</button>
+          <div class="topbar-actions">
+            <button class="icon-btn">🔔</button>
+            <button class="icon-btn">⚙️</button>
+          </div>
+        </header>
+        
+        <div class="content-wrapper">
           <router-outlet></router-outlet>
         </div>
-      </div>
+      </main>
     </div>
   `,
   styles: [`
-    /* Professional Modern Sidebar Design */
-    .layout-wrapper {
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .app-container {
       display: flex;
       height: 100vh;
-      background: #f8f9fa;
+      background: #0f172a;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       direction: rtl;
     }
 
-    .layout-sidebar {
+    .sidebar {
       width: 320px;
       background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       flex-direction: column;
-      box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .layout-sidebar::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 100%;
-      background: radial-gradient(circle at top right, rgba(102, 126, 234, 0.1) 0%, transparent 50%);
-      pointer-events: none;
-    }
-
-    .layout-sidebar.collapsed {
-      width: 80px;
-    }
-
-    /* Sidebar Header */
-    .sidebar-header {
-      padding: 24px 20px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .toggle-btn {
-      color: #ffffff !important;
-      transition: all 0.3s ease;
-    }
-
-    .toggle-btn:hover {
-      background: rgba(255, 255, 255, 0.1) !important;
-      transform: scale(1.1);
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex: 1;
-    }
-
-    .logo-icon {
-      width: 48px;
-      height: 48px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-      animation: pulse 2s infinite;
-    }
-
-    .logo-icon i {
-      font-size: 20px;
-      color: #ffffff;
-    }
-
-    .logo-text {
-      font-size: 20px;
-      font-weight: 700;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-
-    /* System Info - Version & DateTime */
-    .system-info {
-      padding: 16px 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .version-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #ffffff;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-      transition: all 0.3s ease;
-      cursor: pointer;
-      align-self: flex-start;
-    }
-
-    .version-badge:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
-    }
-
-    .version-badge i {
-      font-size: 12px;
-      animation: rotate 3s linear infinite;
-    }
-
-    @keyframes rotate {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .datetime-display {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      padding: 16px 18px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-    }
-
-    .datetime-display .time {
-      font-size: 24px;
-      font-weight: 700;
-      color: #ffffff;
-      font-family: 'Courier New', monospace;
-      letter-spacing: 2px;
-      text-align: center;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .datetime-display .date {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.7);
-      text-align: center;
-      font-weight: 500;
-    }
-
-    /* Sidebar Menu */
-    .sidebar-menu {
-      flex: 1;
+      border-left: 1px solid rgba(255, 255, 255, 0.05);
       overflow-y: auto;
       overflow-x: hidden;
-      padding: 16px 12px;
     }
 
-    .sidebar-menu::-webkit-scrollbar {
+    .sidebar::-webkit-scrollbar {
       width: 6px;
     }
 
-    .sidebar-menu::-webkit-scrollbar-track {
+    .sidebar::-webkit-scrollbar-track {
       background: rgba(255, 255, 255, 0.05);
-      border-radius: 14px;
     }
 
-    .sidebar-menu::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 14px;
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
     }
 
-    .sidebar-menu::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.3);
+    .sidebar-header {
+      padding: 24px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    .menu-section {
-      margin-bottom: 8px;
+    .version-badge {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+      display: inline-block;
+      margin-bottom: 12px;
     }
 
-    /* Menu Items - Professional Style */
-    .menu-item {
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0 0 16px 0;
       display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 16px 18px;
-      border-radius: 14px;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-      text-decoration: none;
+      gap: 8px;
+    }
+
+    .logo-semop {
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .logo-erp {
+      color: #fff;
+    }
+
+    .datetime {
+      font-size: 14px;
       color: rgba(255, 255, 255, 0.7);
+      text-align: center;
+    }
+
+    .time {
       font-weight: 500;
-      font-size: 15px;
       margin-bottom: 4px;
     }
 
+    .date {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .sidebar-menu {
+      flex: 1;
+      padding: 16px 12px;
+      overflow-y: auto;
+    }
+
+    .menu-item-wrapper {
+      margin-bottom: 12px;
+    }
+
+    .menu-item {
+      background: linear-gradient(135deg, #2d3748 0%, #1e293b 100%);
+      border-radius: 14px;
+      padding: 16px 18px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+
     .menu-item:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #ffffff;
-      transform: translateX(-4px);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      border-color: rgba(59, 130, 246, 0.3);
     }
 
+    .menu-item-wrapper.active .menu-item,
     .menu-item.active {
-      background: rgba(102, 126, 234, 0.15);
-      color: #ffffff;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1),
+                  0 8px 20px rgba(59, 130, 246, 0.2);
+      background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
     }
 
-    .menu-item.parent.has-glow {
-      background: rgba(255, 255, 255, 0.1);
-      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+    .menu-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
 
-    /* Icon Wrapper - Larger and Clearer */
-    .menu-icon-wrapper {
-      flex-shrink: 0;
+    .menu-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      flex: 1;
+      text-align: right;
     }
 
     .menu-icon {
       width: 48px;
       height: 48px;
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
+      font-size: 24px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      flex-shrink: 0;
     }
 
-    .menu-icon i {
-      font-size: 20px;
-      color: #ffffff;
-      font-weight: 600;
-      transition: all 0.3s ease;
+    .icon-text {
+      font-size: 24px;
     }
 
-    .menu-item:hover .menu-icon {
-      width: 48px;
-      height: 48px;
-      transform: scale(1.1) rotate(5deg);
-    }
-
-    .menu-item.active .menu-icon {
-      width: 48px;
-      height: 48px;
-      transform: scale(1.15);
-      animation: iconBounce 0.6s ease;
-    }
-
-    @keyframes iconBounce {
-      0%, 100% { transform: scale(1.15); }
-      50% { transform: scale(1.25); }
-    }
-
-    .menu-label {
-      flex: 1;
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 0.3px;
-    }
-
-    .toggle-icon {
-      font-size: 14px;
-      transition: all 0.3s ease;
-      color: rgba(255, 255, 255, 0.5);
-    }
-
-    .menu-item.active .toggle-icon {
-      color: #ffffff;
-    }
-
-    /* Ripple Effect */
-    .menu-ripple {
+    .expand-icon {
       position: absolute;
-      inset: 0;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%) rotate(180deg);
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      transition: transform 0.3s ease;
     }
 
-    .menu-item:active .menu-ripple {
-      opacity: 1;
-      animation: ripple 0.6s ease-out;
+    .expand-icon.expanded {
+      transform: translateY(-50%) rotate(0deg);
     }
 
-    @keyframes ripple {
+    .submenu {
+      margin-top: 8px;
+      padding-right: 12px;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
       from {
-        transform: scale(0);
-        opacity: 1;
+        opacity: 0;
+        transform: translateY(-10px);
       }
       to {
-        transform: scale(2);
-        opacity: 0;
+        opacity: 1;
+        transform: translateY(0);
       }
     }
 
-    /* Submenu */
-    .submenu {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease;
-      padding-right: 16px;
-    }
-
-    .submenu.expanded {
-      max-height: 1000px;
-    }
-
-    .menu-item.sub {
-      padding: 12px 16px 12px 60px;
-      font-size: 14px;
-      margin-bottom: 2px;
-      border-radius: 14px;
-    }
-
-    .sub-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.08);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-    }
-
-    .sub-icon i {
-      font-size: 16px;
-      color: rgba(255, 255, 255, 0.7);
-    }
-
-    .menu-item.sub:hover .sub-icon {
-      background: rgba(102, 126, 234, 0.3);
-      transform: scale(1.1);
-    }
-
-    .menu-item.sub:hover .sub-icon i {
-      color: #ffffff;
-    }
-
-    .menu-item.sub.active {
-      background: linear-gradient(90deg, rgba(102, 126, 234, 0.2) 0%, transparent 100%);
-      border-right: 3px solid #667eea;
-    }
-
-    .menu-item.sub.active .sub-icon {
-      background: #667eea;
-    }
-
-    .menu-item.sub.active .sub-icon i {
-      color: #ffffff;
-    }
-
-    /* Sidebar Footer */
-    .sidebar-footer {
-      padding: 20px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: rgba(0, 0, 0, 0.2);
-    }
-
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex: 1;
-    }
-
-    .user-details {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .user-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: #ffffff;
-    }
-
-    .user-role {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.6);
-    }
-
-    .logout-btn {
-      color: #ff6b6b !important;
-    }
-
-    .logout-btn:hover {
-      background: rgba(255, 107, 107, 0.1) !important;
-    }
-
-    /* Main Content */
-    .layout-main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      transition: all 0.3s ease;
-    }
-
-    .layout-topbar {
-      height: 70px;
-      background: #ffffff;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    .submenu-item {
+      background: rgba(45, 55, 72, 0.5);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 6px;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 32px;
-      z-index: 10;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
     }
 
-    .page-title {
-      font-size: 24px;
+    .submenu-item:hover {
+      background: rgba(59, 130, 246, 0.1);
+      border-color: rgba(59, 130, 246, 0.3);
+      transform: translateX(-4px);
+    }
+
+    .submenu-item.active {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: #3b82f6;
+    }
+
+    .submenu-item span {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .submenu-item .arrow {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 18px;
+    }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(45, 55, 72, 0.5);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .user-profile:hover {
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-weight: 700;
-      color: #1a1f36;
-      margin: 0;
+      font-size: 18px;
     }
 
-    .topbar-right {
+    .user-name {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .topbar {
+      height: 70px;
+      background: #1e293b;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+
+    .menu-toggle {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .menu-toggle:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .topbar-actions {
       display: flex;
       gap: 12px;
     }
 
-    .notification-btn {
-      position: relative;
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: all 0.2s ease;
     }
 
-    .notification-badge {
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      background: #ff6b6b;
-      color: #ffffff;
-      font-size: 10px;
-      font-weight: 600;
-      padding: 2px 6px;
-      border-radius: 14px;
-      min-width: 18px;
-      text-align: center;
+    .icon-btn:hover {
+      background: rgba(59, 130, 246, 0.2);
+      transform: translateY(-2px);
     }
 
-    .layout-content {
+    .content-wrapper {
       flex: 1;
-      padding: 32px;
       overflow-y: auto;
-      background: #f8f9fa;
+      padding: 24px;
+      background: #0f172a;
     }
 
-    /* Responsive */
     @media (max-width: 768px) {
-      .layout-sidebar {
+      .sidebar {
         position: fixed;
-        z-index: 1000;
+        right: 0;
+        top: 0;
         height: 100vh;
-      }
-
-      .layout-sidebar.collapsed {
+        z-index: 1000;
         transform: translateX(100%);
       }
     }
   `]
 })
 export class MainLayoutComponent implements OnInit, OnDestroy {
-  sidebarCollapsed = false;
+  appVersion = environment.version;
+  currentDate = '';
+  currentTime = '';
   currentUser: any;
-  menuSections: MenuSection[] = [];
-  currentTime: string = '';
-  currentDate: string = '';
-  appVersion: string = environment.version;
   private timeInterval: any;
+
+  menuItems: MenuItem[] = [
+    {
+      title: 'الإدارة',
+      icon: '⚙️',
+      color: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+      children: [
+        { title: 'المستخدمين', route: '/users', icon: '', color: '' },
+        { title: 'الأدوار', route: '/roles', icon: '', color: '' },
+        { title: 'الصلاحيات', route: '/permissions', icon: '', color: '' }
+      ]
+    },
+    {
+      title: 'الهيكل التنظيمي',
+      icon: '🏢',
+      color: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+      children: [
+        { title: 'الشركات القابضة', route: '/holding-companies', icon: '', color: '' },
+        { title: 'الوحدات', route: '/units', icon: '', color: '' },
+        { title: 'المشاريع', route: '/projects', icon: '', color: '' }
+      ]
+    },
+    {
+      title: 'المحاسبة',
+      icon: '🧮',
+      color: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+      children: [
+        { title: 'دليل الحسابات', route: '/chart-of-accounts', icon: '', color: '' },
+        { title: 'التسلسل الهرمي', route: '/account-hierarchy', icon: '', color: '' },
+        { title: 'أرصدة الحسابات', route: '/account-balances', icon: '', color: '' },
+        { title: 'القيود اليومية', route: '/journal-entries', icon: '', color: '' },
+        { title: 'مراكز التكلفة', route: '/cost-centers', icon: '', color: '' },
+        { title: 'السنوات المالية', route: '/fiscal-years', icon: '', color: '' },
+        { title: 'الفترات المالية', route: '/fiscal-periods', icon: '', color: '' }
+      ]
+    },
+    {
+      title: 'المخزون',
+      icon: '📦',
+      color: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+      children: [
+        { title: 'المستودعات', route: '/warehouses', icon: '', color: '' },
+        { title: 'الأصناف', route: '/items', icon: '', color: '' },
+        { title: 'حركات المخزون', route: '/stock-movements', icon: '', color: '' },
+        { title: 'جرد المخزون', route: '/stock-taking', icon: '', color: '' }
+      ]
+    },
+    {
+      title: 'المشتريات',
+      icon: '🛒',
+      color: 'linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)',
+      children: [
+        { title: 'أوامر الشراء', route: '/purchase-orders', icon: '', color: '' },
+        { title: 'فواتير الشراء', route: '/purchase-invoices', icon: '', color: '' },
+        { title: 'مرتجعات المشتريات', route: '/purchase-returns', icon: '', color: '' }
+      ]
+    },
+    {
+      title: 'المبيعات',
+      icon: '📊',
+      color: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+      children: [
+        { title: 'أوامر البيع', route: '/sales-orders', icon: '', color: '' },
+        { title: 'فواتير البيع', route: '/sales-invoices', icon: '', color: '' },
+        { title: 'مرتجعات المبيعات', route: '/sales-returns', icon: '', color: '' }
+      ]
+    },
+    {
+      title: 'العملاء والموردين',
+      icon: '👥',
+      color: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
+      children: [
+        { title: 'العملاء', route: '/customers', icon: '', color: '' },
+        { title: 'الموردين', route: '/suppliers', icon: '', color: '' }
+      ]
+    },
+    {
+      title: 'التقارير',
+      icon: '📈',
+      color: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+      children: [
+        { title: 'التقارير المالية', route: '/financial-reports', icon: '', color: '' }
+      ]
+    },
+    {
+      title: 'نظام الجينات',
+      icon: '🧬',
+      color: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
+      children: [
+        { title: 'إدارة الجينات', route: '/genes', icon: '', color: '' }
+      ]
+    },
+    {
+      title: 'نظام الخرائط',
+      icon: '🗺️',
+      color: 'linear-gradient(135deg, #84cc16 0%, #65a30d 100%)',
+      children: [
+        { title: 'خريطة اليمن', route: '/maps', icon: '', color: '' }
+      ]
+    },
+    {
+      title: 'نظام المطور',
+      icon: '💻',
+      color: 'linear-gradient(135deg, #a855f7 0%, #9333ea 100%)',
+      children: [
+        { title: 'الوحدة المركزية للذكاء الاصطناعي', route: '/ai-hub', icon: '', color: '' },
+        { title: 'الدفتر السحري', route: '/magic-notebook', icon: '', color: '' }
+      ]
+    }
+  ];
 
   constructor(
     private router: Router,
@@ -675,7 +555,6 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
-    this.initializeMenu();
     this.updateDateTime();
     this.timeInterval = setInterval(() => this.updateDateTime(), 1000);
   }
@@ -688,189 +567,37 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   updateDateTime() {
     const now = new Date();
+    const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+    const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 
+                    'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
     
-    // Format time (HH:MM:SS)
-    this.currentTime = now.toLocaleTimeString('ar-YE', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    });
-    
-    // Format date (Arabic)
-    this.currentDate = now.toLocaleDateString('ar-YE', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    this.currentDate = `${days[now.getDay()]}، ${now.getDate()} ${months[now.getMonth()]}`;
+    this.currentTime = now.toLocaleTimeString('ar-EG', { 
+      hour: '2-digit', 
+      minute: '2-digit'
     });
   }
 
-  initializeMenu() {
-    this.menuSections = [
-      {
-        title: 'الإدارة',
-        icon: 'pi pi-users',
-        color: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-        iconBg: '0 4px 20px rgba(240, 147, 251, 0.5)',
-        expanded: false,
-        items: [
-          { label: 'المستخدمين', icon: 'pi pi-user', routerLink: '/users' },
-          { label: 'الأدوار', icon: 'pi pi-shield', routerLink: '/roles' },
-          { label: 'الصلاحيات', icon: 'pi pi-key', routerLink: '/permissions' }
-        ]
-      },
-      {
-        title: 'الهيكل التنظيمي',
-        icon: 'pi pi-sitemap',
-        color: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-        iconBg: '0 4px 20px rgba(79, 172, 254, 0.5)',
-        expanded: false,
-        items: [
-          { label: 'الشركات القابضة', icon: 'pi pi-building', routerLink: '/holding-companies' },
-          { label: 'الوحدات', icon: 'pi pi-box', routerLink: '/units' },
-          { label: 'المشاريع', icon: 'pi pi-briefcase', routerLink: '/projects' }
-        ]
-      },
-      {
-        title: 'المحاسبة',
-        icon: 'pi pi-calculator',
-        color: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-        iconBg: '0 4px 20px rgba(67, 233, 123, 0.5)',
-        expanded: false,
-        items: [
-          { label: 'دليل الحسابات', icon: 'pi pi-book', routerLink: '/chart-of-accounts' },
-          { label: 'التسلسل الهرمي', icon: 'pi pi-share-alt', routerLink: '/account-hierarchy' },
-          { label: 'أرصدة الحسابات', icon: 'pi pi-wallet', routerLink: '/account-balances' },
-          { label: 'القيود اليومية', icon: 'pi pi-file-edit', routerLink: '/journal-entries' },
-          { label: 'مراكز التكلفة', icon: 'pi pi-chart-pie', routerLink: '/cost-centers' },
-          { label: 'السنوات المالية', icon: 'pi pi-calendar', routerLink: '/fiscal-years' },
-          { label: 'الفترات المالية', icon: 'pi pi-clock', routerLink: '/fiscal-periods' }
-        ]
-      },
-      {
-        title: 'المخزون',
-        icon: 'pi pi-box',
-        color: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-        iconBg: '0 4px 20px rgba(250, 112, 154, 0.5)',
-        expanded: false,
-        items: [
-          { label: 'المستودعات', icon: 'pi pi-home', routerLink: '/warehouses' },
-          { label: 'الأصناف', icon: 'pi pi-tags', routerLink: '/items' },
-          { label: 'حركات المخزون', icon: 'pi pi-arrows-h', routerLink: '/stock-movements' },
-          { label: 'جرد المخزون', icon: 'pi pi-list', routerLink: '/stock-taking' }
-        ]
-      },
-      {
-        title: 'المشتريات',
-        icon: 'pi pi-shopping-cart',
-        color: 'linear-gradient(135deg, #30cfd0 0%, #330867 100%)',
-        iconBg: '0 4px 20px rgba(48, 207, 208, 0.5)',
-        expanded: false,
-        items: [
-          { label: 'أوامر الشراء', icon: 'pi pi-file', routerLink: '/purchase-orders' },
-          { label: 'فواتير الشراء', icon: 'pi pi-file-pdf', routerLink: '/purchase-invoices' },
-          { label: 'مرتجعات المشتريات', icon: 'pi pi-replay', routerLink: '/purchase-returns' }
-        ]
-      },
-      {
-        title: 'المبيعات',
-        icon: 'pi pi-chart-line',
-        color: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
-        iconBg: '0 4px 20px rgba(168, 237, 234, 0.5)',
-        expanded: false,
-        items: [
-          { label: 'أوامر البيع', icon: 'pi pi-file', routerLink: '/sales-orders' },
-          { label: 'فواتير البيع', icon: 'pi pi-file-pdf', routerLink: '/sales-invoices' },
-          { label: 'مرتجعات المبيعات', icon: 'pi pi-replay', routerLink: '/sales-returns' }
-        ]
-      },
-      {
-        title: 'العملاء والموردين',
-        icon: 'pi pi-users',
-        color: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)',
-        iconBg: '0 4px 20px rgba(255, 154, 158, 0.5)',
-        expanded: false,
-        items: [
-          { label: 'العملاء', icon: 'pi pi-user', routerLink: '/customers' },
-          { label: 'الموردين', icon: 'pi pi-truck', routerLink: '/suppliers' }
-        ]
-      },
-      {
-        title: 'التقارير',
-        icon: 'pi pi-chart-bar',
-        color: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
-        iconBg: '0 4px 20px rgba(255, 236, 210, 0.5)',
-        expanded: false,
-        items: [
-          { label: 'التقارير المالية', icon: 'pi pi-file', routerLink: '/financial-reports' }
-        ]
-      },
-      {
-        title: 'نظام الجينات',
-        icon: 'pi pi-sliders-h',
-        color: 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)',
-        iconBg: '0 4px 20px rgba(161, 196, 253, 0.5)',
-        expanded: false,
-        items: [
-          { label: '🧬 إدارة الجينات', icon: 'pi pi-cog', routerLink: '/genes' }
-        ]
-      },
-      {
-        title: '🗺️ نظام الخرائط',
-        icon: 'pi pi-map',
-        color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        iconBg: '0 4px 20px rgba(102, 126, 234, 0.5)',
-        expanded: false,
-        items: [
-          { label: '🇾🇪 خريطة اليمن', icon: 'pi pi-map-marker', routerLink: '/maps' }
-        ]
-      },
-      {
-        title: 'نظام المطور',
-        icon: 'pi pi-code',
-        color: 'linear-gradient(135deg, #fdcbf1 0%, #e6dee9 100%)',
-        iconBg: '0 4px 20px rgba(253, 203, 241, 0.5)',
-        expanded: false,
-        items: [
-          { label: 'الوحدة المركزية للذكاء الاصطناعي', icon: 'pi pi-bolt', routerLink: '/ai-hub' },
-          { label: "📔 الدفتر السحري", icon: "pi pi-book", routerLink: "/magic-notebook" },
-        ]
-      }
-    ];
-  }
-
-  toggleSidebar() {
-    this.sidebarCollapsed = !this.sidebarCollapsed;
-    if (this.sidebarCollapsed) {
-      this.menuSections.forEach(section => section.expanded = false);
+  handleMenuClick(item: MenuItem) {
+    if (item.children) {
+      item.expanded = !item.expanded;
+    } else if (item.route) {
+      this.navigate(item.route);
     }
   }
 
-  toggleSection(section: MenuSection) {
-    if (!this.sidebarCollapsed) {
-      section.expanded = !section.expanded;
+  navigate(route?: string) {
+    if (route) {
+      this.router.navigate([route]);
     }
+  }
+
+  isActive(route?: string): boolean {
+    if (!route) return false;
+    return this.router.url === route || this.router.url.startsWith(route + '/');
   }
 
   getUserInitial(): string {
     return this.currentUser?.username?.charAt(0).toUpperCase() || 'A';
-  }
-
-  getPageTitle(): string {
-    const url = this.router.url;
-    if (url.includes('dashboard')) return 'لوحة التحكم';
-    if (url.includes('users')) return 'إدارة المستخدمين';
-    if (url.includes('chart-of-accounts')) return 'دليل الحسابات';
-    if (url.includes('warehouses')) return 'المستودعات';
-    if (url.includes('stock-movements')) return 'حركات المخزون';
-    if (url.includes('fiscal-periods')) return 'الفترات المالية';
-    if (url.includes('genes')) return 'نظام الجينات';
-    return 'SEMOP ERP';
-  }
-
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
   }
 }
