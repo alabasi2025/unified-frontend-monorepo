@@ -828,7 +828,6 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         expanded: false,
         items: [
           { label: 'الوحدة المركزية للذكاء الاصطناعي', icon: 'pi pi-bolt', routerLink: '/ai-hub' },
-          { label: "Smart Notebook", icon: "pi pi-book", routerLink: "/smart-notebook" },
           { label: "📔 الدفتر السحري", icon: "pi pi-book", routerLink: "/magic-notebook" },
         ]
       }
