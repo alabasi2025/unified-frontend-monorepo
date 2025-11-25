@@ -1,0 +1,128 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { catchError, tap, finalize } from 'rxjs/operators';
+
+// تعريف واجهات البيانات
+interface ExportStatus {
+  id: string;
+  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED';
+  progress: number; // نسبة مئوية من 0 إلى 100
+  fileUrl?: string;
+  error?: string;
+}
+
+interface ExportRequest {
+  data: any;
+  format: 'PDF' | 'WORD' | 'JSON';
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ExportService {
+  private apiUrl = '/api/export';
+
+  // حالة تتبع التقدم
+  private exportStatusSubject = new BehaviorSubject<ExportStatus | null>(null);
+  public exportStatus$ = this.exportStatusSubject.asObservable();
+
+  // حالة التحميل (لإظهار مؤشر تحميل عام)
+  private isLoadingSubject = new BehaviorSubject<boolean>(false);
+  public isLoading$ = this.isLoadingSubject.asObservable();
+
+  constructor(private http: HttpClient) {}
+
+  /**
+   * معالج الأخطاء المركزي لعمليات HTTP
+   * @param error - كائن الخطأ
+   * @returns Observable خطأ جديد
+   */
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'حدث خطأ غير معروف!';
+    if (error.error instanceof ErrorEvent) {
+      // خطأ من جانب العميل أو الشبكة
+      errorMessage = `خطأ: ${error.error.message}`;
+    } else {
+      // خطأ من جانب الخادم
+      errorMessage = `رمز الخطأ: ${error.status}, الرسالة: ${error.message}`;
+    }
+    console.error(errorMessage);
+    // تحديث حالة التصدير إلى فاشلة
+    this.exportStatusSubject.next({
+      id: 'N/A',
+      status: 'FAILED',
+      progress: 0,
+      error: errorMessage
+    });
+    return throwError(() => new Error(errorMessage));
+  }
+
+  /**
+   * يبدأ عملية التصدير إلى تنسيق معين
+   * @param data - البيانات المراد تصديرها
+   * @param format - تنسيق التصدير المطلوب
+   * @returns Observable يحتوي على حالة التصدير الأولية
+   */
+  private startExport(data: any, format: 'PDF' | 'WORD' | 'JSON'): Observable<ExportStatus> {
+    this.isLoadingSubject.next(true);
+    this.exportStatusSubject.next({ id: 'N/A', status: 'PENDING', progress: 0 });
+
+    const requestBody: ExportRequest = { data, format };
+
+    return this.http.post<ExportStatus>(`${this.apiUrl}/start`, requestBody).pipe(
+      tap(status => {
+        this.exportStatusSubject.next(status);
+      }),
+      catchError(this.handleError.bind(this)),
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  }
+
+  exportToPDF(data: any): Observable<ExportStatus> {
+    return this.startExport(data, 'PDF');
+  }
+
+  exportToWord(data: any): Observable<ExportStatus> {
+    return this.startExport(data, 'WORD');
+  }
+
+  exportToJSON(data: any): Observable<ExportStatus> {
+    return this.startExport(data, 'JSON');
+  }
+
+  /**
+   * يتحقق من حالة عملية التصدير باستخدام معرف العملية
+   * @param exportId - معرف عملية التصدير
+   * @returns Observable يحتوي على حالة التصدير المحدثة
+   */
+  getStatus(exportId: string): Observable<ExportStatus> {
+    this.isLoadingSubject.next(true);
+    return this.http.get<ExportStatus>(`${this.apiUrl}/status/${exportId}`).pipe(
+      tap(status => {
+        this.exportStatusSubject.next(status);
+      }),
+      catchError(this.handleError.bind(this)),
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  }
+
+  /**
+   * يقوم بتنزيل الملف المصدّر
+   * @param fileUrl - رابط الملف للتنزيل
+   */
+  download(fileUrl: string): void {
+    // في بيئة Angular، يمكن استخدام window.open أو إنشاء رابط وهمي للنقر عليه
+    window.open(fileUrl, '_blank');
+    // ملاحظة: في تطبيق حقيقي، قد تحتاج إلى معالجة الـ CORS أو استخدام HttpClient
+    // مع responseType: 'blob' لتنزيل الملفات بشكل أكثر تحكماً.
+    // لكن لغرض هذا المثال، سنستخدم window.open
+  }
+
+  /**
+   * يعيد تعيين حالة التصدير
+   */
+  resetStatus(): void {
+    this.exportStatusSubject.next(null);
+  }
+}

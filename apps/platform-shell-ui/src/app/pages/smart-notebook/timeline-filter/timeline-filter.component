@@ -1,0 +1,189 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+
+// تعريف واجهات البيانات (يمكن نقلها إلى ملفات types/interfaces منفصلة في مشروع حقيقي)
+interface FilterOption {
+  value: string;
+  viewValue: string;
+}
+
+interface TimelineFilters {
+  type: string | null;
+  entityType: string | null;
+  startDate: Date | null;
+  endDate: Date | null;
+}
+
+@Component({
+  selector: 'app-timeline-filter',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatButtonModule,
+  ],
+  template: `
+    <div class="timeline-filter-container">
+      <form [formGroup]="filterForm" class="filter-form">
+
+        <!-- Type Filter -->
+        <mat-form-field appearance="outline">
+          <mat-label>نوع الخط الزمني</mat-label>
+          <mat-select formControlName="type">
+            <mat-option *ngFor="let option of typeOptions" [value]="option.value">
+              {{ option.viewValue }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Entity Type Filter -->
+        <mat-form-field appearance="outline">
+          <mat-label>نوع الكيان</mat-label>
+          <mat-select formControlName="entityType">
+            <mat-option *ngFor="let option of entityTypeOptions" [value]="option.value">
+              {{ option.viewValue }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Start Date Filter -->
+        <mat-form-field appearance="outline">
+          <mat-label>تاريخ البدء</mat-label>
+          <input matInput [matDatepicker]="startDatePicker" formControlName="startDate">
+          <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #startDatePicker></mat-datepicker>
+        </mat-form-field>
+
+        <!-- End Date Filter -->
+        <mat-form-field appearance="outline">
+          <mat-label>تاريخ الانتهاء</mat-label>
+          <input matInput [matDatepicker]="endDatePicker" formControlName="endDate">
+          <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #endDatePicker></mat-datepicker>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" (click)="applyFilters()">تطبيق الفلاتر</button>
+        <button mat-button (click)="clearFilters()">مسح الفلاتر</button>
+      </form>
+
+      <div class="current-filters">
+        <p>الفلاتر الحالية: {{ currentFilters | json }}</p>
+      </div>
+    </div>
+  `,
+  styles: [`
+    .timeline-filter-container {
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .filter-form {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    mat-form-field {
+      width: 200px; /* Adjust as needed */
+    }
+    .current-filters {
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+  `]
+})
+export class TimelineFilterComponent implements OnInit, OnDestroy {
+  // RxJS Subject لإدارة دورة حياة المكون
+  private destroy$ = new Subject<void>();
+
+  // نموذج FormGroup لإدارة حالة الفلاتر
+  filterForm = new FormGroup({
+    type: new FormControl<string | null>(null),
+    entityType: new FormControl<string | null>(null),
+    startDate: new FormControl<Date | null>(null),
+    endDate: new FormControl<Date | null>(null),
+  });
+
+  // بيانات وهمية لخيارات القائمة المنسدلة
+  typeOptions: FilterOption[] = [
+    { value: 'event', viewValue: 'حدث' },
+    { value: 'task', viewValue: 'مهمة' },
+    { value: 'milestone', viewValue: 'معلم' },
+  ];
+
+  entityTypeOptions: FilterOption[] = [
+    { value: 'person', viewValue: 'شخص' },
+    { value: 'location', viewValue: 'موقع' },
+    { value: 'organization', viewValue: 'منظمة' },
+  ];
+
+  // متغير لتخزين الفلاتر المطبقة حاليًا (لغرض العرض فقط)
+  currentFilters: TimelineFilters = {
+    type: null,
+    entityType: null,
+    startDate: null,
+    endDate: null,
+  };
+
+  constructor() {}
+
+  ngOnInit(): void {
+    // استخدام RxJS لمراقبة التغييرات في النموذج
+    this.filterForm.valueChanges
+      .pipe(
+        // تأخير بسيط لتجنب المعالجة المفرطة أثناء الكتابة
+        debounceTime(300),
+        // التأكد من أن القيمة قد تغيرت بالفعل
+        distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
+        // إيقاف الاشتراك عند تدمير المكون
+        takeUntil(this.destroy$)
+      )
+      .subscribe(value => {
+        // يمكن هنا استدعاء دالة لتطبيق الفلاتر تلقائيًا أو إرسالها كـ Output
+        console.log('Filter form value changed:', value);
+        // في مشروع حقيقي، يمكن إرسال القيمة عبر @Output() أو خدمة State
+      });
+  }
+
+  // دالة لتطبيق الفلاتر يدويًا (عند الضغط على زر)
+  applyFilters(): void {
+    const filters = this.filterForm.value as TimelineFilters;
+    this.currentFilters = filters;
+    console.log('Filters applied:', this.currentFilters);
+    // هنا يتم إرسال الفلاتر إلى المكون الأب أو خدمة State
+  }
+
+  // دالة لمسح الفلاتر
+  clearFilters(): void {
+    this.filterForm.reset({
+      type: null,
+      entityType: null,
+      startDate: null,
+      endDate: null,
+    });
+    this.applyFilters(); // لتحديث الفلاتر المطبقة
+  }
+
+  ngOnDestroy(): void {
+    // تنظيف الاشتراكات لمنع تسرب الذاكرة
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+}

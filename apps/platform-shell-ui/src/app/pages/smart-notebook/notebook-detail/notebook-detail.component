@@ -1,0 +1,151 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { Observable, Subscription, of } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
+
+// تعريف واجهات البيانات (يفترض وجودها في مكان آخر، لكن نضعها هنا للمثال)
+interface Page {
+  id: number;
+  title: string;
+  contentSnippet: string;
+}
+
+interface Section {
+  id: number;
+  title: string;
+  pages: Page[];
+}
+
+interface Notebook {
+  id: number;
+  title: string;
+  sections: Section[];
+}
+
+// خدمة وهمية لجلب البيانات (يفترض وجود خدمة حقيقية)
+class NotebookService {
+  getNotebookDetails(id: number): Observable<Notebook> {
+    // بيانات وهمية
+    const mockNotebook: Notebook = {
+      id: id,
+      title: `دفتر الملاحظات رقم ${id}`,
+      sections: [
+        { id: 101, title: 'المقدمة', pages: [{ id: 1, title: 'الصفحة الأولى', contentSnippet: 'محتوى الصفحة الأولى...' }] },
+        { id: 102, title: 'الفصل الأول: الأساسيات', pages: [
+          { id: 2, title: 'مفاهيم أساسية', contentSnippet: 'محتوى المفاهيم الأساسية...' },
+          { id: 3, title: 'تطبيق عملي', contentSnippet: 'محتوى التطبيق العملي...' }
+        ] },
+        { id: 103, title: 'الفصل الثاني: الميزات المتقدمة', pages: [
+          { id: 4, title: 'ميزات RxJS', contentSnippet: 'محتوى ميزات RxJS...' },
+          { id: 5, title: 'تكامل Angular Material', contentSnippet: 'محتوى تكامل Angular Material...' }
+        ] }
+      ]
+    };
+    return of(mockNotebook);
+  }
+}
+
+@Component({
+  selector: 'app-notebook-detail',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatListModule,
+    MatIconModule,
+    MatButtonModule
+  ],
+  template: `
+    <div class="notebook-detail-container" *ngIf="notebook$ | async as notebook">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>{{ notebook.title }}</mat-card-title>
+          <mat-card-subtitle>تفاصيل دفتر الملاحظات</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-list role="list">
+            <h3 mat-subheader>الأقسام (Sections)</h3>
+            <ng-container *ngFor="let section of notebook.sections">
+              <mat-list-item role="listitem">
+                <mat-icon matListItemIcon>folder</mat-icon>
+                <div matListItemTitle>{{ section.title }}</div>
+                <button mat-icon-button color="primary" matListItemMeta>
+                  <mat-icon>expand_more</mat-icon>
+                </button>
+              </mat-list-item>
+              
+              <!-- عرض الصفحات داخل كل قسم -->
+              <mat-list role="list" class="pages-list">
+                <ng-container *ngFor="let page of section.pages">
+                  <mat-list-item role="listitem" class="page-item">
+                    <mat-icon matListItemIcon>description</mat-icon>
+                    <div matListItemTitle>{{ page.title }}</div>
+                    <div matListItemLine>{{ page.contentSnippet }}</div>
+                    <button mat-icon-button matListItemMeta>
+                      <mat-icon>visibility</mat-icon>
+                    </button>
+                  </mat-list-item>
+                </ng-container>
+              </mat-list>
+              <mat-divider></mat-divider>
+            </ng-container>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  `,
+  styles: [`
+    .notebook-detail-container {
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .pages-list {
+      padding-left: 30px; /* مسافة بادئة للصفحات */
+    }
+    .page-item {
+      cursor: pointer;
+    }
+    .page-item:hover {
+      background-color: #f0f0f0;
+    }
+  `]
+})
+export class NotebookDetailComponent implements OnInit, OnDestroy {
+  // استخدام RxJS لتخزين حالة دفتر الملاحظات كـ Observable
+  notebook$: Observable<Notebook | undefined>;
+  private routeSubscription: Subscription;
+
+  // حقن الخدمات (يفترض حقن ActivatedRoute و NotebookService)
+  constructor(private route: ActivatedRoute) {
+    // في بيئة حقيقية، سيتم حقن NotebookService هنا
+    // نستخدم نسخة محلية لغرض المثال
+  }
+
+  ngOnInit(): void {
+    // استخدام switchMap للاستماع لتغييرات المعرف في المسار وجلب البيانات
+    this.notebook$ = this.route.paramMap.pipe(
+      switchMap(params => {
+        const notebookId = Number(params.get('id'));
+        if (notebookId) {
+          // استدعاء خدمة جلب البيانات (نستخدم خدمة وهمية هنا)
+          const notebookService = new NotebookService();
+          return notebookService.getNotebookDetails(notebookId).pipe(
+            tap(notebook => console.log('تم جلب تفاصيل دفتر الملاحظات:', notebook.title))
+          );
+        }
+        return of(undefined); // في حالة عدم وجود معرف
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    // لا حاجة للاشتراك اليدوي إذا كنا نستخدم async pipe، لكن نتركها كممارسة جيدة
+    // في هذا المثال، async pipe يتولى إلغاء الاشتراك
+  }
+}

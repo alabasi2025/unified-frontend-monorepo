@@ -1,0 +1,126 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+
+// تعريف الواجهات للبيانات
+interface Link {
+  id: string;
+  source: string;
+  target: string;
+  type: string;
+  metadata?: any;
+}
+
+interface GraphData {
+  nodes: any[];
+  links: Link[];
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class LinksService {
+  private apiUrl = '/api/links'; // نقطة نهاية افتراضية
+  private linksSubject = new BehaviorSubject<Link[]>([]);
+  public links$: Observable<Link[]> = this.linksSubject.asObservable();
+
+  // BehaviorSubject لتخزين بيانات الرسم البياني (Graph)
+  private graphSubject = new BehaviorSubject<GraphData>({ nodes: [], links: [] });
+  public graphData$: Observable<GraphData> = this.graphSubject.asObservable();
+
+  constructor(private http: HttpClient) {
+    // تحميل الروابط عند تهيئة الخدمة
+    this.getLinks().subscribe();
+  }
+
+  // معالج الأخطاء العام
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'An unknown error occurred!';
+    if (error.error instanceof ErrorEvent) {
+      // خطأ من جانب العميل أو الشبكة
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // خطأ من جانب الخادم
+      errorMessage = `Server returned code: ${error.status}, error message: ${error.message}`;
+    }
+    console.error(errorMessage);
+    // يمكن إرسال الخطأ إلى خدمة تسجيل خارجية هنا
+    return throwError(() => new Error(errorMessage));
+  }
+
+  /**
+   * إنشاء رابط جديد
+   * @param linkData بيانات الرابط الجديد
+   * @returns Observable<Link>
+   */
+  createLink(linkData: Omit<Link, 'id'>): Observable<Link> {
+    return this.http.post<Link>(this.apiUrl, linkData).pipe(
+      tap(newLink => {
+        const currentLinks = this.linksSubject.value;
+        this.linksSubject.next([...currentLinks, newLink]);
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * جلب جميع الروابط وتحديث الـ state
+   * @returns Observable<Link[]>
+   */
+  getLinks(): Observable<Link[]> {
+    return this.http.get<Link[]>(this.apiUrl).pipe(
+      tap(links => this.linksSubject.next(links)),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * جلب المسار بين عقدتين
+   * @param sourceId معرف العقدة المصدر
+   * @param targetId معرف العقدة الهدف
+   * @returns Observable<Link[]>
+   */
+  getPath(sourceId: string, targetId: string): Observable<Link[]> {
+    const pathUrl = `${this.apiUrl}/path?source=${sourceId}&target=${targetId}`;
+    return this.http.get<Link[]>(pathUrl).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * جلب بيانات الرسم البياني (Nodes and Links) وتحديث الـ state
+   * @returns Observable<GraphData>
+   */
+  getGraph(): Observable<GraphData> {
+    const graphUrl = `${this.apiUrl}/graph`;
+    return this.http.get<GraphData>(graphUrl).pipe(
+      tap(graphData => this.graphSubject.next(graphData)),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * حذف رابط
+   * @param linkId معرف الرابط المراد حذفه
+   * @returns Observable<void>
+   */
+  deleteLink(linkId: string): Observable<void> {
+    const deleteUrl = `${this.apiUrl}/${linkId}`;
+    return this.http.delete<void>(deleteUrl).pipe(
+      tap(() => {
+        const currentLinks = this.linksSubject.value.filter(link => link.id !== linkId);
+        this.linksSubject.next(currentLinks);
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * الحصول على عدد الروابط الحالية في الـ state
+   * @returns number
+   */
+  get linksCount(): number {
+    return this.linksSubject.value.length;
+  }
+}

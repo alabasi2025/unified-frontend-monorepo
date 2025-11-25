@@ -1,0 +1,115 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+
+// تعريف واجهة لخطوة الدليل
+interface GuideStep {
+  id: number;
+  title: string;
+  description: string;
+  isCompleted: boolean;
+}
+
+// خدمة وهمية لإدارة حالة الخطوات (لغرض المثال)
+class GuideStateService {
+  private stepsSubject = new BehaviorSubject<GuideStep[]>([
+    { id: 1, title: 'تحديد الهدف', description: 'حدد بوضوح ما تريد إنجازه اليوم.', isCompleted: false },
+    { id: 2, title: 'جمع المعلومات', description: 'استخدم أدوات البحث لجمع البيانات اللازمة.', isCompleted: false },
+    { id: 3, title: 'تنفيذ المهمة', description: 'ابدأ في تنفيذ المهام المخطط لها خطوة بخطوة.', isCompleted: false },
+    { id: 4, title: 'المراجعة والتوثيق', description: 'راجع عملك ووثق النتائج النهائية.', isCompleted: false },
+    { id: 5, title: 'تقديم النتيجة', description: 'أرسل النتيجة النهائية وأنهِ المهمة.', isCompleted: false },
+  ]);
+
+  steps$: Observable<GuideStep[]> = this.stepsSubject.asObservable();
+
+  constructor() {}
+
+  toggleStepCompletion(stepId: number): void {
+    const currentSteps = this.stepsSubject.getValue();
+    const updatedSteps = currentSteps.map(step =>
+      step.id === stepId ? { ...step, isCompleted: !step.isCompleted } : step
+    );
+    this.stepsSubject.next(updatedSteps);
+  }
+}
+
+@Component({
+  selector: 'app-manus-guide-steps',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatStepperModule,
+    MatButtonModule,
+    MatIconModule
+  ],
+  template: `
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>دليل خطوات عمل Manus اليومية</mat-card-title>
+        <mat-card-subtitle>تتبع تقدمك في إنجاز المهام</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-stepper orientation="vertical" #stepper>
+          <mat-step *ngFor="let step of (steps$ | async); let i = index" [completed]="step.isCompleted">
+            <ng-template matStepLabel>
+              <span [class.completed-step]="step.isCompleted">{{ step.title }}</span>
+            </ng-template>
+            <p>{{ step.description }}</p>
+            <div>
+              <button mat-button color="primary" (click)="toggleCompletion(step.id)">
+                <mat-icon>{{ step.isCompleted ? 'undo' : 'done' }}</mat-icon>
+                {{ step.isCompleted ? 'إلغاء الإكمال' : 'تم الإكمال' }}
+              </button>
+              <button mat-button *ngIf="i < (steps$ | async).length - 1" matStepperNext>التالي</button>
+              <button mat-button *ngIf="i === (steps$ | async).length - 1" (click)="stepper.reset()">إعادة تعيين</button>
+            </div>
+          </mat-step>
+        </mat-stepper>
+      </mat-card-content>
+    </mat-card>
+  `,
+  styles: [`
+    :host {
+      display: block;
+      padding: 20px;
+    }
+    .completed-step {
+      text-decoration: line-through;
+      color: green;
+    }
+    mat-card-title {
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+    mat-card-subtitle {
+      color: #757575;
+    }
+  `],
+  providers: [GuideStateService] // توفير الخدمة على مستوى المكون
+})
+export class ManusGuideStepsComponent implements OnInit, OnDestroy {
+  steps$: Observable<GuideStep[]>;
+  private subscription: Subscription;
+
+  constructor(private guideStateService: GuideStateService) {
+    this.steps$ = this.guideStateService.steps$;
+  }
+
+  ngOnInit(): void {
+    // يمكن إضافة منطق تهيئة هنا
+  }
+
+  toggleCompletion(stepId: number): void {
+    this.guideStateService.toggleStepCompletion(stepId);
+  }
+
+  ngOnDestroy(): void {
+    // لا حاجة للاشتراك هنا لأننا نستخدم async pipe، ولكن نتركها كممارسة جيدة
+    // إذا كان هناك اشتراكات أخرى، يجب إلغاؤها هنا.
+  }
+}

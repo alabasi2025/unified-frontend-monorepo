@@ -1,0 +1,260 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableModule } from '@angular/material/table';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormControl,
+} from '@angular/forms';
+import {
+  Observable,
+  Subject,
+  combineLatest,
+  map,
+  startWith,
+  debounceTime,
+  distinctUntilChanged,
+  takeUntil,
+} from 'rxjs';
+
+// تعريف واجهة لتمثيل عنصر الأرشيف
+interface ArchiveItem {
+  id: number;
+  title: string;
+  category: string;
+  date: Date;
+  status: 'Active' | 'Archived' | 'Draft';
+}
+
+@Component({
+  selector: 'app-archive',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSelectModule,
+    MatPaginatorModule,
+    MatTableModule,
+  ],
+  template: `
+    <mat-card class="archive-container">
+      <mat-card-header>
+        <mat-card-title>أرشيف الملاحظات الذكية</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <!-- فلاتر البحث -->
+        <div class="filters-section">
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>البحث بالعنوان</mat-label>
+            <input matInput [formControl]="searchControl" />
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>التصنيف</mat-label>
+            <mat-select [formControl]="categoryControl">
+              <mat-option value="all">الكل</mat-option>
+              <mat-option *ngFor="let cat of categories" [value]="cat">{{
+                cat
+              }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>الحالة</mat-label>
+            <mat-select [formControl]="statusControl">
+              <mat-option value="all">الكل</mat-option>
+              <mat-option value="Active">نشط</mat-option>
+              <mat-option value="Archived">مؤرشف</mat-option>
+              <mat-option value="Draft">مسودة</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- جدول عرض الأرشيف -->
+        <div class="archive-table-wrapper">
+          <table mat-table [dataSource]="filteredArchive$ | async">
+            <!-- الأعمدة -->
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef>#</th>
+              <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="title">
+              <th mat-header-cell *matHeaderCellDef>العنوان</th>
+              <td mat-cell *matCellDef="let element">{{ element.title }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="category">
+              <th mat-header-cell *matHeaderCellDef>التصنيف</th>
+              <td mat-cell *matCellDef="let element">{{ element.category }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef>التاريخ</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.date | date : 'shortDate' }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>الحالة</th>
+              <td mat-cell *matCellDef="let element">{{ element.status }}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        </div>
+
+        <!-- الترقيم (Paginator) -->
+        <mat-paginator
+          [length]="(archiveData$ | async)?.length"
+          [pageSize]="10"
+          [pageSizeOptions]="[5, 10, 25, 100]"
+          aria-label="Select page"
+        >
+        </mat-paginator>
+      </mat-card-content>
+    </mat-card>
+  `,
+  styles: [
+    `
+      .archive-container {
+        margin: 20px;
+      }
+      .filters-section {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      .filter-field {
+        min-width: 200px;
+        flex-grow: 1;
+      }
+      .archive-table-wrapper {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+      }
+    `,
+  ],
+})
+export class ArchiveComponent implements OnInit, OnDestroy {
+  // RxJS Subject لإدارة إيقاف الاشتراكات
+  private destroy$ = new Subject<void>();
+
+  // بيانات الأرشيف (محاكاة لـ State Management)
+  private mockArchiveData: ArchiveItem[] = [
+    {
+      id: 1,
+      title: 'ملاحظة اجتماع الفريق',
+      category: 'اجتماعات',
+      date: new Date('2023-10-01'),
+      status: 'Archived',
+    },
+    {
+      id: 2,
+      title: 'خطة عمل الربع الرابع',
+      category: 'خطط',
+      date: new Date('2023-09-15'),
+      status: 'Active',
+    },
+    {
+      id: 3,
+      title: 'مسودة تقرير الأداء',
+      category: 'تقارير',
+      date: new Date('2023-11-20'),
+      status: 'Draft',
+    },
+    {
+      id: 4,
+      title: 'ملاحظات حول المشروع أ',
+      category: 'مشاريع',
+      date: new Date('2023-10-25'),
+      status: 'Archived',
+    },
+    {
+      id: 5,
+      title: 'ملاحظة حول المشروع ب',
+      category: 'مشاريع',
+      date: new Date('2023-10-25'),
+      status: 'Active',
+    },
+  ];
+
+  // Observable للبيانات الأصلية
+  archiveData$: Observable<ArchiveItem[]> = new Observable((observer) => {
+    observer.next(this.mockArchiveData);
+    observer.complete();
+  });
+
+  // عناصر التحكم في الفلاتر
+  searchControl = new FormControl('');
+  categoryControl = new FormControl('all');
+  statusControl = new FormControl('all');
+
+  // قائمة التصنيفات المتاحة
+  categories = ['اجتماعات', 'خطط', 'تقارير', 'مشاريع'];
+
+  // الأعمدة المعروضة في الجدول
+  displayedColumns: string[] = [
+    'id',
+    'title',
+    'category',
+    'date',
+    'status',
+  ];
+
+  // Observable لبيانات الأرشيف المفلترة
+  filteredArchive$!: Observable<ArchiveItem[]>;
+
+  ngOnInit(): void {
+    // دمج قيم الفلاتر مع البيانات الأصلية لتطبيق الفلترة
+    this.filteredArchive$ = combineLatest([
+      this.archiveData$,
+      this.searchControl.valueChanges.pipe(
+        startWith(''),
+        debounceTime(300),
+        distinctUntilChanged(),
+        map((value) => (value || '').toLowerCase())
+      ),
+      this.categoryControl.valueChanges.pipe(startWith('all')),
+      this.statusControl.valueChanges.pipe(startWith('all')),
+    ]).pipe(
+      map(([data, searchTerm, category, status]) => {
+        return data.filter((item) => {
+          const matchesSearch = item.title
+            .toLowerCase()
+            .includes(searchTerm);
+          const matchesCategory =
+            category === 'all' || item.category === category;
+          const matchesStatus = status === 'all' || item.status === status;
+
+          return matchesSearch && matchesCategory && matchesStatus;
+        });
+      }),
+      takeUntil(this.destroy$) // إدارة الاشتراكات
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+}

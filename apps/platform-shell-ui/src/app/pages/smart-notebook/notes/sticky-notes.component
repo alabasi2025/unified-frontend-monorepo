@@ -1,0 +1,175 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { CdkDragDrop, moveItemInArray, transferArrayItem, CdkDrag, CdkDropList, CdkDropListGroup } from '@angular/cdk/drag-drop';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+
+// تعريف واجهة للملاحظة اللاصقة
+interface StickyNote {
+  id: number;
+  content: string;
+  color: string; // مثال: 'yellow', 'blue', 'pink'
+  position: { x: number, y: number }; // لتحديد موضع الملاحظة على الشاشة
+}
+
+// خدمة وهمية لإدارة حالة الملاحظات
+class StickyNotesService {
+  private notesSubject = new BehaviorSubject<StickyNote[]>([
+    { id: 1, content: 'ملاحظة هامة: مراجعة تقرير الربع الأول.', color: 'yellow', position: { x: 50, y: 50 } },
+    { id: 2, content: 'تذكير: اجتماع الفريق الساعة 10 صباحًا.', color: 'blue', position: { x: 300, y: 100 } },
+    { id: 3, content: 'فكرة جديدة: دمج الذكاء الاصطناعي في نظام المهام.', color: 'pink', position: { x: 150, y: 250 } },
+  ]);
+
+  notes$: Observable<StickyNote[]> = this.notesSubject.asObservable();
+
+  getNotes(): StickyNote[] {
+    return this.notesSubject.getValue();
+  }
+
+  updateNotePosition(noteId: number, newPosition: { x: number, y: number }): void {
+    const notes = this.notesSubject.getValue().map(note =>
+      note.id === noteId ? { ...note, position: newPosition } : note
+    );
+    this.notesSubject.next(notes);
+  }
+}
+
+@Component({
+  selector: 'app-sticky-notes',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    CdkDrag,
+    CdkDropList,
+    CdkDropListGroup // على الرغم من أننا نستخدم CdkDrag فقط، إلا أنه من الجيد تضمينها
+  ],
+  template: `
+    <div class="notes-container">
+      <mat-card 
+        *ngFor="let note of notes$ | async" 
+        [style.background-color]="note.color"
+        [style.transform]="'translate3d(' + note.position.x + 'px, ' + note.position.y + 'px, 0)'"
+        cdkDrag
+        (cdkDragEnded)="onDragEnded($event, note)"
+        class="sticky-note"
+      >
+        <mat-card-content>
+          <p>{{ note.content }}</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-icon-button color="warn" (click)="deleteNote(note.id)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+      
+      <div *ngIf="!(notes$ | async)?.length" class="no-notes-message">
+        لا توجد ملاحظات لاصقة حاليًا. اضغط على زر الإضافة لإنشاء واحدة.
+      </div>
+    </div>
+  `,
+  styles: [`
+    .notes-container {
+      position: relative;
+      width: 100%;
+      height: 600px; /* ارتفاع افتراضي للحاوية */
+      border: 1px solid #ccc;
+      overflow: hidden;
+      background-color: #f9f9f9;
+    }
+    
+    .sticky-note {
+      position: absolute;
+      width: 200px;
+      min-height: 150px;
+      padding: 10px;
+      box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+      cursor: grab;
+      transition: box-shadow 0.3s ease;
+      z-index: 10; /* لضمان ظهورها فوق الحاوية */
+    }
+    
+    .sticky-note:active {
+      cursor: grabbing;
+      box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.5);
+      z-index: 20; /* لضمان ظهور الملاحظة المسحوبة في المقدمة */
+    }
+    
+    .mat-card-content p {
+      white-space: pre-wrap;
+    }
+    
+    .mat-card-actions {
+      display: flex;
+      justify-content: flex-end;
+      padding: 0 8px 8px 8px;
+    }
+    
+    .no-notes-message {
+      text-align: center;
+      padding-top: 50px;
+      color: #888;
+      font-size: 1.2em;
+    }
+  `]
+})
+export class StickyNotesComponent implements OnInit, OnDestroy {
+  // استخدام خدمة وهمية لإدارة الحالة
+  private notesService = new StickyNotesService();
+  notes$: Observable<StickyNote[]> = this.notesService.notes$;
+  
+  // يمكن استخدام اشتراكات RxJS هنا إذا لزم الأمر، لكن استخدام async pipe يغني عن ذلك في هذا المثال
+  // private subscription: Subscription;
+
+  constructor() { }
+
+  ngOnInit(): void {
+    // يمكن هنا تحميل الملاحظات من API عند التهيئة
+  }
+
+  ngOnDestroy(): void {
+    // إلغاء الاشتراك إذا تم استخدام اشتراكات يدوية
+  }
+
+  /**
+   * يتم استدعاؤها عند انتهاء عملية السحب والإفلات
+   * @param event حدث السحب والإفلات
+   * @param note الملاحظة التي تم سحبها
+   */
+  onDragEnded(event: any, note: StickyNote): void {
+    // الحصول على الإزاحة (offset) من الموضع الأصلي
+    const { x, y } = event.distance;
+    
+    // الحصول على الموضع الحالي للملاحظة من الخدمة
+    const currentPosition = note.position;
+    
+    // حساب الموضع الجديد
+    const newPosition = {
+      x: currentPosition.x + x,
+      y: currentPosition.y + y
+    };
+    
+    // تحديث موضع الملاحظة في الخدمة (محاكاة لإدارة الحالة)
+    this.notesService.updateNotePosition(note.id, newPosition);
+    
+    // إعادة تعيين موضع عنصر السحب في DOM إلى الصفر
+    // هذا ضروري لأننا نستخدم خاصية position: absolute و transform لتحديد الموضع
+    event.source.reset();
+  }
+  
+  /**
+   * وظيفة وهمية لحذف ملاحظة
+   * @param noteId معرف الملاحظة المراد حذفها
+   */
+  deleteNote(noteId: number): void {
+    console.log(`Deleting note with ID: ${noteId}`);
+    // منطق الحذف الفعلي هنا (تحديث الـ BehaviorSubject في الخدمة)
+  }
+  
+  // يمكن إضافة وظائف أخرى مثل addNote, editNote
+}

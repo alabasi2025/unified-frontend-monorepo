@@ -1,0 +1,134 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
+
+/**
+ * Component for editing the Manus Guide instructions.
+ * Uses Angular Material for UI and RxJS for state management (simulated here with a Subject).
+ */
+@Component({
+  selector: 'app-manus-guide-editor',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+  ],
+  template: `
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>محرر دليل مانوس</mat-card-title>
+        <mat-card-subtitle>تحديث تعليمات وإرشادات النظام</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>محتوى الدليل</mat-label>
+          <textarea matInput
+                    rows="15"
+                    [(ngModel)]="guideContent"
+                    placeholder="أدخل محتوى دليل مانوس هنا..."></textarea>
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-button color="warn" (click)="revertChanges()">
+          <mat-icon>cancel</mat-icon>
+          إلغاء
+        </button>
+        <button mat-raised-button color="primary" (click)="saveContent()" [disabled]="!guideContent">
+          <mat-icon>save</mat-icon>
+          حفظ التحديث
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  `,
+  styles: [`
+    .full-width {
+      width: 100%;
+    }
+    mat-card {
+      max-width: 800px;
+      margin: 20px auto;
+    }
+  `]
+})
+export class ManusGuideEditorComponent implements OnInit, OnDestroy {
+  // RxJS Subject for managing component lifecycle and unsubscribing
+  private destroy$ = new Subject<void>();
+
+  // Simulated state for the guide content
+  guideContent: string = '';
+  private initialContent: string = 'هذا هو المحتوى الأولي لدليل مانوس.';
+
+  constructor() { }
+
+  ngOnInit(): void {
+    // Simulate loading initial content (RxJS usage example)
+    this.loadInitialContent();
+  }
+
+  /**
+   * Simulates loading the initial guide content.
+   * In a real application, this would involve an API call returning an Observable.
+   */
+  loadInitialContent(): void {
+    // Simulate an Observable from a service
+    new Subject<string>().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: () => {
+        // In a real scenario, the API would return the content
+        this.guideContent = this.initialContent;
+      }
+    });
+    // For this example, we set it directly
+    this.guideContent = this.initialContent;
+  }
+
+  /**
+   * Handles the save action.
+   * In a real application, this would dispatch an action or call a service method
+   * that returns an Observable (RxJS usage).
+   */
+  saveContent(): void {
+    if (this.guideContent) {
+      console.log('Saving content:', this.guideContent);
+      // Simulate a save operation with RxJS
+      new Subject<boolean>().pipe(
+        takeUntil(this.destroy$)
+      ).subscribe({
+        next: (success) => {
+          if (success) {
+            console.log('Content saved successfully!');
+            this.initialContent = this.guideContent; // Update initial content on successful save
+          }
+        }
+      });
+      // For this example, we log and simulate success
+      this.initialContent = this.guideContent;
+      alert('تم حفظ محتوى الدليل بنجاح!');
+    }
+  }
+
+  /**
+   * Reverts the content to the last saved state.
+   */
+  revertChanges(): void {
+    this.guideContent = this.initialContent;
+  }
+
+  ngOnDestroy(): void {
+    // Clean up RxJS subscriptions
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+}

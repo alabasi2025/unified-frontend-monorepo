@@ -1,0 +1,81 @@
+import { Component, Inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
+// تعريف واجهة البيانات التي يتوقعها الحوار
+export interface EditSectionDialogData {
+  id: string;
+  name: string;
+  description: string;
+}
+
+// تعريف واجهة البيانات التي يعيدها الحوار
+export interface EditSectionDialogResult {
+  name: string;
+  description: string;
+}
+
+@Component({
+  selector: 'app-edit-section-dialog',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+  ],
+  templateUrl: './edit-section-dialog.component.html',
+  styleUrls: ['./edit-section-dialog.component.scss'] // افتراض وجود ملف CSS
+})
+export class EditSectionDialogComponent implements OnInit {
+  editForm!: FormGroup;
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    private fb: FormBuilder,
+    public dialogRef: MatDialogRef<EditSectionDialogComponent, EditSectionDialogResult>,
+    @Inject(MAT_DIALOG_DATA) public data: EditSectionDialogData
+  ) {}
+
+  ngOnInit(): void {
+    this.editForm = this.fb.group({
+      name: [this.data.name, [Validators.required, Validators.maxLength(100)]],
+      description: [this.data.description, [Validators.maxLength(500)]]
+    });
+
+    // مثال على استخدام RxJS لمراقبة التغييرات في النموذج (State Management)
+    this.editForm.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => {
+        // يمكن استخدام هذا لمزامنة الحالة مع خدمة أو لتمكين/تعطيل زر الحفظ
+        // console.log('Form value changed:', value);
+      });
+  }
+
+  onCancel(): void {
+    this.dialogRef.close();
+  }
+
+  onSave(): void {
+    if (this.editForm.valid) {
+      const result: EditSectionDialogResult = {
+        name: this.editForm.value.name,
+        description: this.editForm.value.description
+      };
+      this.dialogRef.close(result);
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+}

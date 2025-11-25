@@ -1,0 +1,195 @@
+import { Component, Input, OnInit, OnDestroy, HostBinding } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { DragDropModule, CdkDragEnd } from '@angular/cdk/drag-drop';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { distinctUntilChanged, map } from 'rxjs/operators';
+
+// تعريف واجهة لبيانات الملاحظة اللاصقة
+interface StickyNoteData {
+  id: string;
+  content: string;
+  color: string; // مثال: '#ffeb3b' (أصفر)
+  position: { x: number; y: number };
+}
+
+@Component({
+  selector: 'app-sticky-note',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
+    MatInputModule,
+    DragDropModule,
+  ],
+  template: `
+    <mat-card
+      class="sticky-note"
+      [style.background-color]="(noteState$ | async)?.color"
+      cdkDrag
+      (cdkDragEnded)="onDragEnd($event)"
+      [cdkDragFreeDragPosition]="(noteState$ | async)?.position"
+    >
+      <div class="note-header">
+        <button mat-icon-button (click)="toggleEditMode()">
+          <mat-icon>{{ isEditing ? 'done' : 'edit' }}</mat-icon>
+        </button>
+      </div>
+
+      <div class="note-content">
+        <ng-container *ngIf="isEditing; else viewMode">
+          <mat-form-field appearance="fill" class="full-width">
+            <textarea
+              matInput
+              [(ngModel)]="editableContent"
+              (ngModelChange)="updateContent($event)"
+              rows="5"
+              placeholder="اكتب ملاحظتك هنا..."
+            ></textarea>
+          </mat-form-field>
+          <!-- مثال بسيط لتغيير اللون - يمكن استبداله بـ color picker أكثر تعقيداً -->
+          <div class="color-picker">
+            <label>اللون:</label>
+            <input type="color" [ngModel]="(noteState$ | async)?.color" (ngModelChange)="updateColor($event)">
+          </div>
+        </ng-container>
+
+        <ng-template #viewMode>
+          <p class="note-text" (dblclick)="toggleEditMode()">
+            {{ (noteState$ | async)?.content || 'انقر مرتين للتعديل' }}
+          </p>
+        </ng-template>
+      </div>
+    </mat-card>
+  `,
+  styles: [
+    `
+      .sticky-note {
+        width: 250px;
+        min-height: 250px;
+        padding: 10px;
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+        cursor: grab;
+        position: absolute; /* مهم لـ cdkDragFreeDragPosition */
+      }
+      .note-header {
+        display: flex;
+        justify-content: flex-end;
+      }
+      .note-content {
+        padding: 5px;
+      }
+      .note-text {
+        white-space: pre-wrap;
+        min-height: 150px;
+        cursor: text;
+      }
+      .full-width {
+        width: 100%;
+      }
+      .color-picker {
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+    `,
+  ],
+})
+export class StickyNoteComponent implements OnInit, OnDestroy {
+  // RxJS لإدارة حالة الملاحظة
+  private noteStateSubject = new BehaviorSubject<StickyNoteData>({
+    id: 'note-1',
+    content: 'ملاحظة لاصقة جديدة. يمكن سحبها وتعديل محتواها ولونها.',
+    color: '#ffeb3b', // أصفر
+    position: { x: 50, y: 50 },
+  });
+  noteState$: Observable<StickyNoteData> = this.noteStateSubject.asObservable();
+
+  // متغير مؤقت لتعديل المحتوى في وضع التحرير
+  public editableContent: string = '';
+  public isEditing: boolean = false;
+
+  private subscription = new Subscription();
+
+  // يمكن استخدام @Input لتلقي بيانات الملاحظة من الوالد
+  @Input() set initialData(data: Partial<StickyNoteData>) {
+    this.noteStateSubject.next({ ...this.noteStateSubject.value, ...data });
+  }
+
+  ngOnInit(): void {
+    // مزامنة المحتوى القابل للتعديل مع حالة الملاحظة عند التهيئة
+    this.subscription.add(
+      this.noteState$
+        .pipe(map(state => state.content), distinctUntilChanged())
+        .subscribe(content => {
+          this.editableContent = content;
+        })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  /**
+   * تبديل وضع التحرير.
+   * عند الخروج من وضع التحرير، يتم حفظ المحتوى.
+   */
+  toggleEditMode(): void {
+    this.isEditing = !this.isEditing;
+    if (!this.isEditing) {
+      // حفظ المحتوى عند الخروج من وضع التحرير
+      this.updateNoteState({ content: this.editableContent });
+    } else {
+      // التأكد من أن المحتوى القابل للتعديل محدث عند الدخول لوضع التحرير
+      this.editableContent = this.noteStateSubject.value.content;
+    }
+  }
+
+  /**
+   * تحديث محتوى الملاحظة.
+   * @param newContent المحتوى الجديد
+   */
+  updateContent(newContent: string): void {
+    // يتم تحديث المحتوى في editableContent أولاً، ثم يتم حفظه في toggleEditMode
+    // إذا كنت تريد الحفظ الفوري، قم بإلغاء التعليق على السطر التالي:
+    // this.updateNoteState({ content: newContent });
+  }
+
+  /**
+   * تحديث لون الملاحظة.
+   * @param newColor اللون الجديد
+   */
+  updateColor(newColor: string): void {
+    this.updateNoteState({ color: newColor });
+  }
+
+  /**
+   * معالجة نهاية عملية السحب لتحديث الموضع.
+   * @param event حدث نهاية السحب
+   */
+  onDragEnd(event: CdkDragEnd): void {
+    const { x, y } = event.source.getFreeDragPosition();
+    this.updateNoteState({ position: { x, y } });
+  }
+
+  /**
+   * تحديث حالة الملاحظة باستخدام RxJS.
+   * @param changes التغييرات المراد تطبيقها على حالة الملاحظة
+   */
+  private updateNoteState(changes: Partial<StickyNoteData>): void {
+    const currentState = this.noteStateSubject.value;
+    const newState = { ...currentState, ...changes };
+    this.noteStateSubject.next(newState);
+    // في تطبيق حقيقي، هنا يتم استدعاء خدمة لحفظ الحالة في Backend
+    console.log('Note state updated:', newState);
+  }
+}

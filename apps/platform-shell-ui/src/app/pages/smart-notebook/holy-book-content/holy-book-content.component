@@ -1,0 +1,120 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+
+// تعريف واجهة لتمثيل محتوى الكتاب المقدس
+interface HolyBookContent {
+  title: string;
+  chapter: number;
+  verse: number;
+  text: string;
+}
+
+@Component({
+  selector: 'app-holy-book-content',
+  standalone: true,
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule],
+  template: `
+    <mat-card class="holy-book-card">
+      <mat-card-header>
+        <mat-card-title>{{ (content$ | async)?.title }}</mat-card-title>
+        <mat-card-subtitle>
+          الفصل: {{ (content$ | async)?.chapter }} | الآية: {{ (content$ | async)?.verse }}
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="content-text" [innerHTML]="(content$ | async)?.text">
+          <!-- محتوى الكتاب المقدس المنسق -->
+        </div>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-icon-button color="primary" (click)="loadPrevious()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <button mat-button color="accent" (click)="loadNext()">
+          الآية التالية <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  `,
+  styles: [`
+    .holy-book-card {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+    .content-text {
+      font-size: 1.2em;
+      line-height: 1.8;
+      text-align: justify;
+      margin-top: 15px;
+      /* يمكن إضافة المزيد من التنسيقات لـ HTML المنسق هنا */
+    }
+    .mat-card-title {
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+  `]
+})
+export class HolyBookContentComponent implements OnInit, OnDestroy {
+  // RxJS BehaviorSubject لإدارة حالة محتوى الكتاب المقدس
+  private contentSubject = new BehaviorSubject<HolyBookContent | null>(null);
+  // Observable يمكن للمكونات الأخرى الاشتراك فيه
+  content$: Observable<HolyBookContent | null> = this.contentSubject.asObservable();
+
+  // محتوى وهمي للاختبار
+  private mockContent: HolyBookContent[] = [
+    { title: 'سورة الفاتحة', chapter: 1, verse: 1, text: 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ' },
+    { title: 'سورة الفاتحة', chapter: 1, verse: 2, text: 'ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ' },
+    { title: 'سورة الفاتحة', chapter: 1, verse: 3, text: 'ٱلرَّحْمَٰنِ ٱلرَّحِيمِ' },
+    { title: 'سورة البقرة', chapter: 2, verse: 1, text: 'الم' },
+  ];
+  private currentIndex = 0;
+
+  ngOnInit(): void {
+    // تحميل المحتوى الأولي عند تهيئة المكون
+    this.loadContent(this.currentIndex);
+  }
+
+  /**
+   * دالة لتحميل محتوى معين وتحديث الـ Subject
+   * @param index فهرس المحتوى المراد تحميله
+   */
+  private loadContent(index: number): void {
+    if (index >= 0 && index < this.mockContent.length) {
+      this.contentSubject.next(this.mockContent[index]);
+      this.currentIndex = index;
+    }
+  }
+
+  /**
+   * تحميل الآية التالية
+   */
+  loadNext(): void {
+    if (this.currentIndex < this.mockContent.length - 1) {
+      this.loadContent(this.currentIndex + 1);
+    } else {
+      console.log('وصلت إلى نهاية المحتوى.');
+      // يمكن إضافة منطق لتحميل المزيد من البيانات هنا
+    }
+  }
+
+  /**
+   * تحميل الآية السابقة
+   */
+  loadPrevious(): void {
+    if (this.currentIndex > 0) {
+      this.loadContent(this.currentIndex - 1);
+    } else {
+      console.log('وصلت إلى بداية المحتوى.');
+    }
+  }
+
+  ngOnDestroy(): void {
+    // يجب إكمال الـ Subject عند تدمير المكون لتجنب تسرب الذاكرة
+    this.contentSubject.complete();
+  }
+}

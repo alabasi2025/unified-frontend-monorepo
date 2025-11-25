@@ -1,0 +1,115 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+
+@Component({
+  selector: 'app-manus-guide',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatListModule,
+    MatIconModule,
+    MatButtonModule
+  ],
+  template: `
+    <mat-card class="manus-guide-card">
+      <mat-card-header>
+        <mat-card-title>دليل مانوس للمطورين</mat-card-title>
+        <mat-card-subtitle>خطوات العمل الأساسية</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-list role="list">
+          <mat-list-item role="listitem">
+            <mat-icon matListItemIcon>code</mat-icon>
+            <div matListItemTitle>الخطوة 1: فهم المهمة</div>
+            <div matListItemLine>قراءة وتحليل متطلبات المهمة بدقة.</div>
+          </mat-list-item>
+          <mat-list-item role="listitem">
+            <mat-icon matListItemIcon>design_services</mat-icon>
+            <div matListItemTitle>الخطوة 2: التخطيط والتصميم</div>
+            <div matListItemLine>تحديد المكونات المطلوبة، البنية، واستراتيجية إدارة الحالة (RxJS).</div>
+          </mat-list-item>
+          <mat-list-item role="listitem">
+            <mat-icon matListItemIcon>build</mat-icon>
+            <div matListItemTitle>الخطوة 3: التنفيذ</div>
+            <div matListItemLine>كتابة الكود باستخدام TypeScript و Angular Material.</div>
+          </mat-list-item>
+          <mat-list-item role="listitem">
+            <mat-icon matListItemIcon>bug_report</mat-icon>
+            <div matListItemTitle>الخطوة 4: الاختبار والتصحيح</div>
+            <div matListItemLine>ضمان عمل المكون بشكل صحيح وخلوه من الأخطاء.</div>
+          </mat-list-item>
+          <mat-list-item role="listitem">
+            <mat-icon matListItemIcon>publish</mat-icon>
+            <div matListItemTitle>الخطوة 5: التوثيق والتقديم</div>
+            <div matListItemLine>توثيق العمل وتقديمه وفقًا للمتطلبات.</div>
+          </mat-list-item>
+        </mat-list>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-flat-button color="primary">بدء العمل</button>
+      </mat-card-actions>
+    </mat-card>
+  `,
+  styles: [`
+    .manus-guide-card {
+      max-width: 600px;
+      margin: 32px auto;
+      direction: rtl; /* لدعم اللغة العربية */
+      text-align: right;
+    }
+    .manus-guide-card mat-card-header {
+      border-bottom: 1px solid #eee;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+    }
+    .manus-guide-card mat-card-title {
+      font-size: 1.5em;
+      font-weight: 500;
+    }
+    .manus-guide-card mat-card-subtitle {
+      color: #757575;
+    }
+    mat-list-item {
+      height: auto !important;
+      padding: 8px 0;
+    }
+    mat-list-item .mat-list-item-content {
+      align-items: flex-start;
+    }
+    mat-list-item mat-icon {
+      margin-left: 16px;
+      color: #3f51b5; /* لون أيقونة أساسي */
+    }
+    mat-list-item div[matListItemTitle] {
+      font-weight: 500;
+      font-size: 1.1em;
+    }
+    mat-list-item div[matListItemLine] {
+      color: #555;
+      margin-top: 4px;
+    }
+  `]
+})
+export class ManusGuideComponent implements OnInit {
+  // مثال على استخدام RxJS لإدارة حالة بسيطة
+  // في مكون حقيقي، سيتم استخدام خدمة لإدارة الحالة
+  // ولكن هنا نكتفي بمثال توضيحي
+  guideSteps: { title: string, description: string, icon: string }[] = [
+    { title: 'الخطوة 1: فهم المهمة', description: 'قراءة وتحليل متطلبات المهمة بدقة.', icon: 'code' },
+    { title: 'الخطوة 2: التخطيط والتصميم', description: 'تحديد المكونات المطلوبة، البنية، واستراتيجية إدارة الحالة (RxJS).', icon: 'design_services' },
+    { title: 'الخطوة 3: التنفيذ', description: 'كتابة الكود باستخدام TypeScript و Angular Material.', icon: 'build' },
+    { title: 'الخطوة 4: الاختبار والتصحيح', description: 'ضمان عمل المكون بشكل صحيح وخلوه من الأخطاء.', icon: 'bug_report' },
+    { title: 'الخطوة 5: التوثيق والتقديم', description: 'توثيق العمل وتقديمه وفقًا للمتطلبات.', icon: 'publish' },
+  ];
+
+  constructor() { }
+
+  ngOnInit(): void {
+    // يمكن هنا تحميل البيانات أو الاشتراك في حالة RxJS
+  }
+}

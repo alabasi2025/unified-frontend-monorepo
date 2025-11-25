@@ -1,0 +1,180 @@
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { Observable, BehaviorSubject } from 'rxjs';
+
+// تعريف واجهة لنموذج دفتر الملاحظات
+export interface Notebook {
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
+  pagesCount: number;
+  lastUpdated: Date;
+  isPinned: boolean;
+  isFavorite: boolean;
+  isArchived: boolean;
+}
+
+@Component({
+  selector: 'app-notebook-card',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
+    MatMenuModule,
+  ],
+  template: `
+    <mat-card class="notebook-card" [style.border-left-color]="notebook.color">
+      <mat-card-header>
+        <div mat-card-avatar class="notebook-icon-container" [style.background-color]="notebook.color + '33'">
+          <mat-icon [style.color]="notebook.color">{{ notebook.icon }}</mat-icon>
+        </div>
+        <mat-card-title>{{ notebook.name }}</mat-card-title>
+        <mat-card-subtitle>
+          {{ (notebookState$ | async)?.pagesCount }} صفحة
+        </mat-card-subtitle>
+        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Notebook actions">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="onAction('open')">
+            <mat-icon>open_in_new</mat-icon>
+            <span>فتح</span>
+          </button>
+          <button mat-menu-item (click)="onAction('pin')">
+            <mat-icon>{{ (notebookState$ | async)?.isPinned ? 'push_pin' : 'push_pin' }}</mat-icon>
+            <span>{{ (notebookState$ | async)?.isPinned ? 'إلغاء التثبيت' : 'تثبيت' }}</span>
+          </button>
+          <button mat-menu-item (click)="onAction('favorite')">
+            <mat-icon>{{ (notebookState$ | async)?.isFavorite ? 'star' : 'star_border' }}</mat-icon>
+            <span>{{ (notebookState$ | async)?.isFavorite ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة' }}</span>
+          </button>
+          <button mat-menu-item (click)="onAction('archive')">
+            <mat-icon>archive</mat-icon>
+            <span>أرشفة</span>
+          </button>
+        </mat-menu>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="last-updated">
+          آخر تحديث: {{ notebook.lastUpdated | date: 'short' }}
+        </p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary" (click)="onAction('open')">فتح الدفتر</button>
+      </mat-card-actions>
+    </mat-card>
+  `,
+  styles: [`
+    .notebook-card {
+      width: 300px;
+      margin: 16px;
+      border-left: 5px solid; /* يتم تعيين اللون ديناميكيًا */
+      transition: box-shadow 0.3s ease;
+    }
+    .notebook-card:hover {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .notebook-icon-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    .notebook-icon-container mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+    mat-card-subtitle {
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.6);
+    }
+    .last-updated {
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.54);
+      margin-top: 8px;
+    }
+    mat-card-header {
+      display: flex;
+      align-items: center;
+    }
+    mat-card-header mat-card-title {
+      flex-grow: 1;
+    }
+  `]
+})
+export class NotebookCardComponent {
+  // استخدام Input لاستقبال بيانات دفتر الملاحظات
+  @Input() set notebook(value: Notebook) {
+    this._notebook.next(value);
+  }
+
+  // استخدام Output لإصدار الأحداث (Actions)
+  @Output() notebookAction = new EventEmitter<{ action: 'open' | 'pin' | 'favorite' | 'archive', notebookId: string }>();
+
+  // RxJS State Management: BehaviorSubject للاحتفاظ بالحالة الحالية لدفتر الملاحظات
+  private _notebook = new BehaviorSubject<Notebook>({
+    id: '',
+    name: 'Loading...',
+    icon: 'book',
+    color: '#9E9E9E',
+    pagesCount: 0,
+    lastUpdated: new Date(),
+    isPinned: false,
+    isFavorite: false,
+    isArchived: false,
+  });
+
+  // Observable يمكن للمكون استخدامه في القالب (Template)
+  public notebookState$: Observable<Notebook> = this._notebook.asObservable();
+
+  // getter لسهولة الوصول إلى القيمة الحالية في الكود
+  get notebook(): Notebook {
+    return this._notebook.getValue();
+  }
+
+  constructor() {
+    // يمكن إضافة منطق تهيئة أو اشتراكات هنا
+  }
+
+  /**
+   * معالج لجميع الإجراءات (Actions) التي يمكن تنفيذها على البطاقة.
+   * @param action نوع الإجراء
+   */
+  onAction(action: 'open' | 'pin' | 'favorite' | 'archive'): void {
+    // تحديث الحالة المحلية قبل إصدار الحدث
+    const currentState = this._notebook.getValue();
+    let newState = { ...currentState };
+
+    switch (action) {
+      case 'pin':
+        newState.isPinned = !currentState.isPinned;
+        break;
+      case 'favorite':
+        newState.isFavorite = !currentState.isFavorite;
+        break;
+      case 'archive':
+        newState.isArchived = true;
+        break;
+      case 'open':
+        // لا يوجد تغيير في الحالة المحلية لـ 'open'
+        break;
+    }
+
+    // تحديث BehaviorSubject بالحالة الجديدة
+    this._notebook.next(newState);
+
+    // إصدار الحدث ليتم التعامل معه من قبل المكون الأب
+    this.notebookAction.emit({ action, notebookId: currentState.id });
+  }
+}

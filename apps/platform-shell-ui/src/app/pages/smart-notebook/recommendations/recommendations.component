@@ -1,0 +1,187 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { Observable, BehaviorSubject, Subscription, of } from 'rxjs';
+import { switchMap, catchError, tap } from 'rxjs/operators';
+
+// تعريف واجهة لنموذج التوصية
+interface Recommendation {
+  id: number;
+  title: string;
+  description: string;
+  type: 'article' | 'action' | 'data';
+  link: string;
+}
+
+@Component({
+  selector: 'app-recommendations',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatListModule,
+    MatIconModule,
+    MatButtonModule,
+  ],
+  template: `
+    <mat-card class="recommendations-card">
+      <mat-card-header>
+        <mat-card-title>التوصيات الذكية</mat-card-title>
+        <mat-card-subtitle>اقتراحات مخصصة لك بناءً على نشاطك</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="isLoading$ | async" class="loading-spinner">
+          <mat-spinner diameter="30"></mat-spinner>
+          <p>جاري تحميل التوصيات...</p>
+        </div>
+
+        <mat-list *ngIf="(recommendations$ | async)?.length > 0">
+          <mat-list-item *ngFor="let rec of (recommendations$ | async)">
+            <mat-icon matListItemIcon [color]="getIconColor(rec.type)">{{ getIcon(rec.type) }}</mat-icon>
+            <div matListItemTitle>{{ rec.title }}</div>
+            <div matListItemLine>{{ rec.description }}</div>
+            <button mat-icon-button matListItemMeta (click)="openRecommendation(rec.link)" [attr.aria-label]="'عرض ' + rec.title">
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </mat-list-item>
+        </mat-list>
+
+        <div *ngIf="!(isLoading$ | async) && (recommendations$ | async)?.length === 0" class="no-recommendations">
+          <p>لا توجد توصيات جديدة حاليًا.</p>
+          <button mat-flat-button color="primary" (click)="refreshRecommendations()">تحديث</button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  `,
+  styles: [`
+    .recommendations-card {
+      max-width: 400px;
+      margin: 20px;
+    }
+    .loading-spinner, .no-recommendations {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      text-align: center;
+    }
+    .no-recommendations p {
+      margin-bottom: 10px;
+    }
+    mat-list-item {
+      height: auto !important; /* للسماح بوصف متعدد الأسطر */
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+    mat-list-item div[matListItemLine] {
+      white-space: normal;
+      font-size: 0.85em;
+      color: rgba(0, 0, 0, 0.6);
+    }
+  `]
+})
+export class RecommendationsComponent implements OnInit, OnDestroy {
+  // RxJS: BehaviorSubject لإدارة حالة التحميل
+  private _isLoading = new BehaviorSubject<boolean>(false);
+  isLoading$ = this._isLoading.asObservable();
+
+  // RxJS: BehaviorSubject لإدارة قائمة التوصيات
+  private _recommendations = new BehaviorSubject<Recommendation[]>([]);
+  recommendations$ = this._recommendations.asObservable();
+
+  private dataSubscription: Subscription | undefined;
+
+  constructor() {}
+
+  ngOnInit(): void {
+    this.loadRecommendations();
+  }
+
+  ngOnDestroy(): void {
+    this.dataSubscription?.unsubscribe();
+  }
+
+  /**
+   * محاكاة خدمة جلب التوصيات من API
+   * في تطبيق حقيقي، سيتم استبدال هذا باستدعاء خدمة Angular
+   */
+  private fetchRecommendations(): Observable<Recommendation[]> {
+    // محاكاة تأخير الشبكة
+    this._isLoading.next(true);
+    return of([
+      { id: 1, title: 'مراجعة خطة الربع القادم', description: 'توصية عمل: تحتاج خطة العمل إلى مراجعة قبل نهاية الأسبوع.', type: 'action', link: '/tasks/101' },
+      { id: 2, title: 'مقالة: أفضل ممارسات الأمن السيبراني', description: 'توصية قراءة: مقالة جديدة حول حماية البيانات في الأنظمة السحابية.', type: 'article', link: 'https://example.com/security' },
+      { id: 3, title: 'تقرير أداء الربع الثالث', description: 'توصية بيانات: يتوفر تقرير جديد يوضح أداء الفريق خلال الربع الماضي.', type: 'data', link: '/reports/q3' },
+    ]).pipe(
+      tap(() => this._isLoading.next(false)),
+      catchError(error => {
+        console.error('فشل تحميل التوصيات:', error);
+        this._isLoading.next(false);
+        // إرجاع مصفوفة فارغة في حالة الخطأ
+        return of([]);
+      })
+    );
+  }
+
+  /**
+   * تحميل التوصيات والاشتراك في Observable
+   */
+  loadRecommendations(): void {
+    this.dataSubscription = this.fetchRecommendations().subscribe(
+      (recommendations) => {
+        this._recommendations.next(recommendations);
+      }
+    );
+  }
+
+  /**
+   * وظيفة لتحديث التوصيات (إعادة التحميل)
+   */
+  refreshRecommendations(): void {
+    this.loadRecommendations();
+  }
+
+  /**
+   * وظيفة مساعدة لتحديد أيقونة الماتيريال بناءً على نوع التوصية
+   */
+  getIcon(type: Recommendation['type']): string {
+    switch (type) {
+      case 'action':
+        return 'assignment';
+      case 'article':
+        return 'article';
+      case 'data':
+        return 'analytics';
+      default:
+        return 'info';
+    }
+  }
+
+  /**
+   * وظيفة مساعدة لتحديد لون الأيقونة
+   */
+  getIconColor(type: Recommendation['type']): 'primary' | 'accent' | 'warn' | undefined {
+    switch (type) {
+      case 'action':
+        return 'primary';
+      case 'article':
+        return 'accent';
+      case 'data':
+        return 'warn';
+      default:
+        return undefined;
+    }
+  }
+
+  /**
+   * فتح رابط التوصية (محاكاة)
+   */
+  openRecommendation(link: string): void {
+    console.log(`فتح التوصية: ${link}`);
+    // في تطبيق حقيقي، سيتم استخدام Router للتنقل أو window.open
+    // مثال: this.router.navigate([link]);
+  }
+}

@@ -1,0 +1,160 @@
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { BehaviorSubject, Observable, Subscription, map, switchMap, of } from 'rxjs';
+
+/**
+ * يمثل عارض صفحة لعرض محتوى HTML منسق.
+ * يستخدم Angular Material للتصميم و RxJS لإدارة حالة التحميل والمحتوى.
+ */
+@Component({
+  selector: 'app-page-viewer',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatProgressBarModule
+  ],
+  template: `
+    <mat-card class="page-viewer-card">
+      <mat-card-header>
+        <mat-card-title>{{ title$ | async }}</mat-card-title>
+      </mat-card-header>
+
+      <mat-progress-bar *ngIf="isLoading$ | async" mode="indeterminate"></mat-progress-bar>
+
+      <mat-card-content>
+        <!-- عرض المحتوى المنسق. يجب استخدام Sanitizer لتجنب هجمات XSS في تطبيق حقيقي. -->
+        <div class="page-content" [innerHTML]="content$ | async"></div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <!-- يمكن إضافة أزرار الإجراءات هنا -->
+      </mat-card-actions>
+    </mat-card>
+  `,
+  styles: [`
+    .page-viewer-card {
+      margin: 16px;
+      padding: 0; /* لإزالة الحشو الافتراضي للبطاقة والتحكم فيه داخل المحتوى */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .page-content {
+      padding: 16px;
+      line-height: 1.6;
+      font-family: 'Roboto', sans-serif;
+      /* تنسيق أساسي لمحتوى HTML */
+      h1, h2, h3 {
+        color: #3f51b5; /* لون أساسي من Material */
+        margin-top: 1em;
+      }
+      p {
+        margin-bottom: 1em;
+      }
+      pre {
+        background-color: #f5f5f5;
+        padding: 10px;
+        border-radius: 4px;
+        overflow-x: auto;
+      }
+    }
+  `]
+})
+export class PageViewerComponent implements OnInit, OnDestroy {
+  // RxJS لإدارة الحالة
+  private contentSource = new BehaviorSubject<string>('');
+  private titleSource = new BehaviorSubject<string>('تحميل...');
+  private loadingSource = new BehaviorSubject<boolean>(false);
+
+  // واجهات Observable عامة
+  content$: Observable<string> = this.contentSource.asObservable();
+  title$: Observable<string> = this.titleSource.asObservable();
+  isLoading$: Observable<boolean> = this.loadingSource.asObservable();
+
+  // خاصية الإدخال (Input) لاستقبال معرف الصفحة أو المحتوى
+  @Input() pageId: string | undefined;
+  @Input() initialContent: string | undefined;
+  @Input() initialTitle: string | undefined;
+
+  private dataSubscription: Subscription | undefined;
+
+  constructor() { }
+
+  ngOnInit(): void {
+    if (this.initialTitle) {
+      this.titleSource.next(this.initialTitle);
+    } else {
+      this.titleSource.next('عارض الصفحة');
+    }
+
+    if (this.initialContent) {
+      this.contentSource.next(this.initialContent);
+    } else if (this.pageId) {
+      // محاكاة تحميل البيانات من خدمة (Service) باستخدام RxJS
+      this.loadPageContent(this.pageId);
+    } else {
+      this.contentSource.next('<h1>لا يوجد محتوى لعرضه</h1><p>يرجى توفير محتوى أو معرف صفحة.</p>');
+    }
+  }
+
+  /**
+   * محاكاة عملية تحميل محتوى الصفحة بشكل غير متزامن.
+   * @param id معرف الصفحة المراد تحميلها.
+   */
+  private loadPageContent(id: string): void {
+    this.loadingSource.next(true);
+
+    // محاكاة استدعاء API باستخدام Observable
+    const mockApiCall = of({
+      title: `الصفحة رقم ${id}`,
+      htmlContent: `
+        <h2>محتوى الصفحة المنسق</h2>
+        <p>هذا هو محتوى HTML الذي تم تحميله للصفحة ذات المعرف <strong>${id}</strong>. يتم استخدام تنسيق HTML هنا.</p>
+        <ul>
+          <li>عنصر قائمة 1</li>
+          <li>عنصر قائمة 2</li>
+          <li>عنصر قائمة 3</li>
+        </ul>
+        <pre><code>// مثال على كود
+const data = 'Hello, World!';
+console.log(data);</code></pre>
+      `
+    }).pipe(
+      // محاكاة تأخير الشبكة
+      switchMap(data => new Observable<typeof data>(observer => {
+        setTimeout(() => {
+          observer.next(data);
+          observer.complete();
+        }, 1500); // تأخير لمدة 1.5 ثانية
+      }))
+    );
+
+    this.dataSubscription = mockApiCall.subscribe({
+      next: (data) => {
+        this.titleSource.next(data.title);
+        this.contentSource.next(data.htmlContent);
+      },
+      error: (err) => {
+        console.error('خطأ في تحميل محتوى الصفحة:', err);
+        this.titleSource.next('خطأ في التحميل');
+        this.contentSource.next('<p style="color: red;">فشل تحميل المحتوى.</p>');
+        this.loadingSource.next(false);
+      },
+      complete: () => {
+        this.loadingSource.next(false);
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    // إلغاء الاشتراك لتجنب تسرب الذاكرة
+    if (this.dataSubscription) {
+      this.dataSubscription.unsubscribe();
+    }
+    // إغلاق مصادر RxJS
+    this.contentSource.complete();
+    this.titleSource.complete();
+    this.loadingSource.complete();
+  }
+}

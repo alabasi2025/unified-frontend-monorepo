@@ -1,0 +1,148 @@
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { BehaviorSubject } from 'rxjs';
+
+// تعريف واجهة لبيانات الحدث
+export interface TimelineEvent {
+  type: 'note' | 'task' | 'meeting' | 'system';
+  description: string;
+  timestamp: Date;
+  icon: string; // اسم أيقونة Angular Material
+}
+
+@Component({
+  selector: 'app-timeline-event',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+  ],
+  template: `
+    <mat-card class="timeline-event-card" [class.system-event]="event()?.type === 'system'">
+      <div class="timeline-icon-container">
+        <mat-icon class="timeline-icon" [attr.aria-label]="event()?.type">{{ event()?.icon }}</mat-icon>
+      </div>
+      <div class="timeline-content">
+        <div class="timeline-header">
+          <span class="event-type" [matTooltip]="'نوع الحدث: ' + event()?.type">{{ event()?.type | uppercase }}</span>
+          <span class="event-timestamp">{{ event()?.timestamp | date:'short' }}</span>
+        </div>
+        <p class="event-description">{{ event()?.description }}</p>
+        <div class="timeline-actions">
+          <button mat-icon-button color="primary" matTooltip="عرض التفاصيل">
+            <mat-icon>visibility</mat-icon>
+          </button>
+        </div>
+      </div>
+    </mat-card>
+  `,
+  styles: [`
+    :host {
+      display: block;
+      padding: 10px 0;
+      border-left: 2px solid #ccc;
+      position: relative;
+      margin-left: 20px;
+    }
+
+    .timeline-event-card {
+      margin-right: 20px;
+      margin-left: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    .timeline-event-card::before {
+      content: '';
+      position: absolute;
+      top: 15px;
+      right: -42px; /* Adjust to align with the left border */
+      width: 10px;
+      height: 10px;
+      background-color: var(--mat-primary-color, #3f51b5);
+      border-radius: 50%;
+      z-index: 1;
+      border: 2px solid white;
+    }
+
+    .timeline-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .timeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .event-type {
+      font-weight: bold;
+      color: var(--mat-primary-color, #3f51b5);
+      font-size: 0.8em;
+    }
+
+    .event-timestamp {
+      font-size: 0.7em;
+      color: #999;
+    }
+
+    .event-description {
+      margin: 0 0 10px 0;
+      font-size: 0.9em;
+    }
+
+    .timeline-actions {
+      text-align: right;
+    }
+
+    .system-event {
+      background-color: #f5f5f5;
+      border-left: 5px solid #ff9800; /* Orange for system events */
+    }
+
+    .timeline-icon-container {
+      position: absolute;
+      top: 10px;
+      right: -55px; /* Position the icon next to the dot */
+      background-color: white;
+      border-radius: 50%;
+      padding: 5px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      z-index: 2;
+    }
+
+    .timeline-icon {
+      color: var(--mat-primary-color, #3f51b5);
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class TimelineEventComponent {
+  // استخدام BehaviorSubject لمحاكاة إدارة الحالة لمدخلات المكون
+  private eventSubject = new BehaviorSubject<TimelineEvent | null>(null);
+  public event = this.eventSubject.asObservable();
+
+  // استخدام set/get لـ @Input لدمج RxJS
+  @Input()
+  set timelineEvent(value: TimelineEvent) {
+    this.eventSubject.next(value);
+  }
+
+  // يمكن استخدام هذا getter إذا لزم الأمر للوصول المباشر للقيمة
+  get timelineEvent(): TimelineEvent | null {
+    return this.eventSubject.value;
+  }
+}

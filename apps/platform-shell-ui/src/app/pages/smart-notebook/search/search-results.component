@@ -1,0 +1,131 @@
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { Observable, Subject, takeUntil, map } from 'rxjs';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+
+// تعريف واجهة لنموذج نتيجة البحث
+export interface SearchResult {
+  id: string;
+  title: string;
+  snippet: string; // مقتطف النص الذي سيتم تظليله
+  source: string;
+}
+
+@Component({
+  selector: 'app-search-results',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatListModule,
+    MatIconModule,
+    MatButtonModule
+  ],
+  template: `
+    <mat-card class="search-results-card">
+      <mat-card-header>
+        <mat-card-title>نتائج البحث</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-list *ngIf="results$ | async as results; else noResults">
+          <mat-list-item *ngFor="let result of results">
+            <mat-icon matListItemIcon>description</mat-icon>
+            <div matListItemTitle class="result-title">{{ result.title }}</div>
+            <div matListItemLine class="result-snippet" [innerHTML]="highlightText(result.snippet) | async"></div>
+            <div matListItemLine class="result-source">{{ result.source }}</div>
+            <button mat-icon-button matListItemMeta>
+              <mat-icon>open_in_new</mat-icon>
+            </button>
+            <mat-divider></mat-divider>
+          </mat-list-item>
+        </mat-list>
+        <ng-template #noResults>
+          <p class="no-results-message">لا توجد نتائج مطابقة لبحثك.</p>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+  `,
+  styles: [`
+    .search-results-card {
+      margin: 20px;
+      max-width: 800px;
+    }
+    .result-title {
+      font-weight: 600;
+      color: #1a0dab; /* لون رابط البحث */
+    }
+    .result-snippet {
+      color: #545454;
+      line-height: 1.4;
+    }
+    .result-source {
+      font-size: 0.8em;
+      color: #006621; /* لون مصدر البحث */
+    }
+    .no-results-message {
+      padding: 20px;
+      text-align: center;
+      color: #757575;
+    }
+    /* تنسيق التظليل */
+    ::ng-deep .highlight {
+      font-weight: bold;
+      background-color: #ffff00; /* لون التظليل الأصفر */
+      padding: 1px 0;
+      border-radius: 2px;
+    }
+  `]
+})
+export class SearchResultsComponent implements OnInit, OnDestroy {
+  // RxJS: Subject لإدارة دورة حياة المكون
+  private destroy$ = new Subject<void>();
+
+  // RxJS: Observable لنتائج البحث (State Management)
+  @Input() results$: Observable<SearchResult[]> = new Observable<SearchResult[]>();
+
+  // RxJS: Input لكلمة البحث (لتطبيق التظليل)
+  @Input() searchTerm: string = '';
+
+  constructor(private sanitizer: DomSanitizer) {}
+
+  ngOnInit(): void {
+    // يمكن إضافة منطق تهيئة هنا، مثل الاشتراك في خدمات البحث إذا لم يتم تمريرها كـ Input
+    // results$.pipe(takeUntil(this.destroy$)).subscribe(data => { /* ... */ });
+  }
+
+  /**
+   * دالة لتطبيق التظليل على النص باستخدام كلمة البحث.
+   * تستخدم DomSanitizer لتجنب مشاكل الأمان (XSS) عند استخدام innerHTML.
+   * @param text النص المراد تظليله.
+   * @returns Observable<SafeHtml> النص بعد التظليل كـ SafeHtml.
+   */
+  highlightText(text: string): Observable<SafeHtml> {
+    return this.results$.pipe(
+      map(() => {
+        if (!this.searchTerm || !text) {
+          return this.sanitizer.bypassSecurityTrustHtml(text);
+        }
+
+        // إنشاء تعبير نمطي (Regex) للبحث عن كلمة البحث بغض النظر عن حالة الأحرف (case-insensitive)
+        const regex = new RegExp(`(${this.searchTerm})`, 'gi');
+
+        // استبدال كلمة البحث بـ <span> لتطبيق التنسيق
+        const highlightedText = text.replace(regex, '<span class="highlight">$1</span>');
+
+        // استخدام bypassSecurityTrustHtml لتمرير HTML المولد بأمان
+        return this.sanitizer.bypassSecurityTrustHtml(highlightedText);
+      }),
+      takeUntil(this.destroy$)
+    );
+  }
+
+  ngOnDestroy(): void {
+    // RxJS: إيقاف جميع الاشتراكات عند تدمير المكون
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+}

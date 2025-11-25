@@ -1,0 +1,74 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule, AsyncPipe } from '@angular/common';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { BehaviorSubject, Observable } from 'rxjs';
+
+// تعريف واجهة للصفحة
+interface Page {
+  id: number;
+  title: string;
+  icon: string;
+}
+
+@Component({
+  selector: 'app-pages-list',
+  standalone: true,
+  imports: [CommonModule, MatListModule, MatIconModule, AsyncPipe],
+  template: `
+    <mat-nav-list>
+      <h3 mat-subheader>قائمة الصفحات</h3>
+      <mat-list-item *ngFor="let page of (pages$ | async)" (click)="selectPage(page)">
+        <mat-icon matListItemIcon>{{ page.icon }}</mat-icon>
+        <div matListItemTitle>{{ page.title }}</div>
+        <div matListItemLine>معرف الصفحة: {{ page.id }}</div>
+      </mat-list-item>
+      <mat-list-item *ngIf="!(pages$ | async)?.length">
+        <div matListItemTitle>لا توجد صفحات لعرضها.</div>
+      </mat-list-item>
+    </mat-nav-list>
+  `,
+  styles: [`
+    mat-nav-list {
+      width: 300px;
+      border-right: 1px solid #eee;
+      padding: 10px;
+    }
+    mat-list-item {
+      cursor: pointer;
+    }
+  `]
+})
+export class PagesListComponent implements OnInit {
+  // استخدام RxJS لإدارة حالة قائمة الصفحات
+  private pagesSubject = new BehaviorSubject<Page[]>([]);
+  pages$: Observable<Page[]> = this.pagesSubject.asObservable();
+
+  ngOnInit(): void {
+    // محاكاة تحميل البيانات
+    this.loadPages();
+  }
+
+  /**
+   * محاكاة تحميل قائمة الصفحات من خدمة ما
+   */
+  private loadPages(): void {
+    const mockPages: Page[] = [
+      { id: 1, title: 'الصفحة الرئيسية', icon: 'home' },
+      { id: 2, title: 'ملاحظات الاجتماع', icon: 'description' },
+      { id: 3, title: 'مخطط المشروع', icon: 'timeline' },
+      { id: 4, title: 'قائمة المهام', icon: 'check_circle' },
+    ];
+    // تحديث الـ Subject بالبيانات الجديدة
+    this.pagesSubject.next(mockPages);
+  }
+
+  /**
+   * معالجة حدث اختيار صفحة
+   * @param page الصفحة المختارة
+   */
+  selectPage(page: Page): void {
+    console.log('تم اختيار الصفحة:', page.title);
+    // هنا يمكن إضافة منطق توجيه (routing) أو تحميل محتوى الصفحة
+  }
+}

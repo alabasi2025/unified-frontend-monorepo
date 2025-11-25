@@ -1,0 +1,140 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { catchError, tap, map } from 'rxjs/operators';
+import { Notebook, NotebookState } from './notebook.interface'; // سنفترض أن الواجهة موجودة في نفس المجلد مؤقتاً
+
+@Injectable({
+  providedIn: 'root'
+})
+export class NotebooksService {
+  private apiUrl = '/api/notebooks';
+
+  // State Management with BehaviorSubject
+  private initialState: NotebookState = {
+    notebooks: [],
+    loading: false,
+    error: null
+  };
+  private notebookStateSubject = new BehaviorSubject<NotebookState>(this.initialState);
+  public notebookState$ = this.notebookStateSubject.asObservable();
+
+  // Observable for the list of notebooks
+  public notebooks$: Observable<Notebook[]> = this.notebookState$.pipe(
+    map(state => state.notebooks)
+  );
+
+  constructor(private http: HttpClient) {
+    // يمكن استدعاء getAll هنا لتحميل البيانات الأولية
+    // this.getAll().subscribe();
+  }
+
+  private updateState(newState: Partial<NotebookState>): void {
+    this.notebookStateSubject.next({ ...this.notebookStateSubject.value, ...newState });
+  }
+
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    let errorMessage = 'An unknown error occurred!';
+    if (error.error instanceof ErrorEvent) {
+      // Client-side errors
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Server-side errors
+      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+    }
+    console.error(errorMessage);
+    this.updateState({ loading: false, error: errorMessage });
+    return throwError(() => new Error(errorMessage));
+  }
+
+  // Methods to be implemented: create, getAll, getOne, update, delete, pin, favorite, archive
+
+  getAll(): Observable<Notebook[]> {
+    this.updateState({ loading: true, error: null });
+    return this.http.get<Notebook[]>(this.apiUrl).pipe(
+      tap(notebooks => this.updateState({ notebooks, loading: false })),
+      catchError(this.handleError.bind(this))
+    );
+  }
+
+  getOne(id: string): Observable<Notebook> {
+    this.updateState({ loading: true, error: null });
+    return this.http.get<Notebook>(`${this.apiUrl}/${id}`).pipe(
+      tap(() => this.updateState({ loading: false })),
+      catchError(this.handleError.bind(this))
+    );
+  }
+
+  create(notebook: Omit<Notebook, 'id' | 'createdAt' | 'updatedAt' | 'isPinned' | 'isFavorite' | 'isArchived'>): Observable<Notebook> {
+    this.updateState({ loading: true, error: null });
+    return this.http.post<Notebook>(this.apiUrl, notebook).pipe(
+      tap(newNotebook => {
+        const currentNotebooks = this.notebookStateSubject.value.notebooks;
+        this.updateState({ notebooks: [...currentNotebooks, newNotebook], loading: false });
+      }),
+      catchError(this.handleError.bind(this))
+    );
+  }
+
+  update(id: string, changes: Partial<Notebook>): Observable<Notebook> {
+    this.updateState({ loading: true, error: null });
+    return this.http.put<Notebook>(`${this.apiUrl}/${id}`, changes).pipe(
+      tap(updatedNotebook => {
+        const currentNotebooks = this.notebookStateSubject.value.notebooks;
+        const updatedList = currentNotebooks.map(n => n.id === id ? updatedNotebook : n);
+        this.updateState({ notebooks: updatedList, loading: false });
+      }),
+      catchError(this.handleError.bind(this))
+    );
+  }
+
+  delete(id: string): Observable<void> {
+    this.updateState({ loading: true, error: null });
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      tap(() => {
+        const currentNotebooks = this.notebookStateSubject.value.notebooks;
+        const updatedList = currentNotebooks.filter(n => n.id !== id);
+        this.updateState({ notebooks: updatedList, loading: false });
+      }),
+      catchError(this.handleError.bind(this))
+    );
+  }
+
+  // Utility methods: pin, favorite, archive
+
+  pin(id: string, isPinned: boolean): Observable<Notebook> {
+    this.updateState({ loading: true, error: null });
+    return this.http.patch<Notebook>(`${this.apiUrl}/${id}/pin`, { isPinned }).pipe(
+      tap(updatedNotebook => {
+        const currentNotebooks = this.notebookStateSubject.value.notebooks;
+        const updatedList = currentNotebooks.map(n => n.id === id ? updatedNotebook : n);
+        this.updateState({ notebooks: updatedList, loading: false });
+      }),
+      catchError(this.handleError.bind(this))
+    );
+  }
+
+  favorite(id: string, isFavorite: boolean): Observable<Notebook> {
+    this.updateState({ loading: true, error: null });
+    return this.http.patch<Notebook>(`${this.apiUrl}/${id}/favorite`, { isFavorite }).pipe(
+      tap(updatedNotebook => {
+        const currentNotebooks = this.notebookStateSubject.value.notebooks;
+        const updatedList = currentNotebooks.map(n => n.id === id ? updatedNotebook : n);
+        this.updateState({ notebooks: updatedList, loading: false });
+      }),
+      catchError(this.handleError.bind(this))
+    );
+  }
+
+  archive(id: string, isArchived: boolean): Observable<Notebook> {
+    this.updateState({ loading: true, error: null });
+    return this.http.patch<Notebook>(`${this.apiUrl}/${id}/archive`, { isArchived }).pipe(
+      tap(updatedNotebook => {
+        const currentNotebooks = this.notebookStateSubject.value.notebooks;
+        const updatedList = currentNotebooks.map(n => n.id === id ? updatedNotebook : n);
+        this.updateState({ notebooks: updatedList, loading: false });
+      }),
+      catchError(this.handleError.bind(this))
+    );
+  }
+}

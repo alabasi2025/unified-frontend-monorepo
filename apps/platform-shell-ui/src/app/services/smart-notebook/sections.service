@@ -1,0 +1,120 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { catchError, tap, map } from 'rxjs/operators';
+
+// تعريف واجهة للقسم (Section)
+export interface Section {
+  id: number;
+  title: string;
+  order: number;
+  // يمكن إضافة حقول أخرى حسب الحاجة
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class SectionsService {
+  private apiUrl = '/api/sections'; // نقطة نهاية API الافتراضية
+  private sectionsSubject = new BehaviorSubject<Section[]>([]);
+  public sections$: Observable<Section[]> = this.sectionsSubject.asObservable();
+
+  constructor(private http: HttpClient) {
+    // تحميل البيانات الأولية عند إنشاء الخدمة
+    this.getAll().subscribe();
+  }
+
+  // معالج الأخطاء
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'An unknown error occurred!';
+    if (error.error instanceof ErrorEvent) {
+      // خطأ من جانب العميل أو الشبكة
+      errorMessage = `Client-side error: ${error.error.message}`;
+    } else {
+      // خطأ من جانب الخادم
+      errorMessage = `Server-side error: ${error.status} - ${error.message}`;
+    }
+    console.error(errorMessage);
+    // يمكن إرسال الخطأ إلى خدمة تسجيل خارجية
+    return throwError(() => new Error(errorMessage));
+  }
+
+  // 1. جلب جميع الأقسام (getAll)
+  getAll(): Observable<Section[]> {
+    return this.http.get<Section[]>(this.apiUrl).pipe(
+      tap(data => {
+        // تحديث الحالة بعد جلب البيانات بنجاح
+        this.sectionsSubject.next(data.sort((a, b) => a.order - b.order));
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  // 2. جلب قسم واحد (getOne)
+  getOne(id: number): Observable<Section> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.get<Section>(url).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // 3. إنشاء قسم جديد (create)
+  create(section: Omit<Section, 'id' | 'order'>): Observable<Section> {
+    return this.http.post<Section>(this.apiUrl, section).pipe(
+      tap(newSection => {
+        const currentSections = this.sectionsSubject.value;
+        // إضافة القسم الجديد وتحديث الترتيب (يفترض أن الخادم يعيد الترتيب الصحيح)
+        this.sectionsSubject.next([...currentSections, newSection].sort((a, b) => a.order - b.order));
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  // 4. تحديث قسم موجود (update)
+  update(id: number, section: Partial<Section>): Observable<Section> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.put<Section>(url, section).pipe(
+      tap(updatedSection => {
+        const currentSections = this.sectionsSubject.value;
+        const updatedList = currentSections.map(s =>
+          s.id === id ? updatedSection : s
+        );
+        // تحديث القائمة وفرزها
+        this.sectionsSubject.next(updatedList.sort((a, b) => a.order - b.order));
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  // 5. حذف قسم (delete)
+  delete(id: number): Observable<void> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.delete<void>(url).pipe(
+      tap(() => {
+        const currentSections = this.sectionsSubject.value;
+        const updatedList = currentSections.filter(s => s.id !== id);
+        // تحديث القائمة بعد الحذف
+        this.sectionsSubject.next(updatedList);
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  // 6. إعادة ترتيب الأقسام (reorder)
+  reorder(sectionIds: number[]): Observable<Section[]> {
+    const url = `${this.apiUrl}/reorder`;
+    // إرسال قائمة معرفات الأقسام بالترتيب الجديد
+    return this.http.post<Section[]>(url, { sectionIds }).pipe(
+      tap(reorderedSections => {
+        // تحديث الحالة بالقائمة الجديدة التي أعادها الخادم
+        this.sectionsSubject.next(reorderedSections.sort((a, b) => a.order - b.order));
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  // طريقة مساعدة للحصول على القيمة الحالية للحالة
+  getCurrentSections(): Section[] {
+    return this.sectionsSubject.value;
+  }
+}

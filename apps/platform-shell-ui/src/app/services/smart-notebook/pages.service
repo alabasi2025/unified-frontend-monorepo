@@ -1,0 +1,105 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { catchError, tap, map } from 'rxjs/operators';
+
+// تعريف واجهة بسيطة لتمثيل الصفحة
+interface Page {
+  id: number;
+  title: string;
+  content: string;
+  archived: boolean;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class PagesService {
+  private apiUrl = '/api/pages';
+  private pagesSubject = new BehaviorSubject<Page[]>([]);
+  public pages$: Observable<Page[]> = this.pagesSubject.asObservable();
+
+  constructor(private http: HttpClient) {
+    // تحميل البيانات عند إنشاء الخدمة
+    this.getAll().subscribe();
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    console.error('An error occurred:', error.error instanceof ErrorEvent ? error.error.message : error.status);
+    return throwError(() => new Error('Something bad happened; please try again later.'));
+  }
+
+  // 1. getAll: جلب جميع الصفحات وتحديث الحالة
+  getAll(): Observable<Page[]> {
+    return this.http.get<Page[]>(this.apiUrl).pipe(
+      tap(pages => this.pagesSubject.next(pages)),
+      catchError(this.handleError)
+    );
+  }
+
+  // 2. getOne: جلب صفحة واحدة
+  getOne(id: number): Observable<Page> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.get<Page>(url).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // 3. create: إنشاء صفحة جديدة وتحديث الحالة
+  create(pageData: Omit<Page, 'id' | 'archived'>): Observable<Page> {
+    return this.http.post<Page>(this.apiUrl, { ...pageData, archived: false }).pipe(
+      tap(newPage => {
+        const currentPages = this.pagesSubject.value;
+        this.pagesSubject.next([...currentPages, newPage]);
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  // 4. update: تحديث صفحة موجودة وتحديث الحالة
+  update(id: number, pageData: Partial<Page>): Observable<Page> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.put<Page>(url, pageData).pipe(
+      tap(updatedPage => {
+        const currentPages = this.pagesSubject.value.map(page =>
+          page.id === id ? updatedPage : page
+        );
+        this.pagesSubject.next(currentPages);
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  // 5. delete: حذف صفحة وتحديث الحالة
+  delete(id: number): Observable<void> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.delete<void>(url).pipe(
+      tap(() => {
+        const currentPages = this.pagesSubject.value.filter(page => page.id !== id);
+        this.pagesSubject.next(currentPages);
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  // 6. archive: أرشفة صفحة وتحديث الحالة
+  archive(id: number): Observable<Page> {
+    const url = `${this.apiUrl}/${id}/archive`;
+    return this.http.post<Page>(url, {}).pipe(
+      tap(archivedPage => {
+        const currentPages = this.pagesSubject.value.map(page =>
+          page.id === id ? archivedPage : page
+        );
+        this.pagesSubject.next(currentPages);
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  // method إضافي: جلب الصفحات المؤرشفة فقط
+  getArchived(): Observable<Page[]> {
+    return this.pages$.pipe(
+      map(pages => pages.filter(page => page.archived))
+    );
+  }
+}

@@ -1,0 +1,157 @@
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { EditorModule } from '@tinymce/tinymce-angular';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { Subject, takeUntil } from 'rxjs';
+
+/**
+ * Component for a rich text page editor using TinyMCE.
+ * It integrates Angular Material for surrounding UI elements and uses RxJS for state management.
+ */
+@Component({
+  selector: 'app-page-editor',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    EditorModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+  ],
+  template: `
+    <div class="page-editor-container">
+      <mat-form-field appearance="outline" class="editor-title-field">
+        <mat-label>عنوان الصفحة</mat-label>
+        <input matInput [(ngModel)]="pageTitle" (ngModelChange)="onTitleChange($event)" placeholder="أدخل عنوان الصفحة هنا">
+        <mat-icon matSuffix>title</mat-icon>
+      </mat-form-field>
+
+      <editor
+        [apiKey]="tinyMceApiKey"
+        [init]="editorConfig"
+        [(ngModel)]="pageContent"
+        (onEditorChange)="onContentChange($event)"
+        class="rich-text-editor"
+      ></editor>
+
+      <div class="editor-actions">
+        <button mat-raised-button color="primary" (click)="saveContent()">
+          <mat-icon>save</mat-icon>
+          حفظ التغييرات
+        </button>
+        <button mat-button color="warn" (click)="discardChanges()">
+          <mat-icon>cancel</mat-icon>
+          إلغاء
+        </button>
+      </div>
+    </div>
+  `,
+  styles: [`
+    .page-editor-container {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .editor-title-field {
+      width: 100%;
+    }
+    .rich-text-editor {
+      min-height: 500px;
+    }
+    .editor-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+  `]
+})
+export class PageEditorComponent implements OnInit, OnDestroy {
+  // RxJS Subject for managing component lifecycle and unsubscribing from observables
+  private destroy$ = new Subject<void>();
+
+  // Input properties
+  @Input() initialTitle: string = 'صفحة جديدة';
+  @Input() initialContent: string = '<p>ابدأ بكتابة محتوى الصفحة هنا...</p>';
+
+  // Output events
+  @Output() save = new EventEmitter<{ title: string, content: string }>();
+  @Output() discard = new EventEmitter<void>();
+
+  // Component state
+  public pageTitle: string = '';
+  public pageContent: string = '';
+
+  // TinyMCE configuration
+  public tinyMceApiKey: string = 'YOUR_TINYMCE_API_KEY'; // Replace with actual API key or load from environment
+  public editorConfig = {
+    height: 500,
+    menubar: false,
+    plugins: [
+      'advlist autolink lists link image charmap print preview anchor',
+      'searchreplace visualblocks code fullscreen',
+      'insertdatetime media table paste code help wordcount'
+    ],
+    toolbar:
+      'undo redo | formatselect | bold italic backcolor | \
+      alignleft aligncenter alignright alignjustify | \
+      bullist numlist outdent indent | removeformat | help'
+  };
+
+  ngOnInit(): void {
+    // Initialize state from inputs
+    this.pageTitle = this.initialTitle;
+    this.pageContent = this.initialContent;
+
+    // Example of using RxJS for state change (though simple ngModelChange is used in template)
+    // For complex state management (e.g., auto-save, debouncing), RxJS would be fully utilized here.
+    // For demonstration, we'll simulate a title change stream.
+    // Note: In a real app, you might use a dedicated service with BehaviorSubject for global state.
+    this.titleChangeSubject
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(newTitle => {
+        console.log('Title updated via RxJS stream:', newTitle);
+        // Additional logic like auto-save can be implemented here
+      });
+  }
+
+  // A Subject to handle title changes for RxJS demonstration
+  private titleChangeSubject = new Subject<string>();
+
+  onTitleChange(newTitle: string): void {
+    this.titleChangeSubject.next(newTitle);
+  }
+
+  onContentChange(event: any): void {
+    // The content is already updated via [(ngModel)], this is for side effects
+    // For example, updating a global state service or triggering auto-save logic
+    // This method can be debounced using RxJS for performance:
+    // of(event).pipe(debounceTime(1000), takeUntil(this.destroy$)).subscribe(...)
+    console.log('Content changed:', this.pageContent.length, 'characters');
+  }
+
+  saveContent(): void {
+    // Emit the current state to the parent component
+    this.save.emit({ title: this.pageTitle, content: this.pageContent });
+  }
+
+  discardChanges(): void {
+    // Emit discard event
+    this.discard.emit();
+    // Optionally reset content to initial state
+    this.pageTitle = this.initialTitle;
+    this.pageContent = this.initialContent;
+  }
+
+  ngOnDestroy(): void {
+    // Clean up RxJS subscriptions
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+}

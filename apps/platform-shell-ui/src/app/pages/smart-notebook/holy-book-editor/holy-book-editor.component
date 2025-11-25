@@ -1,0 +1,168 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { BehaviorSubject, Subscription } from 'rxjs';
+
+// ملاحظة: لا يوجد محرر نصوص غني (Rich Text Editor) مدمج في Angular Material.
+// في بيئة Angular حقيقية، سيتم استخدام مكتبة خارجية مثل TinyMCE أو CKEditor.
+// هنا، سنقوم بمحاكاة واجهة محرر نصوص غني باستخدام textarea من Angular Material
+// وإضافة بعض أزرار التنسيق الأساسية.
+
+@Component({
+  selector: 'app-holy-book-editor',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatIconModule,
+    MatToolbarModule,
+  ],
+  template: `
+    <div class="holy-book-editor-container">
+      <mat-toolbar color="primary" class="editor-toolbar">
+        <span class="editor-title">محرر الكتاب المقدس</span>
+        <span class="spacer"></span>
+        <!-- محاكاة لأزرار التنسيق الأساسية -->
+        <button mat-icon-button (click)="applyFormat('bold')" title="غامق">
+          <mat-icon>format_bold</mat-icon>
+        </button>
+        <button mat-icon-button (click)="applyFormat('italic')" title="مائل">
+          <mat-icon>format_italic</mat-icon>
+        </button>
+        <button mat-icon-button (click)="applyFormat('underline')" title="تحته خط">
+          <mat-icon>format_underline</mat-icon>
+        </button>
+        <button mat-icon-button (click)="saveContent()" [disabled]="!isContentModified" title="حفظ">
+          <mat-icon>save</mat-icon>
+        </button>
+      </mat-toolbar>
+
+      <mat-form-field appearance="outline" class="editor-field">
+        <mat-label>محتوى الكتاب المقدس</mat-label>
+        <textarea matInput
+                  [formControl]="editorControl"
+                  rows="20"
+                  placeholder="ابدأ بكتابة المحتوى هنا..."
+                  dir="rtl"></textarea>
+      </mat-form-field>
+
+      <div class="editor-status">
+        <p>حالة المحرر: <strong>{{ status$ | async }}</strong></p>
+        <p>تم التعديل: <strong>{{ isContentModified ? 'نعم' : 'لا' }}</strong></p>
+      </div>
+    </div>
+  `,
+  styles: [`
+    .holy-book-editor-container {
+      padding: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .editor-toolbar {
+      margin-bottom: 15px;
+      border-radius: 4px;
+    }
+    .editor-title {
+      font-size: 1.2em;
+      font-weight: 500;
+    }
+    .spacer {
+      flex: 1 1 auto;
+    }
+    .editor-field {
+      width: 100%;
+    }
+    .editor-status {
+      margin-top: 15px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+    }
+    textarea {
+      /* محاكاة لتطبيق التنسيقات */
+      font-family: 'Arial', sans-serif;
+      line-height: 1.6;
+    }
+  `]
+})
+export class HolyBookEditorComponent implements OnInit, OnDestroy {
+  // RxJS State Management
+  private statusSubject = new BehaviorSubject<string>('جاهز للتحرير');
+  status$ = this.statusSubject.asObservable();
+
+  // Form Control for the editor content
+  editorControl = new FormControl('');
+  initialContent = '';
+  isContentModified = false;
+
+  private contentSubscription: Subscription | undefined;
+
+  ngOnInit(): void {
+    // 1. تحميل المحتوى الأولي (محاكاة)
+    this.loadInitialContent();
+
+    // 2. الاشتراك في تغييرات المحتوى لتحديث حالة التعديل
+    this.contentSubscription = this.editorControl.valueChanges.subscribe(value => {
+      this.isContentModified = value !== this.initialContent;
+      if (this.isContentModified) {
+        this.statusSubject.next('يتم التحرير... لم يتم الحفظ');
+      } else {
+        this.statusSubject.next('جاهز للتحرير');
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.contentSubscription?.unsubscribe();
+  }
+
+  /**
+   * محاكاة لتحميل المحتوى الأولي من خدمة ما
+   */
+  loadInitialContent(): void {
+    // في بيئة حقيقية: استدعاء خدمة لتحميل البيانات
+    const content = 'هذا هو المحتوى الأولي للكتاب المقدس. يمكن للمسؤولين تحرير هذا النص باستخدام محرر النصوص الغني.';
+    this.initialContent = content;
+    this.editorControl.setValue(content, { emitEvent: false }); // لا تصدر حدث تغيير عند التحميل الأولي
+    this.isContentModified = false;
+    this.statusSubject.next('تم تحميل المحتوى بنجاح');
+  }
+
+  /**
+   * محاكاة لتطبيق تنسيق معين (في محرر نصوص غني حقيقي، يتم استخدام execCommand أو واجهة برمجة تطبيقات المحرر)
+   */
+  applyFormat(format: 'bold' | 'italic' | 'underline'): void {
+    this.statusSubject.next(`تطبيق التنسيق: ${format}`);
+    // في محرر نصوص غني حقيقي، يتم تطبيق التنسيق على النص المحدد.
+    // هنا، سنكتفي بتحديث الحالة.
+  }
+
+  /**
+   * محاكاة لحفظ المحتوى
+   */
+  saveContent(): void {
+    if (!this.isContentModified) {
+      this.statusSubject.next('لا توجد تعديلات للحفظ.');
+      return;
+    }
+
+    this.statusSubject.next('جاري حفظ المحتوى...');
+    const newContent = this.editorControl.value;
+
+    // في بيئة حقيقية: استدعاء خدمة لحفظ البيانات
+    setTimeout(() => {
+      this.initialContent = newContent || '';
+      this.isContentModified = false;
+      this.statusSubject.next('تم حفظ المحتوى بنجاح!');
+    }, 1500); // محاكاة لعملية حفظ تستغرق 1.5 ثانية
+  }
+}

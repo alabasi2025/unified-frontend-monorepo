@@ -1,0 +1,168 @@
+import { Component, OnInit, Inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
+import { MatRadioModule } from '@angular/material/radio';
+import { Observable, of } from 'rxjs';
+
+// تعريف واجهة لبيانات الإدخال والإخراج للحوار
+export interface NotebookDialogData {
+  name: string;
+  description: string;
+  type: string;
+  icon: string;
+  color: string;
+}
+
+@Component({
+  selector: 'app-create-notebook-dialog',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatIconModule,
+    MatRadioModule,
+  ],
+  template: `
+    <h2 mat-dialog-title>إنشاء دفتر جديد</h2>
+    <form [formGroup]="notebookForm" (ngSubmit)="onSubmit()">
+      <mat-dialog-content class="mat-typography">
+        <!-- Name -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>اسم الدفتر</mat-label>
+          <input matInput formControlName="name" required>
+          <mat-error *ngIf="notebookForm.get('name')?.hasError('required')">
+            اسم الدفتر مطلوب.
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Description -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>الوصف</mat-label>
+          <textarea matInput formControlName="description" rows="3"></textarea>
+        </mat-form-field>
+
+        <!-- Type -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>النوع</mat-label>
+          <mat-select formControlName="type" required>
+            <mat-option *ngFor="let type of notebookTypes$ | async" [value]="type.value">
+              {{ type.label }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="notebookForm.get('type')?.hasError('required')">
+            النوع مطلوب.
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Icon -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>الأيقونة</mat-label>
+          <input matInput formControlName="icon" placeholder="مثل: book, lightbulb">
+          <mat-icon matSuffix *ngIf="notebookForm.get('icon')?.value">{{ notebookForm.get('icon')?.value }}</mat-icon>
+        </mat-form-field>
+
+        <!-- Color -->
+        <div class="color-selection">
+          <label>اللون:</label>
+          <mat-radio-group formControlName="color" required>
+            <mat-radio-button *ngFor="let color of notebookColors" [value]="color" [style.color]="color">
+              <mat-icon [style.color]="color">lens</mat-icon>
+            </mat-radio-button>
+          </mat-radio-group>
+          <mat-error *ngIf="notebookForm.get('color')?.hasError('required') && notebookForm.get('color')?.touched">
+            اللون مطلوب.
+          </mat-error>
+        </div>
+
+      </mat-dialog-content>
+      <mat-dialog-actions align="end">
+        <button mat-button (click)="onCancel()">إلغاء</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="notebookForm.invalid">إنشاء</button>
+      </mat-dialog-actions>
+    </form>
+  `,
+  styles: [`
+    .full-width {
+      width: 100%;
+    }
+    .color-selection {
+      margin-top: 15px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .color-selection mat-radio-button {
+      margin-right: 10px;
+    }
+    .color-selection mat-icon {
+      font-size: 20px;
+      height: 20px;
+      width: 20px;
+      vertical-align: middle;
+    }
+  `]
+})
+export class CreateNotebookDialogComponent implements OnInit {
+  notebookForm: FormGroup;
+  
+  // محاكاة لبيانات الأنواع والألوان (يمكن استبدالها بخدمة حقيقية)
+  notebookTypes$: Observable<{ value: string, label: string }[]> = of([
+    { value: 'personal', label: 'شخصي' },
+    { value: 'work', label: 'عمل' },
+    { value: 'study', label: 'دراسة' },
+  ]);
+
+  notebookColors: string[] = [
+    '#f44336', // Red
+    '#e91e63', // Pink
+    '#9c27b0', // Purple
+    '#3f51b5', // Indigo
+    '#00bcd4', // Cyan
+    '#4caf50', // Green
+    '#ffeb3b', // Yellow
+    '#ff9800', // Orange
+  ];
+
+  constructor(
+    private fb: FormBuilder,
+    public dialogRef: MatDialogRef<CreateNotebookDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: NotebookDialogData // لاستقبال بيانات إذا لزم الأمر
+  ) {
+    this.notebookForm = this.fb.group({
+      name: ['', Validators.required],
+      description: [''],
+      type: ['', Validators.required],
+      icon: ['book'], // قيمة افتراضية
+      color: [this.notebookColors[0], Validators.required], // قيمة افتراضية
+    });
+  }
+
+  ngOnInit(): void {
+    // يمكن استخدام ngOnInit لتحميل البيانات من خدمة باستخدام RxJS
+    // مثال: this.notebookTypes$ = this.notebookService.getTypes();
+  }
+
+  onSubmit(): void {
+    if (this.notebookForm.valid) {
+      // إغلاق الحوار وإرجاع بيانات النموذج
+      this.dialogRef.close(this.notebookForm.value);
+    }
+  }
+
+  onCancel(): void {
+    // إغلاق الحوار دون إرجاع بيانات
+    this.dialogRef.close();
+  }
+}

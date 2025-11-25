@@ -1,0 +1,164 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
+import { Subject, combineLatest } from 'rxjs';
+import { debounceTime, distinctUntilChanged, takeUntil, startWith } from 'rxjs/operators';
+
+// تعريف واجهة الفلاتر
+interface SearchFilters {
+  types: string[];
+  dateRange: { start: Date | null; end: Date | null };
+  sortBy: string;
+}
+
+@Component({
+  selector: 'app-search-filters',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatSelectModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatButtonModule,
+  ],
+  template: `
+    <mat-card class="search-filters-card">
+      <form [formGroup]="filtersForm" class="filters-form">
+        <!-- فلتر الأنواع (Types) -->
+        <mat-form-field appearance="outline">
+          <mat-label>الأنواع</mat-label>
+          <mat-select formControlName="types" multiple>
+            <mat-option *ngFor="let type of availableTypes" [value]="type">{{ type }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- فلتر تاريخ البداية (Date Range Start) -->
+        <mat-form-field appearance="outline">
+          <mat-label>من تاريخ</mat-label>
+          <input matInput [matDatepicker]="startDatePicker" formControlName="startDate">
+          <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #startDatePicker></mat-datepicker>
+        </mat-form-field>
+
+        <!-- فلتر تاريخ النهاية (Date Range End) -->
+        <mat-form-field appearance="outline">
+          <mat-label>إلى تاريخ</mat-label>
+          <input matInput [matDatepicker]="endDatePicker" formControlName="endDate">
+          <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #endDatePicker></mat-datepicker>
+        </mat-form-field>
+
+        <!-- فلتر الترتيب حسب (Sort By) -->
+        <mat-form-field appearance="outline">
+          <mat-label>الترتيب حسب</mat-label>
+          <mat-select formControlName="sortBy">
+            <mat-option *ngFor="let sort of availableSorts" [value]="sort.value">{{ sort.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- زر إعادة تعيين الفلاتر -->
+        <button mat-stroked-button color="warn" (click)="resetFilters()">إعادة تعيين</button>
+      </form>
+    </mat-card>
+  `,
+  styles: [`
+    .search-filters-card {
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .filters-form {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filters-form mat-form-field {
+      width: 200px; /* عرض موحد لحقول الإدخال */
+    }
+    .filters-form button {
+      height: 56px; /* مطابقة ارتفاع حقول الإدخال */
+    }
+  `]
+})
+export class SearchFiltersComponent implements OnInit, OnDestroy {
+  // RxJS Subject لإدارة دورة حياة المكون
+  private destroy$ = new Subject<void>();
+
+  // تعريف FormGroup لإدارة حالة الفلاتر
+  filtersForm: FormGroup;
+
+  // البيانات المتاحة للفلاتر
+  availableTypes = ['ملاحظة', 'مهمة', 'اجتماع', 'وثيقة'];
+  availableSorts = [
+    { label: 'الأحدث أولاً', value: 'date_desc' },
+    { label: 'الأقدم أولاً', value: 'date_asc' },
+    { label: 'الأكثر صلة', value: 'relevance' },
+  ];
+
+  // BehaviorSubject لحالة الفلاتر الحالية
+  private _currentFilters = new Subject<SearchFilters>();
+  public currentFilters$ = this._currentFilters.asObservable();
+
+  constructor(private fb: FormBuilder) {
+    // تهيئة النموذج
+    this.filtersForm = this.fb.group({
+      types: [[]], // قيمة ابتدائية: مصفوفة فارغة
+      startDate: [null], // قيمة ابتدائية: لا يوجد تاريخ
+      endDate: [null], // قيمة ابتدائية: لا يوجد تاريخ
+      sortBy: [this.availableSorts[0].value], // قيمة ابتدائية: الأحدث أولاً
+    });
+  }
+
+  ngOnInit(): void {
+    // مراقبة التغييرات في النموذج وإرسالها عبر RxJS
+    this.filtersForm.valueChanges.pipe(
+      // تأخير بسيط لتجميع التغييرات وتجنب الاستدعاءات المتكررة
+      debounceTime(300),
+      // التأكد من أن القيمة قد تغيرت بالفعل
+      distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
+      // إيقاف الاشتراك عند تدمير المكون
+      takeUntil(this.destroy$),
+      // بدء العملية بالقيمة الأولية للنموذج
+      startWith(this.filtersForm.value)
+    ).subscribe(formValue => {
+      // تحويل قيمة النموذج إلى واجهة SearchFilters
+      const filters: SearchFilters = {
+        types: formValue.types,
+        dateRange: {
+          start: formValue.startDate,
+          end: formValue.endDate,
+        },
+        sortBy: formValue.sortBy,
+      };
+      // إرسال الفلاتر المحدثة
+      this._currentFilters.next(filters);
+    });
+  }
+
+  /**
+   * إعادة تعيين النموذج إلى القيم الافتراضية.
+   */
+  resetFilters(): void {
+    this.filtersForm.reset({
+      types: [],
+      startDate: null,
+      endDate: null,
+      sortBy: this.availableSorts[0].value,
+    });
+  }
+
+  ngOnDestroy(): void {
+    // إكمال الـ Subject لإلغاء جميع الاشتراكات
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+}

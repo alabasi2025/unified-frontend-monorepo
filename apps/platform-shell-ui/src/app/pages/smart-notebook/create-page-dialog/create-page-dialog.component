@@ -1,0 +1,106 @@
+import { Component, Inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { Observable, of } from 'rxjs';
+
+// تعريف الواجهات لبيانات الإدخال والإخراج
+export interface CreatePageDialogData {
+  initialTitle: string;
+  initialContent: string;
+  initialType: string;
+  availableTypes: string[];
+}
+
+export interface CreatePageResult {
+  title: string;
+  content: string;
+  type: string;
+}
+
+@Component({
+  selector: 'app-create-page-dialog',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatSelectModule
+  ],
+  template: `
+    <h2 mat-dialog-title>إنشاء صفحة جديدة</h2>
+    <form [formGroup]="form" (ngSubmit)="onSave()">
+      <mat-dialog-content class="mat-typography">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>العنوان</mat-label>
+          <input matInput formControlName="title" required>
+          <mat-error *ngIf="form.get('title')?.hasError('required')">العنوان مطلوب</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>النوع</mat-label>
+          <mat-select formControlName="type" required>
+            <mat-option *ngFor="let pageType of availableTypes$ | async" [value]="pageType">
+              {{ pageType }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('type')?.hasError('required')">النوع مطلوب</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>المحتوى</mat-label>
+          <textarea matInput formControlName="content" rows="5"></textarea>
+        </mat-form-field>
+      </mat-dialog-content>
+
+      <mat-dialog-actions align="end">
+        <button mat-button (click)="onCancel()">إلغاء</button>
+        <button mat-raised-button color="primary" [disabled]="form.invalid" type="submit">إنشاء</button>
+      </mat-dialog-actions>
+    </form>
+  `,
+  styles: [`
+    .full-width {
+      width: 100%;
+    }
+  `]
+})
+export class CreatePageDialogComponent {
+  form: FormGroup;
+  availableTypes$: Observable<string[]>;
+
+  constructor(
+    private fb: FormBuilder,
+    public dialogRef: MatDialogRef<CreatePageDialogComponent, CreatePageResult>,
+    @Inject(MAT_DIALOG_DATA) public data: CreatePageDialogData
+  ) {
+    // استخدام RxJS لـ state management لأنواع الصفحات المتاحة
+    this.availableTypes$ = of(data.availableTypes || ['Note', 'Task', 'Idea']);
+
+    this.form = this.fb.group({
+      title: [data.initialTitle || '', Validators.required],
+      content: [data.initialContent || ''],
+      type: [data.initialType || '', Validators.required]
+    });
+  }
+
+  onCancel(): void {
+    // إغلاق الحوار دون إرجاع بيانات (null)
+    this.dialogRef.close(null);
+  }
+
+  onSave(): void {
+    if (this.form.valid) {
+      // إغلاق الحوار وإرجاع بيانات الصفحة الجديدة
+      const result: CreatePageResult = this.form.value;
+      this.dialogRef.close(result);
+    }
+  }
+}

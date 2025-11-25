@@ -1,0 +1,125 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { BehaviorSubject, Observable, Subscription, interval, map } from 'rxjs';
+
+// تعريف واجهة لبطاقة الإحصائيات
+interface StatCard {
+  title: string;
+  value: number;
+  icon: string;
+  color: string;
+}
+
+@Component({
+  selector: 'app-stats-cards',
+  standalone: true,
+  imports: [CommonModule, MatCardModule, MatIconModule, MatGridListModule],
+  template: `
+    <mat-grid-list cols="5" rowHeight="100px" gutterSize="16px">
+      <mat-grid-tile *ngFor="let card of (statsCards$ | async)" [colspan]="1" [rowspan]="1">
+        <mat-card class="stat-card" [ngStyle]="{'border-left': '5px solid ' + card.color}">
+          <mat-card-header>
+            <div mat-card-avatar class="example-header-image" [ngStyle]="{'background-color': card.color + '1A'}">
+              <mat-icon [ngStyle]="{'color': card.color}">{{ card.icon }}</mat-icon>
+            </div>
+            <mat-card-title>{{ card.value | number }}</mat-card-title>
+            <mat-card-subtitle>{{ card.title }}</mat-card-subtitle>
+          </mat-card-header>
+        </mat-card>
+      </mat-grid-tile>
+    </mat-grid-list>
+  `,
+  styles: [`
+    .stat-card {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease-in-out;
+    }
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+    .mat-card-header {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 0 16px;
+    }
+    .mat-card-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 16px;
+    }
+    .mat-card-title {
+      font-size: 1.5em;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+    .mat-card-subtitle {
+      font-size: 0.8em;
+      color: #757575;
+      margin-top: 4px;
+    }
+  `]
+})
+export class StatsCardsComponent implements OnInit, OnDestroy {
+  // استخدام BehaviorSubject لإدارة حالة بطاقات الإحصائيات
+  private statsCardsSubject = new BehaviorSubject<StatCard[]>([]);
+  statsCards$: Observable<StatCard[]> = this.statsCardsSubject.asObservable();
+
+  private dataSubscription: Subscription | undefined;
+
+  // بيانات الإحصائيات المطلوبة
+  private initialStats: StatCard[] = [
+    { title: 'إجمالي الدفاتر', value: 0, icon: 'book', color: '#4CAF50' }, // totalNotebooks
+    { title: 'إجمالي الصفحات', value: 0, icon: 'description', color: '#2196F3' }, // totalPages
+    { title: 'إجمالي الأفكار', value: 0, icon: 'lightbulb', color: '#FFC107' }, // totalIdeas
+    { title: 'إجمالي المهام', value: 0, icon: 'check_circle', color: '#FF5722' }, // totalTasks
+    { title: 'إجمالي التقارير', value: 0, icon: 'analytics', color: '#9C27B0' } // totalReports
+  ];
+
+  constructor() {
+    this.statsCardsSubject.next(this.initialStats);
+  }
+
+  ngOnInit(): void {
+    // محاكاة جلب البيانات من خدمة ما وتحديثها كل 5 ثوانٍ
+    // في تطبيق حقيقي، سيتم استبدال هذا باستدعاء خدمة API
+    this.dataSubscription = interval(5000)
+      .pipe(
+        map(() => this.fetchMockStats())
+      )
+      .subscribe(newStats => {
+        this.statsCardsSubject.next(newStats);
+      });
+  }
+
+  ngOnDestroy(): void {
+    // التأكد من إلغاء الاشتراك عند تدمير المكون لتجنب تسرب الذاكرة
+    if (this.dataSubscription) {
+      this.dataSubscription.unsubscribe();
+    }
+  }
+
+  /**
+   * محاكاة جلب بيانات الإحصائيات من الخادم.
+   * يتم توليد قيم عشوائية لغرض المثال.
+   */
+  private fetchMockStats(): StatCard[] {
+    return this.initialStats.map(stat => ({
+      ...stat,
+      // توليد قيمة عشوائية بين 100 و 1000
+      value: Math.floor(Math.random() * 900) + 100
+    }));
+  }
+}

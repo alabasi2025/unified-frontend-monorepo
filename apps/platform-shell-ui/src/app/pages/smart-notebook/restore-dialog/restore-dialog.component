@@ -1,0 +1,85 @@
+import { Component, Inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Observable, of } from 'rxjs';
+
+// تعريف واجهة البيانات التي سيتم تمريرها إلى الحوار
+export interface RestoreDialogData {
+  entityName: string;
+  entityType: string;
+}
+
+@Component({
+  selector: 'app-restore-dialog',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule
+  ],
+  template: `
+    <h2 mat-dialog-title>تأكيد استرجاع</h2>
+    <mat-dialog-content class="mat-typography">
+      <p>هل أنت متأكد من أنك تريد استرجاع **{{ data.entityName }}** من نوع **{{ data.entityType }}** من الأرشيف؟</p>
+      <div *ngIf="isRestoring$ | async" class="restoring-indicator">
+        <mat-progress-spinner mode="indeterminate" diameter="24"></mat-progress-spinner>
+        <span>جاري الاسترجاع...</span>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button [mat-dialog-close]="false" [disabled]="isRestoring$ | async">إلغاء</button>
+      <button mat-raised-button color="primary" (click)="onConfirm()" [disabled]="isRestoring$ | async">
+        <mat-icon>restore</mat-icon>
+        استرجاع
+      </button>
+    </mat-dialog-actions>
+  `,
+  styles: [`
+    .restoring-indicator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 15px;
+      color: var(--mat-primary-text-color);
+    }
+    .mat-typography p {
+      font-size: 16px;
+    }
+    .mat-typography strong {
+      font-weight: 600;
+    }
+  `]
+})
+export class RestoreDialogComponent {
+  // RxJS: استخدام Observable لتمثيل حالة الاسترجاع
+  // في تطبيق حقيقي، سيتم تحديث هذا Observable بناءً على استدعاء خدمة الاسترجاع
+  isRestoring$: Observable<boolean> = of(false);
+
+  constructor(
+    public dialogRef: MatDialogRef<RestoreDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: RestoreDialogData
+  ) {}
+
+  onConfirm(): void {
+    // في تطبيق حقيقي، هنا سيتم استدعاء خدمة الاسترجاع
+    // this.isRestoring$ = this.restoreService.restore(this.data.entityId).pipe(
+    //   tap(() => this.dialogRef.close(true)), // إغلاق الحوار بنجاح
+    //   catchError(() => {
+    //     // معالجة الخطأ
+    //     return of(false);
+    //   })
+    // );
+
+    // للمثال، نقوم بإغلاق الحوار مباشرةً مع تمرير قيمة true (تأكيد)
+    this.dialogRef.close(true);
+  }
+
+  onCancel(): void {
+    this.dialogRef.close(false);
+  }
+}
