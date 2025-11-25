@@ -77,21 +77,21 @@
                  placeholder="بحث برقم الأمر...">
         </span>
         
-        <p-dropdown [options]="customers" [(ngModel)]="selectedCustomer" 
+        <p-select [options]="customers" [(ngModel)]="selectedCustomer" 
                     optionLabel="name" placeholder="اختر العميل" 
-                    [showClear]="true" (onChange)="applyFilters()"></p-dropdown>
+                    [showClear]="true" (onChange)="applyFilters()"></p-select>
         
-        <p-dropdown [options]="statuses" [(ngModel)]="selectedStatus" 
+        <p-select [options]="statuses" [(ngModel)]="selectedStatus" 
                     optionLabel="label" placeholder="اختر الحالة" 
-                    [showClear]="true" (onChange)="applyFilters()"></p-dropdown>
+                    [showClear]="true" (onChange)="applyFilters()"></p-select>
         
-        <p-calendar [(ngModel)]="startDate" placeholder="من تاريخ" 
+        <p-datepicker [(ngModel)]="startDate" placeholder="من تاريخ" 
                     dateFormat="yy-mm-dd" [showIcon]="true" 
-                    (onSelect)="applyFilters()"></p-calendar>
+                    (onSelect)="applyFilters()"></p-datepicker>
         
-        <p-calendar [(ngModel)]="endDate" placeholder="إلى تاريخ" 
+        <p-datepicker [(ngModel)]="endDate" placeholder="إلى تاريخ" 
                     dateFormat="yy-mm-dd" [showIcon]="true" 
-                    (onSelect)="applyFilters()"></p-calendar>
+                    (onSelect)="applyFilters()"></p-datepicker>
         
         <button pButton icon="pi pi-filter-slash" label="مسح الفلاتر" 
                 class="p-button-outlined" (click)="clearFilters()"></button>
@@ -190,21 +190,21 @@
           
           <div class="form-group">
             <label for="orderDate">تاريخ الأمر <span class="required">*</span></label>
-            <p-calendar id="orderDate" [(ngModel)]="currentOrder.orderDate" 
-                        dateFormat="yy-mm-dd" [showIcon]="true" class="w-full"></p-calendar>
+            <p-datepicker id="orderDate" [(ngModel)]="currentOrder.orderDate" 
+                        dateFormat="yy-mm-dd" [showIcon]="true" class="w-full"></p-datepicker>
           </div>
           
           <div class="form-group">
             <label for="customer">العميل <span class="required">*</span></label>
-            <p-dropdown id="customer" [options]="customers" [(ngModel)]="currentOrder.customerId" 
+            <p-select id="customer" [options]="customers" [(ngModel)]="currentOrder.customerId" 
                         optionLabel="name" optionValue="id" placeholder="اختر العميل" 
-                        class="w-full"></p-dropdown>
+                        class="w-full"></p-select>
           </div>
           
           <div class="form-group">
             <label for="expectedDeliveryDate">تاريخ التسليم المتوقع</label>
-            <p-calendar id="expectedDeliveryDate" [(ngModel)]="currentOrder.expectedDeliveryDate" 
-                        dateFormat="yy-mm-dd" [showIcon]="true" class="w-full"></p-calendar>
+            <p-datepicker id="expectedDeliveryDate" [(ngModel)]="currentOrder.expectedDeliveryDate" 
+                        dateFormat="yy-mm-dd" [showIcon]="true" class="w-full"></p-datepicker>
           </div>
           
           <div class="form-group">
@@ -246,10 +246,10 @@
             <tbody>
               <tr *ngFor="let line of currentOrder.lines; let i = index">
                 <td>
-                  <p-dropdown [options]="items" [(ngModel)]="line.itemId" 
+                  <p-select [options]="items" [(ngModel)]="line.itemId" 
                               optionLabel="name" optionValue="id" 
                               placeholder="اختر الصنف" 
-                              (onChange)="onItemChange(line)" class="w-full"></p-dropdown>
+                              (onChange)="onItemChange(line)" class="w-full"></p-select>
                 </td>
                 <td>
                   <p-inputNumber [(ngModel)]="line.quantity" [min]="1" 
