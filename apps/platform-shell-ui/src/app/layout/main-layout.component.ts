@@ -659,7 +659,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   menuSections: MenuSection[] = [];
   currentTime: string = '';
   currentDate: string = '';
-  appVersion: string = environment.version;
+  appVersion: string = '2.1.0';
   private timeInterval: any;
 
   constructor(
