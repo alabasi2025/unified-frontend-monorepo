@@ -108,58 +108,58 @@ interface FilterOptions {
         <div class="filters-grid">
           <div class="filter-field">
             <label>المستودع</label>
-            <p-dropdown 
+            <p-select 
               [(ngModel)]="filters.warehouseId"
               [options]="warehouses"
               optionLabel="nameAr"
               optionValue="id"
               placeholder="اختر المستودع"
               (onChange)="applyFilters()">
-            </p-dropdown>
+            </p-select>
           </div>
 
           <div class="filter-field">
             <label>الصنف</label>
-            <p-dropdown 
+            <p-select 
               [(ngModel)]="filters.itemId"
               [options]="items"
               optionLabel="nameAr"
               optionValue="id"
               placeholder="اختر الصنف"
               (onChange)="applyFilters()">
-            </p-dropdown>
+            </p-select>
           </div>
 
           <div class="filter-field">
             <label>نوع الحركة</label>
-            <p-dropdown 
+            <p-select 
               [(ngModel)]="filters.movementType"
               [options]="movementTypes"
               optionLabel="label"
               optionValue="value"
               placeholder="اختر نوع الحركة"
               (onChange)="applyFilters()">
-            </p-dropdown>
+            </p-select>
           </div>
 
           <div class="filter-field">
             <label>من التاريخ</label>
-            <p-calendar 
+            <p-datepicker 
               [(ngModel)]="filters.startDate"
               dateFormat="dd/mm/yy"
               [showIcon]="true"
               (onSelect)="applyFilters()">
-            </p-calendar>
+            </p-datepicker>
           </div>
 
           <div class="filter-field">
             <label>إلى التاريخ</label>
-            <p-calendar 
+            <p-datepicker 
               [(ngModel)]="filters.endDate"
               dateFormat="dd/mm/yy"
               [showIcon]="true"
               (onSelect)="applyFilters()">
-            </p-calendar>
+            </p-datepicker>
           </div>
 
           <div class="filter-field">
@@ -295,7 +295,7 @@ interface FilterOptions {
         <div class="form-grid">
           <div class="form-field">
             <label for="warehouse">المستودع *</label>
-            <p-dropdown 
+            <p-select 
               id="warehouse"
               [(ngModel)]="movement.warehouseId"
               [options]="warehouses"
@@ -303,12 +303,12 @@ interface FilterOptions {
               optionValue="id"
               placeholder="اختر المستودع"
               required>
-            </p-dropdown>
+            </p-select>
           </div>
 
           <div class="form-field">
             <label for="item">الصنف *</label>
-            <p-dropdown 
+            <p-select 
               id="item"
               [(ngModel)]="movement.itemId"
               [options]="items"
@@ -316,12 +316,12 @@ interface FilterOptions {
               optionValue="id"
               placeholder="اختر الصنف"
               required>
-            </p-dropdown>
+            </p-select>
           </div>
 
           <div class="form-field">
             <label for="movementType">نوع الحركة *</label>
-            <p-dropdown 
+            <p-select 
               id="movementType"
               [(ngModel)]="movement.movementType"
               [options]="movementTypes"
@@ -329,7 +329,7 @@ interface FilterOptions {
               optionValue="value"
               placeholder="اختر نوع الحركة"
               required>
-            </p-dropdown>
+            </p-select>
           </div>
 
           <div class="form-field">
