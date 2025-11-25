@@ -1,19 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { CalendarModule } from 'primeng/calendar';
-import { DropdownModule } from 'primeng/dropdown';
-import { BadgeModule } from 'primeng/badge';
-import { ToastModule } from 'primeng/toast';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ToolbarModule } from 'primeng/toolbar';
-import { CardModule } from 'primeng/card';
-import { TooltipModule } from 'primeng/tooltip';
+import { Table } from 'primeng/table';
+import { Button } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
+import { InputText } from 'primeng/inputtext';
+import { InputNumber } from 'primeng/inputnumber';
+import { DatePicker } from 'primeng/datepicker';
+import { Select } from 'primeng/select';
+import { Badge } from 'primeng/badge';
+import { Toast } from 'primeng/toast';
+import { ConfirmDialog } from 'primeng/confirmdialog';
+import { Toolbar } from 'primeng/toolbar';
+import { Card } from 'primeng/card';
+import { Tooltip } from 'primeng/tooltip';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { SalesOrdersService } from '../../services/sales-orders.service';
 
@@ -22,9 +22,9 @@ import { SalesOrdersService } from '../../services/sales-orders.service';
   standalone: true,
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
-    TableModule, ButtonModule, DialogModule, InputTextModule, InputNumberModule,
-    CalendarModule, DropdownModule, BadgeModule, ToastModule, ConfirmDialogModule,
-    ToolbarModule, CardModule, TooltipModule
+    Table, Button, Dialog, InputText, InputNumber,
+    DatePicker, Select, Badge, Toast, ConfirmDialog,
+    Toolbar, Card, Tooltip
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './sales-orders.component.html',
@@ -98,12 +98,12 @@ export class SalesOrdersComponent implements OnInit {
   loadData() {
     this.loading = true;
     this.salesOrdersService.getAll().subscribe({
-      next: (data) => {
+      next: (data: any) => {
         this.salesOrders = data;
         this.filteredOrders = data;
         this.loading = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         this.messageService.add({ 
           severity: 'error', 
           summary: 'خطأ', 
@@ -132,10 +132,10 @@ export class SalesOrdersComponent implements OnInit {
 
   loadStatistics() {
     this.salesOrdersService.getStatistics().subscribe({
-      next: (data) => {
+      next: (data: any) => {
         this.statistics = data;
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Failed to load statistics', error);
       }
     });
@@ -222,7 +222,7 @@ export class SalesOrdersComponent implements OnInit {
             });
             this.loadData();
           },
-          error: (error) => {
+          error: (error: any) => {
             this.messageService.add({ 
               severity: 'error', 
               summary: 'خطأ', 
@@ -256,7 +256,7 @@ export class SalesOrdersComponent implements OnInit {
         this.loadData();
         this.loadStatistics();
       },
-      error: (error) => {
+      error: (error: any) => {
         this.messageService.add({ 
           severity: 'error', 
           summary: 'خطأ', 
@@ -307,7 +307,7 @@ export class SalesOrdersComponent implements OnInit {
             });
             this.loadData();
           },
-          error: (error) => {
+          error: (error: any) => {
             this.messageService.add({ 
               severity: 'error', 
               summary: 'خطأ', 
@@ -336,7 +336,7 @@ export class SalesOrdersComponent implements OnInit {
             });
             this.loadData();
           },
-          error: (error) => {
+          error: (error: any) => {
             this.messageService.add({ 
               severity: 'error', 
               summary: 'خطأ', 
