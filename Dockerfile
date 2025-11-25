@@ -14,7 +14,7 @@ RUN npm ci
 COPY . .
 
 # Build application for production
-RUN npx nx build platform-shell-ui --prod
+RUN npx nx build platform-shell-ui --configuration=production
 
 # Production stage with Nginx
 FROM nginx:alpine
