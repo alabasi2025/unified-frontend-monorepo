@@ -6,7 +6,7 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
-import { InputTextareaModule } from 'primeng/inputtextarea';
+
 import { FormsModule } from '@angular/forms';
 import { TooltipModule } from 'primeng/tooltip';
 
@@ -28,7 +28,7 @@ interface Notebook {
     ButtonModule,
     DialogModule,
     InputTextModule,
-    InputTextareaModule,
+
     FormsModule,
     TooltipModule
   ],
@@ -121,14 +121,13 @@ interface Notebook {
 
         <div class="field">
           <label for="description">الوصف</label>
-          <textarea 
+          <input 
             id="description"
-            pInputTextarea 
+            type="text" 
+            pInputText 
             [(ngModel)]="newNotebook.description"
             placeholder="وصف مختصر للدفتر..."
-            rows="3"
             class="w-full">
-          </textarea>
         </div>
       </div>
 
