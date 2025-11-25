@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Table } from 'primeng/table';
+import { TableModule } from 'primeng/table';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
@@ -29,7 +29,7 @@ interface FilterOptions {
   imports: [
     CommonModule,
     FormsModule,
-    Table,
+    TableModule,
     Button,
     Dialog,
     InputText,

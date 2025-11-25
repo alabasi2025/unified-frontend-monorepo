@@ -821,31 +821,15 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         ]
       },
       {
-        title: '📓 Smart Notebook',
-        icon: 'pi pi-book',
-        color: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-        iconBg: '0 4px 20px rgba(240, 147, 251, 0.5)',
-        expanded: false,
-        items: [
-          { label: '📊 Dashboard', icon: 'pi pi-chart-bar', routerLink: '/smart-notebook/dashboard' },
-          { label: '📓 الدفتر الشامل', icon: 'pi pi-book', routerLink: '/smart-notebook/living-notebook' },
-          { label: '💡 بنك الأفكار', icon: 'pi pi-lightbulb', routerLink: '/smart-notebook/ideas' },
-          { label: '💬 سجل المحادثات', icon: 'pi pi-comments', routerLink: '/smart-notebook/chats' },
-          { label: '📊 مكتبة التقارير', icon: 'pi pi-file', routerLink: '/smart-notebook/reports' },
-          { label: '✅ المهام', icon: 'pi pi-check-square', routerLink: '/smart-notebook/tasks' },
-          { label: '📄 صفحات الدفتر', icon: 'pi pi-book', routerLink: '/smart-notebook/pages' },
-          { label: '📌 الملصقات', icon: 'pi pi-bookmark', routerLink: '/smart-notebook/sticky-notes' },
-          { label: '⏱️ الخط الزمني', icon: 'pi pi-clock', routerLink: '/smart-notebook/timeline' }
-        ]
-      },
-      {
-        title: 'التطوير',
+        title: 'نظام المطور',
         icon: 'pi pi-code',
         color: 'linear-gradient(135deg, #fdcbf1 0%, #e6dee9 100%)',
         iconBg: '0 4px 20px rgba(253, 203, 241, 0.5)',
         expanded: false,
         items: [
-          { label: 'Developer Chat', icon: 'pi pi-comments', routerLink: '/developer-chat' }
+          { label: 'الوحدة المركزية للذكاء الاصطناعي', icon: 'pi pi-bolt', routerLink: '/ai-hub' },
+          { label: "Smart Notebook", icon: "pi pi-book", routerLink: "/smart-notebook" },
+          { label: "📔 الدفتر السحري", icon: "pi pi-book", routerLink: "/magic-notebook" },
         ]
       }
     ];
