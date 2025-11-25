@@ -1,23 +1,20 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, BehaviorSubject } from 'rxjs';
+
+// ============ Interfaces & Types ============
 
 export interface StockMovement {
   id: string;
   warehouseId: string;
   warehouseName: string;
   itemId: string;
-  itemCode: string;
   itemName: string;
   movementType: 'IN' | 'OUT' | 'TRANSFER' | 'ADJUSTMENT';
   quantity: number;
-  unitPrice?: number;
-  totalValue?: number;
-  referenceType?: string;
-  referenceId?: string;
-  notes?: string;
-  createdBy: string;
+  notes: string;
   createdAt: string;
+  createdBy: string;
 }
 
 export interface CreateStockMovementDto {
@@ -25,95 +22,152 @@ export interface CreateStockMovementDto {
   itemId: string;
   movementType: 'IN' | 'OUT' | 'TRANSFER' | 'ADJUSTMENT';
   quantity: number;
-  unitCost?: number;
-  referenceType?: string;
-  referenceId?: string;
-  notes?: string;
-  holdingId: string;
-  unitId?: string;
-  projectId?: string;
+  notes: string;
+}
+
+export interface StockMovementResponse {
+  id: string;
+  warehouseId: string;
+  warehouseName: string;
+  itemId: string;
+  itemName: string;
+  movementType: string;
+  quantity: number;
+  notes: string;
+  createdAt: string;
+  createdBy: string;
 }
 
 export interface StockMovementStatistics {
-  totalIncoming: number;
-  totalOutgoing: number;
-  movementsToday: number;
-  totalMovements: number;
+  totalInbound: number;
+  totalOutbound: number;
+  totalMovementsToday: number;
+  lastMovementTime: string | null;
 }
+
+export interface FilterOptions {
+  warehouseId?: string;
+  itemId?: string;
+  movementType?: string;
+  startDate?: Date;
+  endDate?: Date;
+  skip?: number;
+  take?: number;
+}
+
+// ============ Service ============
 
 @Injectable({
   providedIn: 'root'
 })
 export class StockMovementsService {
-  private apiUrl = '/api/stock-movements';
+  private apiUrl: string = '/api/stock-movements';
+  private movementsSubject: BehaviorSubject<StockMovement[]> = new BehaviorSubject<StockMovement[]>([]);
+  public movements$: Observable<StockMovement[]> = this.movementsSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.loadMovements();
+  }
 
-  /**
-   * الحصول على جميع حركات المخزون مع الفلاتر
-   */
-  getAll(filters?: any): Observable<StockMovement[]> {
-    let url = this.apiUrl;
+  // ============ Get All Movements ============
+  getAll(filters?: FilterOptions): Observable<StockMovementResponse[]> {
+    let params: HttpParams = new HttpParams();
+
     if (filters) {
-      const params = new URLSearchParams();
-      if (filters.warehouseId) params.append('warehouseId', filters.warehouseId);
-      if (filters.itemId) params.append('itemId', filters.itemId);
-      if (filters.movementType) params.append('movementType', filters.movementType);
-      if (filters.startDate) params.append('startDate', filters.startDate);
-      if (filters.endDate) params.append('endDate', filters.endDate);
-      if (params.toString()) {
-        url += '?' + params.toString();
+      if (filters.warehouseId) {
+        params = params.set('warehouseId', filters.warehouseId);
+      }
+      if (filters.itemId) {
+        params = params.set('itemId', filters.itemId);
+      }
+      if (filters.movementType) {
+        params = params.set('movementType', filters.movementType);
+      }
+      if (filters.startDate) {
+        params = params.set('startDate', filters.startDate.toISOString());
+      }
+      if (filters.endDate) {
+        params = params.set('endDate', filters.endDate.toISOString());
+      }
+      if (filters.skip !== undefined) {
+        params = params.set('skip', filters.skip.toString());
+      }
+      if (filters.take !== undefined) {
+        params = params.set('take', filters.take.toString());
       }
     }
-    return this.http.get<StockMovement[]>(url);
+
+    return this.http.get<StockMovementResponse[]>(this.apiUrl, { params });
   }
 
-  /**
-   * الحصول على حركة واحدة بالمعرف
-   */
-  getOne(id: string): Observable<StockMovement> {
-    return this.http.get<StockMovement>(`${this.apiUrl}/${id}`);
+  // ============ Get One Movement ============
+  getOne(id: string): Observable<StockMovementResponse> {
+    return this.http.get<StockMovementResponse>(`${this.apiUrl}/${id}`);
   }
 
-  /**
-   * إنشاء حركة مخزون جديدة
-   */
-  create(data: CreateStockMovementDto): Observable<StockMovement> {
-    return this.http.post<StockMovement>(this.apiUrl, data);
+  // ============ Create Movement ============
+  create(dto: CreateStockMovementDto): Observable<StockMovementResponse> {
+    return this.http.post<StockMovementResponse>(this.apiUrl, dto);
   }
 
-  /**
-   * الحصول على حركات المخزون حسب المستودع
-   */
-  getByWarehouse(warehouseId: string): Observable<StockMovement[]> {
-    return this.http.get<StockMovement[]>(`${this.apiUrl}?warehouseId=${warehouseId}`);
+  // ============ Update Movement ============
+  update(id: string, dto: CreateStockMovementDto): Observable<StockMovementResponse> {
+    return this.http.patch<StockMovementResponse>(`${this.apiUrl}/${id}`, dto);
   }
 
-  /**
-   * الحصول على حركات المخزون حسب الصنف
-   */
-  getByItem(itemId: string): Observable<StockMovement[]> {
-    return this.http.get<StockMovement[]>(`${this.apiUrl}?itemId=${itemId}`);
+  // ============ Delete Movement ============
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  /**
-   * الحصول على إحصائيات حركات المخزون
-   */
+  // ============ Get By Warehouse ============
+  getByWarehouse(warehouseId: string): Observable<StockMovementResponse[]> {
+    const params: HttpParams = new HttpParams().set('warehouseId', warehouseId);
+    return this.http.get<StockMovementResponse[]>(this.apiUrl, { params });
+  }
+
+  // ============ Get By Item ============
+  getByItem(itemId: string): Observable<StockMovementResponse[]> {
+    const params: HttpParams = new HttpParams().set('itemId', itemId);
+    return this.http.get<StockMovementResponse[]>(this.apiUrl, { params });
+  }
+
+  // ============ Get Statistics ============
   getStatistics(): Observable<StockMovementStatistics> {
-    return this.http.get<StockMovementStatistics>(`${this.apiUrl}/statistics`);
+    return this.http.get<StockMovementStatistics>(`${this.apiUrl}/statistics/summary`);
   }
 
-  /**
-   * تحديث حركة مخزون
-   */
-  update(id: string, data: any): Observable<StockMovement> {
-    return this.http.patch<StockMovement>(`${this.apiUrl}/${id}`, data);
+  // ============ Get Warehouse Statistics ============
+  getWarehouseStatistics(warehouseId: string): Observable<StockMovementStatistics> {
+    return this.http.get<StockMovementStatistics>(`${this.apiUrl}/statistics/warehouse/${warehouseId}`);
   }
 
-  /**
-   * حذف حركة مخزون
-   */
-  delete(id: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  // ============ Get Item Statistics ============
+  getItemStatistics(itemId: string): Observable<StockMovementStatistics> {
+    return this.http.get<StockMovementStatistics>(`${this.apiUrl}/statistics/item/${itemId}`);
+  }
+
+  // ============ Private Methods ============
+  private loadMovements(): void {
+    this.getAll().subscribe({
+      next: (data: StockMovementResponse[]) => {
+        const movements: StockMovement[] = data.map((item: StockMovementResponse) => ({
+          id: item.id,
+          warehouseId: item.warehouseId,
+          warehouseName: item.warehouseName,
+          itemId: item.itemId,
+          itemName: item.itemName,
+          movementType: item.movementType as 'IN' | 'OUT' | 'TRANSFER' | 'ADJUSTMENT',
+          quantity: item.quantity,
+          notes: item.notes,
+          createdAt: item.createdAt,
+          createdBy: item.createdBy
+        }));
+        this.movementsSubject.next(movements);
+      },
+      error: (error: any) => {
+        console.error('Error loading movements:', error);
+      }
+    });
   }
 }

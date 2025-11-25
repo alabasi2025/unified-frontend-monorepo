@@ -1,18 +1,18 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { DropdownModule } from 'primeng/dropdown';
-import { CalendarModule } from 'primeng/calendar';
-import { ToastModule } from 'primeng/toast';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { Table } from 'primeng/table';
+import { Button } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
+import { InputText } from 'primeng/inputtext';
+import { InputNumber } from 'primeng/inputnumber';
+import { Select } from 'primeng/select';
+import { DatePicker } from 'primeng/datepicker';
+import { Toast } from 'primeng/toast';
+import { ConfirmDialog } from 'primeng/confirmdialog';
+import { Tooltip } from 'primeng/tooltip';
+import { Card } from 'primeng/card';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { TooltipModule } from 'primeng/tooltip';
-import { CardModule } from 'primeng/card';
 import { StockMovementsService, StockMovement, CreateStockMovementDto, StockMovementStatistics } from '../../services/stock-movements.service';
 
 interface FilterOptions {
@@ -29,17 +29,17 @@ interface FilterOptions {
   imports: [
     CommonModule,
     FormsModule,
-    TableModule,
-    ButtonModule,
-    DialogModule,
-    InputTextModule,
-    InputNumberModule,
-    DropdownModule,
-    CalendarModule,
-    ToastModule,
-    ConfirmDialogModule,
-    TooltipModule,
-    CardModule
+    Table,
+    Button,
+    Dialog,
+    InputText,
+    InputNumber,
+    Select,
+    DatePicker,
+    Toast,
+    ConfirmDialog,
+    Tooltip,
+    Card
   ],
   providers: [MessageService, ConfirmationService],
   template: `
@@ -49,667 +49,443 @@ interface FilterOptions {
 
       <!-- Page Header -->
       <div class="page-header">
-        <h2>حركات المخزون</h2>
+        <h1>حركات المخزون</h1>
         <button 
           pButton 
-          label="حركة جديدة" 
-          icon="pi pi-plus" 
-          (click)="openNew()"
+          type="button" 
+          label="إضافة حركة جديدة" 
+          icon="pi pi-plus"
+          (click)="openDialog()"
           class="p-button-success">
         </button>
       </div>
 
       <!-- Statistics Cards -->
       <div class="statistics-section">
-        <div class="stat-card">
-          <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-            <i class="pi pi-arrow-down"></i>
-          </div>
+        <p-card class="stat-card">
+          <ng-template pTemplate="header">
+            <div class="stat-icon">📥</div>
+          </ng-template>
           <div class="stat-content">
-            <span class="stat-label">إجمالي الوارد</span>
-            <span class="stat-value">{{ statistics?.totalIncoming | number }}</span>
+            <h3>إجمالي الوارد</h3>
+            <p class="stat-value">{{ statistics?.totalInbound || 0 }}</p>
           </div>
-        </div>
+        </p-card>
 
-        <div class="stat-card">
-          <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-            <i class="pi pi-arrow-up"></i>
-          </div>
+        <p-card class="stat-card">
+          <ng-template pTemplate="header">
+            <div class="stat-icon">📤</div>
+          </ng-template>
           <div class="stat-content">
-            <span class="stat-label">إجمالي الصادر</span>
-            <span class="stat-value">{{ statistics?.totalOutgoing | number }}</span>
+            <h3>إجمالي الصادر</h3>
+            <p class="stat-value">{{ statistics?.totalOutbound || 0 }}</p>
           </div>
-        </div>
+        </p-card>
 
-        <div class="stat-card">
-          <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-            <i class="pi pi-calendar"></i>
-          </div>
+        <p-card class="stat-card">
+          <ng-template pTemplate="header">
+            <div class="stat-icon">📊</div>
+          </ng-template>
           <div class="stat-content">
-            <span class="stat-label">حركات اليوم</span>
-            <span class="stat-value">{{ statistics?.movementsToday | number }}</span>
+            <h3>حركات اليوم</h3>
+            <p class="stat-value">{{ statistics?.totalMovementsToday || 0 }}</p>
           </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
-            <i class="pi pi-list"></i>
-          </div>
-          <div class="stat-content">
-            <span class="stat-label">إجمالي الحركات</span>
-            <span class="stat-value">{{ statistics?.totalMovements | number }}</span>
-          </div>
-        </div>
+        </p-card>
       </div>
 
       <!-- Filters Section -->
-      <div class="card filters-card">
+      <div class="filters-section">
         <h3>الفلاتر</h3>
-        <div class="filters-grid">
-          <div class="filter-field">
-            <label>المستودع</label>
-            <p-dropdown 
+        <div class="filter-row">
+          <div class="filter-group">
+            <label>المستودع:</label>
+            <p-select 
+              [options]="warehouses" 
+              optionLabel="name" 
+              optionValue="id"
               [(ngModel)]="filters.warehouseId"
-              [options]="warehouses"
-              optionLabel="nameAr"
-              optionValue="id"
               placeholder="اختر المستودع"
-              (onChange)="applyFilters()">
-            </p-dropdown>
+              [showClear]="true">
+            </p-select>
           </div>
 
-          <div class="filter-field">
-            <label>الصنف</label>
-            <p-dropdown 
-              [(ngModel)]="filters.itemId"
-              [options]="items"
-              optionLabel="nameAr"
+          <div class="filter-group">
+            <label>الصنف:</label>
+            <p-select 
+              [options]="items" 
+              optionLabel="name" 
               optionValue="id"
+              [(ngModel)]="filters.itemId"
               placeholder="اختر الصنف"
-              (onChange)="applyFilters()">
-            </p-dropdown>
+              [showClear]="true">
+            </p-select>
           </div>
 
-          <div class="filter-field">
-            <label>نوع الحركة</label>
-            <p-dropdown 
-              [(ngModel)]="filters.movementType"
-              [options]="movementTypes"
-              optionLabel="label"
+          <div class="filter-group">
+            <label>نوع الحركة:</label>
+            <p-select 
+              [options]="movementTypes" 
+              optionLabel="label" 
               optionValue="value"
-              placeholder="اختر نوع الحركة"
-              (onChange)="applyFilters()">
-            </p-dropdown>
+              [(ngModel)]="filters.movementType"
+              placeholder="اختر النوع"
+              [showClear]="true">
+            </p-select>
           </div>
 
-          <div class="filter-field">
-            <label>من التاريخ</label>
-            <p-calendar 
+          <div class="filter-group">
+            <label>من التاريخ:</label>
+            <p-datePicker 
               [(ngModel)]="filters.startDate"
-              dateFormat="dd/mm/yy"
-              [showIcon]="true"
-              (onSelect)="applyFilters()">
-            </p-calendar>
+              placeholder="اختر التاريخ"
+              [showIcon]="true">
+            </p-datePicker>
           </div>
 
-          <div class="filter-field">
-            <label>إلى التاريخ</label>
-            <p-calendar 
+          <div class="filter-group">
+            <label>إلى التاريخ:</label>
+            <p-datePicker 
               [(ngModel)]="filters.endDate"
-              dateFormat="dd/mm/yy"
-              [showIcon]="true"
-              (onSelect)="applyFilters()">
-            </p-calendar>
+              placeholder="اختر التاريخ"
+              [showIcon]="true">
+            </p-datePicker>
           </div>
 
-          <div class="filter-field">
-            <label>بحث سريع</label>
-            <input 
-              pInputText 
-              type="text" 
-              [(ngModel)]="searchText"
-              (input)="applyFilters()"
-              placeholder="ابحث عن حركة..." />
+          <div class="filter-actions">
+            <button 
+              pButton 
+              type="button" 
+              label="بحث" 
+              icon="pi pi-search"
+              (click)="applyFilters()"
+              class="p-button-info">
+            </button>
+            <button 
+              pButton 
+              type="button" 
+              label="إعادة تعيين" 
+              icon="pi pi-refresh"
+              (click)="resetFilters()"
+              class="p-button-secondary">
+            </button>
           </div>
-        </div>
-
-        <div class="filter-actions">
-          <button 
-            pButton 
-            label="إعادة تعيين" 
-            icon="pi pi-refresh"
-            class="p-button-text"
-            (click)="resetFilters()">
-          </button>
         </div>
       </div>
 
       <!-- Data Table -->
-      <div class="card">
-        <p-table 
-          #movementsTable
-          [value]="filteredMovements" 
-          [paginator]="true" 
-          [rows]="10"
-          [showCurrentPageReport]="true"
-          currentPageReportTemplate="عرض {first} إلى {last} من {totalRecords} حركة"
-          [globalFilterFields]="['itemName', 'warehouseName', 'referenceId']"
-          styleClass="p-datatable-gridlines"
-          [loading]="loading">
-          
-          <ng-template pTemplate="caption">
-            <div class="table-header">
-              <span class="p-input-icon-left">
-                <i class="pi pi-search"></i>
-                <input 
-                  pInputText 
-                  type="text" 
-                  #searchInput
-                  (input)="movementsTable.filterGlobal(searchInput.value, 'contains')" 
-                  placeholder="بحث سريع..." />
-              </span>
-            </div>
-          </ng-template>
-
-          <ng-template pTemplate="header">
-            <tr>
-              <th pSortableColumn="createdAt">التاريخ <p-sortIcon field="createdAt"></p-sortIcon></th>
-              <th pSortableColumn="warehouseName">المستودع <p-sortIcon field="warehouseName"></p-sortIcon></th>
-              <th pSortableColumn="itemName">الصنف <p-sortIcon field="itemName"></p-sortIcon></th>
-              <th pSortableColumn="movementType">نوع الحركة <p-sortIcon field="movementType"></p-sortIcon></th>
-              <th pSortableColumn="quantity">الكمية <p-sortIcon field="quantity"></p-sortIcon></th>
-              <th pSortableColumn="unitPrice">السعر الوحدة <p-sortIcon field="unitPrice"></p-sortIcon></th>
-              <th pSortableColumn="totalValue">القيمة الإجمالية <p-sortIcon field="totalValue"></p-sortIcon></th>
-              <th pSortableColumn="referenceId">المرجع <p-sortIcon field="referenceId"></p-sortIcon></th>
-              <th pSortableColumn="createdBy">المستخدم <p-sortIcon field="createdBy"></p-sortIcon></th>
-              <th>الملاحظات</th>
-              <th>الإجراءات</th>
-            </tr>
-          </ng-template>
-
-          <ng-template pTemplate="body" let-movement>
-            <tr>
-              <td>{{ movement.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
-              <td>{{ movement.warehouseName }}</td>
-              <td>{{ movement.itemName }}</td>
-              <td>
-                <span [class]="'movement-badge ' + getMovementTypeClass(movement.movementType)">
-                  {{ getMovementTypeLabel(movement.movementType) }}
-                </span>
-              </td>
-              <td class="text-right">{{ movement.quantity | number }}</td>
-              <td class="text-right">{{ movement.unitPrice | number: '1.2-2' }}</td>
-              <td class="text-right">{{ movement.totalValue | number: '1.2-2' }}</td>
-              <td>{{ movement.referenceId || '-' }}</td>
-              <td>{{ movement.createdBy }}</td>
-              <td>
-                <span [title]="movement.notes" class="notes-cell">
-                  {{ movement.notes ? (movement.notes.substring(0, 30) + '...') : '-' }}
-                </span>
-              </td>
-              <td>
-                <div class="action-buttons">
-                  <button 
-                    pButton 
-                    icon="pi pi-eye" 
-                    class="p-button-rounded p-button-text p-button-info"
-                    (click)="viewMovement(movement)"
-                    pTooltip="عرض">
-                  </button>
-                  <button 
-                    pButton 
-                    icon="pi pi-pencil" 
-                    class="p-button-rounded p-button-text p-button-warning"
-                    (click)="editMovement(movement)"
-                    pTooltip="تعديل">
-                  </button>
-                  <button 
-                    pButton 
-                    icon="pi pi-trash" 
-                    class="p-button-rounded p-button-text p-button-danger"
-                    (click)="deleteMovement(movement)"
-                    pTooltip="حذف">
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="11" class="text-center">لا توجد حركات مخزون</td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
-
-      <!-- Dialog للإضافة/التعديل -->
-      <p-dialog 
-        [(visible)]="movementDialog" 
-        [header]="dialogTitle"
-        [modal]="true" 
-        [style]="{width: '700px'}"
-        [draggable]="false"
-        [resizable]="false">
+      <p-table 
+        #dt 
+        [value]="movements" 
+        [paginator]="true" 
+        [rows]="10"
+        [globalFilterFields]="['warehouseName','itemName','movementType']"
+        responsiveLayout="scroll"
+        styleClass="p-datatable-striped">
         
-        <div class="form-grid">
-          <div class="form-field">
-            <label for="warehouse">المستودع *</label>
-            <p-dropdown 
-              id="warehouse"
-              [(ngModel)]="movement.warehouseId"
-              [options]="warehouses"
-              optionLabel="nameAr"
+        <ng-template pTemplate="header">
+          <tr>
+            <th>المستودع</th>
+            <th>الصنف</th>
+            <th>نوع الحركة</th>
+            <th>الكمية</th>
+            <th>الملاحظات</th>
+            <th>التاريخ</th>
+            <th>الإجراءات</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-movement>
+          <tr>
+            <td>{{ movement.warehouseName }}</td>
+            <td>{{ movement.itemName }}</td>
+            <td>
+              <span [ngClass]="getMovementTypeClass(movement.movementType)">
+                {{ getMovementTypeLabel(movement.movementType) }}
+              </span>
+            </td>
+            <td>{{ movement.quantity }}</td>
+            <td>{{ movement.notes }}</td>
+            <td>{{ movement.createdAt | date: 'short' }}</td>
+            <td>
+              <button 
+                pButton 
+                pRipple 
+                type="button" 
+                pTooltip="تعديل" 
+                icon="pi pi-pencil" 
+                class="p-button-rounded p-button-warning p-button-sm"
+                (click)="editMovement(movement)">
+              </button>
+              <button 
+                pButton 
+                pRipple 
+                type="button" 
+                pTooltip="حذف" 
+                icon="pi pi-trash" 
+                class="p-button-rounded p-button-danger p-button-sm"
+                (click)="deleteMovement(movement)">
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7" class="text-center">لا توجد حركات مخزون</td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <!-- Add/Edit Dialog -->
+      <p-dialog 
+        [(visible)]="displayDialog" 
+        [header]="isEditMode ? 'تعديل حركة مخزون' : 'إضافة حركة مخزون جديدة'" 
+        [modal]="true" 
+        [style]="{ width: '50vw' }"
+        (onHide)="closeDialog()">
+        
+        <form (ngSubmit)="saveMovement()">
+          <div class="form-group">
+            <label>المستودع:</label>
+            <p-select 
+              [options]="warehouses" 
+              optionLabel="name" 
               optionValue="id"
+              [(ngModel)]="formData.warehouseId"
+              name="warehouseId"
               placeholder="اختر المستودع"
               required>
-            </p-dropdown>
+            </p-select>
           </div>
 
-          <div class="form-field">
-            <label for="item">الصنف *</label>
-            <p-dropdown 
-              id="item"
-              [(ngModel)]="movement.itemId"
-              [options]="items"
-              optionLabel="nameAr"
+          <div class="form-group">
+            <label>الصنف:</label>
+            <p-select 
+              [options]="items" 
+              optionLabel="name" 
               optionValue="id"
+              [(ngModel)]="formData.itemId"
+              name="itemId"
               placeholder="اختر الصنف"
               required>
-            </p-dropdown>
+            </p-select>
           </div>
 
-          <div class="form-field">
-            <label for="movementType">نوع الحركة *</label>
-            <p-dropdown 
-              id="movementType"
-              [(ngModel)]="movement.movementType"
-              [options]="movementTypes"
-              optionLabel="label"
+          <div class="form-group">
+            <label>نوع الحركة:</label>
+            <p-select 
+              [options]="movementTypes" 
+              optionLabel="label" 
               optionValue="value"
-              placeholder="اختر نوع الحركة"
+              [(ngModel)]="formData.movementType"
+              name="movementType"
+              placeholder="اختر النوع"
               required>
-            </p-dropdown>
+            </p-select>
           </div>
 
-          <div class="form-field">
-            <label for="quantity">الكمية *</label>
+          <div class="form-group">
+            <label>الكمية:</label>
             <p-inputNumber 
-              id="quantity" 
-              [(ngModel)]="movement.quantity" 
+              [(ngModel)]="formData.quantity"
+              name="quantity"
               [min]="0"
-              placeholder="0"
+              placeholder="أدخل الكمية"
               required>
             </p-inputNumber>
           </div>
 
-          <div class="form-field">
-            <label for="unitCost">سعر الوحدة</label>
-            <p-inputNumber 
-              id="unitCost" 
-              [(ngModel)]="movement.unitCost" 
-              [min]="0"
-              mode="currency"
-              currency="USD"
-              placeholder="0.00">
-            </p-inputNumber>
-          </div>
-
-          <div class="form-field">
-            <label for="referenceType">نوع المرجع</label>
+          <div class="form-group">
+            <label>الملاحظات:</label>
             <input 
               pInputText 
-              id="referenceType" 
-              [(ngModel)]="movement.referenceType" 
-              placeholder="مثال: PURCHASE_ORDER" />
+              [(ngModel)]="formData.notes"
+              name="notes"
+              placeholder="أدخل الملاحظات"
+              type="text">
           </div>
 
-          <div class="form-field">
-            <label for="referenceId">رقم المرجع</label>
-            <input 
-              pInputText 
-              id="referenceId" 
-              [(ngModel)]="movement.referenceId" 
-              placeholder="مثال: PO-001" />
-          </div>
-
-          <div class="form-field full-width">
-            <label for="notes">الملاحظات</label>
-            <textarea 
-              pInputText 
-              id="notes" 
-              [(ngModel)]="movement.notes" 
-              placeholder="أضف ملاحظات..."
-              rows="3"
-              style="resize: vertical; width: 100%;">
-            </textarea>
-          </div>
-        </div>
-
-        <ng-template pTemplate="footer">
-          <button 
-            pButton 
-            label="إلغاء" 
-            icon="pi pi-times" 
-            class="p-button-text"
-            (click)="hideDialog()">
-          </button>
-          <button 
-            pButton 
-            label="حفظ" 
-            icon="pi pi-check" 
-            (click)="saveMovement()"
-            [disabled]="!isValid()">
-          </button>
-        </ng-template>
-      </p-dialog>
-
-      <!-- Dialog للعرض -->
-      <p-dialog 
-        [(visible)]="viewDialog" 
-        header="تفاصيل حركة المخزون"
-        [modal]="true" 
-        [style]="{width: '600px'}"
-        [draggable]="false"
-        [resizable]="false">
-        
-        <div class="view-details" *ngIf="selectedMovement">
-          <div class="detail-row">
-            <span class="label">التاريخ:</span>
-            <span class="value">{{ selectedMovement.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">المستودع:</span>
-            <span class="value">{{ selectedMovement.warehouseName }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">الصنف:</span>
-            <span class="value">{{ selectedMovement.itemName }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">نوع الحركة:</span>
-            <span class="value">
-              <span [class]="'movement-badge ' + getMovementTypeClass(selectedMovement.movementType)">
-                {{ getMovementTypeLabel(selectedMovement.movementType) }}
-              </span>
-            </span>
-          </div>
-          <div class="detail-row">
-            <span class="label">الكمية:</span>
-            <span class="value">{{ selectedMovement.quantity | number }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">سعر الوحدة:</span>
-            <span class="value">{{ selectedMovement.unitPrice | number: '1.2-2' }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">القيمة الإجمالية:</span>
-            <span class="value">{{ selectedMovement.totalValue | number: '1.2-2' }}</span>
-          </div>
-          <div class="detail-row" *ngIf="selectedMovement.referenceId">
-            <span class="label">المرجع:</span>
-            <span class="value">{{ selectedMovement.referenceType }} - {{ selectedMovement.referenceId }}</span>
-          </div>
-          <div class="detail-row" *ngIf="selectedMovement.notes">
-            <span class="label">الملاحظات:</span>
-            <span class="value">{{ selectedMovement.notes }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">المستخدم:</span>
-            <span class="value">{{ selectedMovement.createdBy }}</span>
-          </div>
-        </div>
+          <ng-template pTemplate="footer">
+            <button 
+              pButton 
+              type="button" 
+              label="إلغاء" 
+              icon="pi pi-times"
+              (click)="closeDialog()"
+              class="p-button-text">
+            </button>
+            <button 
+              pButton 
+              type="submit" 
+              label="حفظ" 
+              icon="pi pi-check"
+              class="p-button-success">
+            </button>
+          </ng-template>
+        </form>
       </p-dialog>
     </div>
   `,
   styles: [`
     .stock-movements-page {
-      padding: 24px;
+      padding: 20px;
     }
 
     .page-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 30px;
     }
 
-    .page-header h2 {
+    .page-header h1 {
       margin: 0;
       font-size: 28px;
-      font-weight: 700;
-      color: #1a1f36;
+      color: #333;
     }
 
-    /* Statistics Section */
     .statistics-section {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
+      gap: 20px;
+      margin-bottom: 30px;
     }
 
     .stat-card {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      transition: all 0.3s ease;
-    }
-
-    .stat-card:hover {
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-      transform: translateY(-2px);
+      text-align: center;
     }
 
     .stat-icon {
-      width: 60px;
-      height: 60px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 24px;
+      font-size: 32px;
+      margin-bottom: 10px;
     }
 
-    .stat-content {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .stat-label {
-      font-size: 13px;
-      color: #6c757d;
-      font-weight: 500;
+    .stat-content h3 {
+      margin: 10px 0 5px 0;
+      color: #666;
+      font-size: 14px;
     }
 
     .stat-value {
-      font-size: 24px;
-      font-weight: 700;
-      color: #1a1f36;
+      margin: 0;
+      font-size: 28px;
+      font-weight: bold;
+      color: #2196F3;
     }
 
-    /* Filters Section */
-    .filters-card {
-      margin-bottom: 24px;
+    .filters-section {
+      background: #f5f5f5;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
     }
 
-    .filters-card h3 {
-      margin: 0 0 16px 0;
-      font-size: 16px;
-      font-weight: 600;
-      color: #1a1f36;
+    .filters-section h3 {
+      margin-top: 0;
+      color: #333;
     }
 
-    .filters-grid {
+    .filter-row {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-bottom: 16px;
+      gap: 15px;
+      align-items: flex-end;
     }
 
-    .filter-field {
+    .filter-group {
       display: flex;
       flex-direction: column;
-      gap: 8px;
     }
 
-    .filter-field label {
-      font-size: 13px;
-      font-weight: 600;
-      color: #495057;
+    .filter-group label {
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #333;
     }
 
     .filter-actions {
       display: flex;
-      justify-content: flex-end;
-      gap: 8px;
+      gap: 10px;
     }
 
-    /* Table Styles */
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    }
-
-    .table-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-
-    .movement-badge {
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .movement-badge.in {
-      background: #d4edda;
-      color: #155724;
-    }
-
-    .movement-badge.out {
-      background: #f8d7da;
-      color: #721c24;
-    }
-
-    .movement-badge.transfer {
-      background: #cce5ff;
-      color: #004085;
-    }
-
-    .movement-badge.adjustment {
-      background: #fff3cd;
-      color: #856404;
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 8px;
-    }
-
-    .notes-cell {
-      color: #6c757d;
-      font-size: 12px;
-    }
-
-    /* Form Styles */
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-    }
-
-    .form-field {
+    .form-group {
+      margin-bottom: 20px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
     }
 
-    .form-field.full-width {
-      grid-column: 1 / -1;
-    }
-
-    .form-field label {
-      font-size: 13px;
-      font-weight: 600;
-      color: #495057;
-    }
-
-    /* View Details */
-    .view-details {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .detail-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px;
-      background: #f8f9fa;
-      border-radius: 8px;
-    }
-
-    .detail-row .label {
-      font-weight: 600;
-      color: #495057;
-      min-width: 150px;
-    }
-
-    .detail-row .value {
-      color: #1a1f36;
-      text-align: right;
-      flex: 1;
+    .form-group label {
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #333;
     }
 
     .text-center {
       text-align: center;
     }
 
-    .text-right {
-      text-align: right;
+    .movement-in {
+      background-color: #c8e6c9;
+      color: #2e7d32;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .movement-out {
+      background-color: #ffccbc;
+      color: #d84315;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .movement-transfer {
+      background-color: #bbdefb;
+      color: #1565c0;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .movement-adjustment {
+      background-color: #fff9c4;
+      color: #f57f17;
+      padding: 4px 8px;
+      border-radius: 4px;
     }
   `]
 })
 export class StockMovementsComponent implements OnInit {
   movements: StockMovement[] = [];
-  filteredMovements: StockMovement[] = [];
-  selectedMovement: StockMovement | null = null;
-  movement: any = {};
-  
-  movementDialog = false;
-  viewDialog = false;
-  loading = false;
-  isEditing = false;
-  
   statistics: StockMovementStatistics | null = null;
-  
+  displayDialog: boolean = false;
+  isEditMode: boolean = false;
+  selectedMovement: StockMovement | null = null;
+
   filters: FilterOptions = {};
-  searchText = '';
-  
-  warehouses: any[] = [];
-  items: any[] = [];
-  
-  movementTypes = [
+  formData: CreateStockMovementDto = {
+    warehouseId: '',
+    itemId: '',
+    movementType: 'IN',
+    quantity: 0,
+    notes: ''
+  };
+
+  warehouses: any[] = [
+    { id: '1', name: 'المستودع الرئيسي' },
+    { id: '2', name: 'مستودع الفرع' }
+  ];
+
+  items: any[] = [
+    { id: '1', name: 'منتج أ' },
+    { id: '2', name: 'منتج ب' },
+    { id: '3', name: 'منتج ج' }
+  ];
+
+  movementTypes: any[] = [
     { label: 'وارد', value: 'IN' },
     { label: 'صادر', value: 'OUT' },
     { label: 'تحويل', value: 'TRANSFER' },
     { label: 'تسوية', value: 'ADJUSTMENT' }
   ];
-
-  dialogTitle = 'حركة مخزون جديدة';
 
   constructor(
     private stockMovementsService: StockMovementsService,
@@ -717,157 +493,139 @@ export class StockMovementsComponent implements OnInit {
     private confirmationService: ConfirmationService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadMovements();
     this.loadStatistics();
-    this.loadWarehouses();
-    this.loadItems();
   }
 
-  /**
-   * تحميل جميع حركات المخزون
-   */
-  loadMovements() {
-    this.loading = true;
+  loadMovements(): void {
     this.stockMovementsService.getAll().subscribe({
-      next: (data) => {
+      next: (data: any) => {
         this.movements = data;
-        this.filteredMovements = data;
-        this.loading = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error loading movements:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'خطأ',
-          detail: 'فشل تحميل حركات المخزون'
+          detail: 'فشل تحميل الحركات'
         });
-        this.loading = false;
       }
     });
   }
 
-  /**
-   * تحميل الإحصائيات
-   */
-  loadStatistics() {
+  loadStatistics(): void {
     this.stockMovementsService.getStatistics().subscribe({
-      next: (data) => {
+      next: (data: StockMovementStatistics) => {
         this.statistics = data;
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error loading statistics:', error);
       }
     });
   }
 
-  /**
-   * تحميل المستودعات (بيانات تجريبية)
-   */
-  loadWarehouses() {
-    this.warehouses = [
-      { id: '1', nameAr: 'المستودع الرئيسي' },
-      { id: '2', nameAr: 'مستودع عدن' },
-      { id: '3', nameAr: 'مستودع تعز' },
-      { id: '4', nameAr: 'مستودع الحديدة' }
-    ];
-  }
-
-  /**
-   * تحميل الأصناف (بيانات تجريبية)
-   */
-  loadItems() {
-    this.items = [
-      { id: '1', nameAr: 'لابتوب Dell Latitude' },
-      { id: '2', nameAr: 'شاشة Samsung 27"' },
-      { id: '3', nameAr: 'طابعة HP LaserJet' },
-      { id: '4', nameAr: 'ماوس Logitech' },
-      { id: '5', nameAr: 'لوحة مفاتيح Mechanical' },
-      { id: '6', nameAr: 'سماعات Bluetooth' }
-    ];
-  }
-
-  /**
-   * تطبيق الفلاتر
-   */
-  applyFilters() {
-    this.filteredMovements = this.movements.filter(movement => {
-      if (this.filters.warehouseId && movement.warehouseId !== this.filters.warehouseId) {
-        return false;
+  applyFilters(): void {
+    this.stockMovementsService.getAll(this.filters).subscribe({
+      next: (data: any) => {
+        this.movements = data;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'نجح',
+          detail: 'تم تطبيق الفلاتر'
+        });
+      },
+      error: (error: any) => {
+        console.error('Error applying filters:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'خطأ',
+          detail: 'فشل تطبيق الفلاتر'
+        });
       }
-      if (this.filters.itemId && movement.itemId !== this.filters.itemId) {
-        return false;
-      }
-      if (this.filters.movementType && movement.movementType !== this.filters.movementType) {
-        return false;
-      }
-      if (this.filters.startDate) {
-        const movementDate = new Date(movement.createdAt);
-        if (movementDate < this.filters.startDate) {
-          return false;
-        }
-      }
-      if (this.filters.endDate) {
-        const movementDate = new Date(movement.createdAt);
-        const endDate = new Date(this.filters.endDate);
-        endDate.setHours(23, 59, 59, 999);
-        if (movementDate > endDate) {
-          return false;
-        }
-      }
-      if (this.searchText) {
-        const search = this.searchText.toLowerCase();
-        return (
-          movement.itemName.toLowerCase().includes(search) ||
-          movement.warehouseName.toLowerCase().includes(search) ||
-          (movement.referenceId && movement.referenceId.toLowerCase().includes(search))
-        );
-      }
-      return true;
     });
   }
 
-  /**
-   * إعادة تعيين الفلاتر
-   */
-  resetFilters() {
+  resetFilters(): void {
     this.filters = {};
-    this.searchText = '';
-    this.filteredMovements = this.movements;
+    this.loadMovements();
+    this.messageService.add({
+      severity: 'info',
+      summary: 'تم',
+      detail: 'تم إعادة تعيين الفلاتر'
+    });
   }
 
-  /**
-   * فتح نموذج إضافة حركة جديدة
-   */
-  openNew() {
-    this.movement = {};
-    this.isEditing = false;
-    this.dialogTitle = 'حركة مخزون جديدة';
-    this.movementDialog = true;
+  openDialog(): void {
+    this.isEditMode = false;
+    this.formData = {
+      warehouseId: '',
+      itemId: '',
+      movementType: 'IN',
+      quantity: 0,
+      notes: ''
+    };
+    this.displayDialog = true;
   }
 
-  /**
-   * تعديل حركة
-   */
-  editMovement(movement: StockMovement) {
-    this.movement = { ...movement };
-    this.isEditing = true;
-    this.dialogTitle = 'تعديل حركة المخزون';
-    this.movementDialog = true;
-  }
-
-  /**
-   * عرض تفاصيل حركة
-   */
-  viewMovement(movement: StockMovement) {
+  editMovement(movement: StockMovement): void {
+    this.isEditMode = true;
     this.selectedMovement = movement;
-    this.viewDialog = true;
+    this.formData = {
+      warehouseId: movement.warehouseId,
+      itemId: movement.itemId,
+      movementType: movement.movementType,
+      quantity: movement.quantity,
+      notes: movement.notes
+    };
+    this.displayDialog = true;
   }
 
-  /**
-   * حذف حركة
-   */
-  deleteMovement(movement: StockMovement) {
+  saveMovement(): void {
+    if (this.isEditMode && this.selectedMovement) {
+      this.stockMovementsService.update(this.selectedMovement.id, this.formData).subscribe({
+        next: (data: any) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'نجح',
+            detail: 'تم تحديث الحركة بنجاح'
+          });
+          this.closeDialog();
+          this.loadMovements();
+        },
+        error: (error: any) => {
+          console.error('Error updating movement:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'خطأ',
+            detail: 'فشل تحديث الحركة'
+          });
+        }
+      });
+    } else {
+      this.stockMovementsService.create(this.formData).subscribe({
+        next: (data: any) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'نجح',
+            detail: 'تم إضافة الحركة بنجاح'
+          });
+          this.closeDialog();
+          this.loadMovements();
+        },
+        error: (error: any) => {
+          console.error('Error creating movement:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'خطأ',
+            detail: 'فشل إضافة الحركة'
+          });
+        }
+      });
+    }
+  }
+
+  deleteMovement(movement: StockMovement): void {
     this.confirmationService.confirm({
       message: 'هل أنت متأكد من حذف هذه الحركة؟',
       header: 'تأكيد الحذف',
@@ -875,15 +633,14 @@ export class StockMovementsComponent implements OnInit {
       accept: () => {
         this.stockMovementsService.delete(movement.id).subscribe({
           next: () => {
-            this.movements = this.movements.filter(m => m.id !== movement.id);
-            this.applyFilters();
             this.messageService.add({
               severity: 'success',
               summary: 'نجح',
               detail: 'تم حذف الحركة بنجاح'
             });
+            this.loadMovements();
           },
-          error: (error) => {
+          error: (error: any) => {
             console.error('Error deleting movement:', error);
             this.messageService.add({
               severity: 'error',
@@ -896,115 +653,29 @@ export class StockMovementsComponent implements OnInit {
     });
   }
 
-  /**
-   * حفظ حركة (إضافة أو تعديل)
-   */
-  saveMovement() {
-    if (!this.isValid()) {
-      return;
-    }
-
-    if (this.isEditing) {
-      this.stockMovementsService.update(this.movement.id, this.movement).subscribe({
-        next: () => {
-          const index = this.movements.findIndex(m => m.id === this.movement.id);
-          if (index > -1) {
-            this.movements[index] = this.movement;
-          }
-          this.applyFilters();
-          this.hideDialog();
-          this.messageService.add({
-            severity: 'success',
-            summary: 'نجح',
-            detail: 'تم تحديث الحركة بنجاح'
-          });
-        },
-        error: (error) => {
-          console.error('Error updating movement:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'خطأ',
-            detail: 'فشل تحديث الحركة'
-          });
-        }
-      });
-    } else {
-      this.stockMovementsService.create(this.movement).subscribe({
-        next: (newMovement) => {
-          this.movements.push(newMovement);
-          this.applyFilters();
-          this.hideDialog();
-          this.messageService.add({
-            severity: 'success',
-            summary: 'نجح',
-            detail: 'تم إضافة الحركة بنجاح'
-          });
-        },
-        error: (error) => {
-          console.error('Error creating movement:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'خطأ',
-            detail: 'فشل إضافة الحركة'
-          });
-        }
-      });
-    }
+  closeDialog(): void {
+    this.displayDialog = false;
+    this.isEditMode = false;
+    this.selectedMovement = null;
   }
 
-  /**
-   * إغلاق النموذج
-   */
-  hideDialog() {
-    this.movementDialog = false;
-    this.movement = {};
-  }
-
-  /**
-   * التحقق من صحة النموذج
-   */
-  isValid(): boolean {
-    return !!(
-      this.movement.warehouseId &&
-      this.movement.itemId &&
-      this.movement.movementType &&
-      this.movement.quantity
-    );
-  }
-
-  /**
-   * الحصول على تصنيف نوع الحركة
-   */
-  getMovementTypeClass(type: string): string {
-    switch (type) {
-      case 'IN':
-        return 'in';
-      case 'OUT':
-        return 'out';
-      case 'TRANSFER':
-        return 'transfer';
-      case 'ADJUSTMENT':
-        return 'adjustment';
-      default:
-        return '';
-    }
-  }
-
-  /**
-   * الحصول على تسمية نوع الحركة
-   */
   getMovementTypeLabel(type: string): string {
-    switch (type) {
-      case 'IN':
-        return 'وارد';
-      case 'OUT':
-        return 'صادر';
-      case 'TRANSFER':
-        return 'تحويل';
-      case 'ADJUSTMENT':
-        return 'تسوية';
-      default:
-        return type;
-    }
+    const typeMap: { [key: string]: string } = {
+      'IN': 'وارد',
+      'OUT': 'صادر',
+      'TRANSFER': 'تحويل',
+      'ADJUSTMENT': 'تسوية'
+    };
+    return typeMap[type] || type;
+  }
+
+  getMovementTypeClass(type: string): string {
+    const classMap: { [key: string]: string } = {
+      'IN': 'movement-in',
+      'OUT': 'movement-out',
+      'TRANSFER': 'movement-transfer',
+      'ADJUSTMENT': 'movement-adjustment'
+    };
+    return classMap[type] || '';
   }
 }
