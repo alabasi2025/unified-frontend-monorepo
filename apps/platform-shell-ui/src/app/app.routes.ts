@@ -48,8 +48,8 @@ export const appRoutes: Route[] = [
       // Maps System
       { path: 'maps', loadComponent: () => import('./features/maps/maps.component').then(m => m.MapsComponent) },
       
-      // Smart Notebook System (OneNote-like)
-      { path: 'smart-notebook', loadComponent: () => import('./pages/smart-notebook/notebooks-list/notebooks-list.component').then(m => m.NotebooksListComponent) },
+      // Smart Notebook System (OneNote-like) - under Developer System
+      { path: 'smart-notebook', loadComponent: () => import('./features/developer-system/smart-notebook/notebooks-list/notebooks-list.component').then(m => m.NotebooksListComponent) },
       
       // Developer System
       { path: 'developer', loadComponent: () => import('./features/developer-system/developer-chat/developer-chat.component').then(m => m.DeveloperChatComponent) },
