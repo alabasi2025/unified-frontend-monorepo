@@ -874,6 +874,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     if (url.includes('users')) return 'إدارة المستخدمين';
     if (url.includes('chart-of-accounts')) return 'دليل الحسابات';
     if (url.includes('warehouses')) return 'المستودعات';
+    if (url.includes('stock-movements')) return 'حركات المخزون';
     if (url.includes('fiscal-periods')) return 'الفترات المالية';
     if (url.includes('genes')) return 'نظام الجينات';
     return 'SEMOP ERP';

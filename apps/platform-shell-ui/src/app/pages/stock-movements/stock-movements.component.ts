@@ -6,8 +6,8 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { DropdownModule } from 'primeng/dropdown';
-import { CalendarModule } from 'primeng/calendar';
+import { Select } from 'primeng/select';
+import { DatePicker } from 'primeng/datepicker';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
@@ -34,8 +34,8 @@ interface FilterOptions {
     DialogModule,
     InputTextModule,
     InputNumberModule,
-    DropdownModule,
-    CalendarModule,
+    Select,
+    DatePicker,
     ToastModule,
     ConfirmDialogModule,
     TooltipModule,
