@@ -117,8 +117,8 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   loadNotifications(): void {
     this.loading = true;
     
-    const sub = this.notificationService.getAll().subscribe({
-      next: (notifications) => {
+    const sub = this.notificationService.getNotifications().subscribe({
+      next: (notifications: Notification[]) => {
         this.notifications = notifications;
         this.applyFilters();
         this.calculateStatistics();
@@ -153,7 +153,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
       this.calculateStatistics();
       
       if (this.settings.soundEnabled) {
-        this.soundService.playNotificationSound();
+        this.soundService.playNotificationSound(notification.type);
       }
     });
     this.subscriptions.push(sub);
