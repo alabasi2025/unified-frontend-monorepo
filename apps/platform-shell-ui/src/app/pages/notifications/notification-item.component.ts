@@ -19,8 +19,8 @@ import { Notification } from './notification.contracts';
 })
 export class NotificationItemComponent {
   @Input() notification!: Notification;
-  @Output() onRead = new EventEmitter<number>();
-  @Output() onDelete = new EventEmitter<number>();
+  @Output() read = new EventEmitter<number>();
+  @Output() delete = new EventEmitter<number>();
 
   /**
    * Get icon class based on notification type
@@ -64,7 +64,7 @@ export class NotificationItemComponent {
    */
   markAsRead(): void {
     if (!this.notification.isRead) {
-      this.onRead.emit(this.notification.id);
+      this.read.emit(this.notification.id);
     }
   }
 
@@ -73,6 +73,6 @@ export class NotificationItemComponent {
    */
   deleteNotification(event: Event): void {
     event.stopPropagation();
-    this.onDelete.emit(this.notification.id);
+    this.delete.emit(this.notification.id);
   }
 }
