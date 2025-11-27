@@ -1,16 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Notification } from './notification.contracts';
 import { NotificationItemComponent } from './notification-item.component';
+import { Notification } from './notification.contracts';
 
-/**
- * NotificationListComponent
- * 
- * @description
- * Component for displaying a list of notifications.
- * Uses NotificationItemComponent for each notification.
- * Handles loading and empty states.
- */
 @Component({
   selector: 'app-notification-list',
   standalone: true,
@@ -21,27 +13,106 @@ import { NotificationItemComponent } from './notification-item.component';
 export class NotificationListComponent {
   @Input() notifications: Notification[] = [];
   @Input() loading: boolean = false;
-  @Output() onNotificationRead = new EventEmitter<number>();
-  @Output() onNotificationDelete = new EventEmitter<number>();
+  @Input() viewMode: 'list' | 'grid' = 'list';
+  
+  @Output() notificationRead = new EventEmitter<number>();
+  @Output() notificationDelete = new EventEmitter<number>();
+  @Output() bulkMarkAsRead = new EventEmitter<number[]>();
+  @Output() bulkDelete = new EventEmitter<number[]>();
+
+  // Bulk selection state
+  selectedIds: Set<number> = new Set();
+  selectAll: boolean = false;
 
   /**
-   * Track notifications by ID for performance
+   * Toggle select all
    */
-  trackByNotificationId(index: number, item: Notification): number {
-    return item.id;
+  toggleSelectAll(): void {
+    this.selectAll = !this.selectAll;
+    
+    if (this.selectAll) {
+      // Select all notifications
+      this.selectedIds = new Set(this.notifications.map(n => n.id));
+    } else {
+      // Deselect all
+      this.selectedIds.clear();
+    }
   }
 
   /**
-   * Handle notification read event
+   * Toggle individual selection
    */
-  handleRead(id: number): void {
-    this.onNotificationRead.emit(id);
+  toggleSelection(id: number): void {
+    if (this.selectedIds.has(id)) {
+      this.selectedIds.delete(id);
+    } else {
+      this.selectedIds.add(id);
+    }
+
+    // Update select all checkbox
+    this.selectAll = this.selectedIds.size === this.notifications.length;
   }
 
   /**
-   * Handle notification delete event
+   * Check if notification is selected
    */
-  handleDelete(id: number): void {
-    this.onNotificationDelete.emit(id);
+  isSelected(id: number): boolean {
+    return this.selectedIds.has(id);
+  }
+
+  /**
+   * Get selected count
+   */
+  getSelectedCount(): number {
+    return this.selectedIds.size;
+  }
+
+  /**
+   * Has selections
+   */
+  hasSelections(): boolean {
+    return this.selectedIds.size > 0;
+  }
+
+  /**
+   * Bulk mark as read
+   */
+  onBulkMarkAsRead(): void {
+    const ids = Array.from(this.selectedIds);
+    this.bulkMarkAsRead.emit(ids);
+    this.clearSelection();
+  }
+
+  /**
+   * Bulk delete
+   */
+  onBulkDelete(): void {
+    if (confirm(`هل أنت متأكد من حذف ${this.selectedIds.size} إشعار؟`)) {
+      const ids = Array.from(this.selectedIds);
+      this.bulkDelete.emit(ids);
+      this.clearSelection();
+    }
+  }
+
+  /**
+   * Clear selection
+   */
+  clearSelection(): void {
+    this.selectedIds.clear();
+    this.selectAll = false;
+  }
+
+  /**
+   * Handle notification read
+   */
+  handleNotificationRead(id: number): void {
+    this.notificationRead.emit(id);
+  }
+
+  /**
+   * Handle notification delete
+   */
+  handleNotificationDelete(id: number): void {
+    this.notificationDelete.emit(id);
   }
 }
