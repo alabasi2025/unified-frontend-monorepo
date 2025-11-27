@@ -1,0 +1,24 @@
+<div class="notification-list">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>جاري تحميل الإشعارات...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && notifications.length === 0" class="empty-state">
+    <div class="empty-icon">🔔</div>
+    <h3>لا توجد إشعارات</h3>
+    <p>ستظهر إشعاراتك هنا</p>
+  </div>
+
+  <!-- Notifications List -->
+  <div *ngIf="!loading && notifications.length > 0" class="notifications-container">
+    <app-notification-item
+      *ngFor="let notification of notifications; trackBy: trackByNotificationId"
+      [notification]="notification"
+      (onRead)="handleRead($event)"
+      (onDelete)="handleDelete($event)">
+    </app-notification-item>
+  </div>
+</div>
