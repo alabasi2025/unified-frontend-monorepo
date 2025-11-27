@@ -124,7 +124,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         this.calculateStatistics();
         this.loading = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Failed to load notifications:', error);
         this.loading = false;
       }
@@ -191,7 +191,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     this.statistics.today = this.notifications.filter(n => {
-      const notifDate = new Date(n.timestamp);
+      const notifDate = new Date(n.createdAt);
       notifDate.setHours(0, 0, 0, 0);
       return notifDate.getTime() === today.getTime();
     }).length;
@@ -232,7 +232,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
           break;
       }
 
-      filtered = filtered.filter(n => new Date(n.timestamp) >= cutoffDate);
+      filtered = filtered.filter(n => new Date(n.createdAt) >= cutoffDate);
     }
 
     // Search filter
@@ -248,7 +248,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     filtered.sort((a, b) => {
       switch (this.sortBy) {
         case 'date':
-          return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         case 'type':
           return a.type.localeCompare(b.type);
         default:
@@ -367,7 +367,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
           this.calculateStatistics();
         }
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Failed to mark as read:', error);
       }
     });
@@ -378,13 +378,13 @@ export class NotificationsComponent implements OnInit, OnDestroy {
    * Handle notification delete
    */
   onNotificationDelete(id: number): void {
-    const sub = this.notificationService.delete(id).subscribe({
+    const sub = this.notificationService.deleteNotification(id).subscribe({
       next: () => {
         this.notifications = this.notifications.filter(n => n.id !== id);
         this.applyFilters();
         this.calculateStatistics();
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Failed to delete notification:', error);
       }
     });
