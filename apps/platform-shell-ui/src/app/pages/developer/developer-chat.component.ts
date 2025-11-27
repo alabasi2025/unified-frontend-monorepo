@@ -323,14 +323,14 @@ import { MessageService } from 'primeng/api';
 export class DeveloperChatComponent implements OnInit, AfterViewChecked {
   @ViewChild('chatContainer') chatContainer!: ElementRef;
 
-  conversationId: string = '';
-  userId: string = 'current-user-id'; // TODO: Get from auth service
+  conversationId = '';
+  userId = 'current-user-id'; // TODO: Get from auth service
   messages: any[] = [];
-  userMessage: string = '';
-  isSending: boolean = false;
-  isTyping: boolean = false;
+  userMessage = '';
+  isSending = false;
+  isTyping = false;
   lastCreatedTask: any = null;
-  shouldScroll: boolean = false;
+  shouldScroll = false;
 
   stats = {
     totalConversations: 0,
@@ -505,7 +505,7 @@ export class DeveloperChatComponent implements OnInit, AfterViewChecked {
     try {
       this.chatContainer.nativeElement.scrollTop = 
         this.chatContainer.nativeElement.scrollHeight;
-    } catch (err) {}
+    } catch (err) { console.error(err); }
   }
 
   showConversations() {
