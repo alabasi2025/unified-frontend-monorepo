@@ -1,9 +1,9 @@
-import { Injectable, signal } from '@angular/core';
-import { Observable, of, throwError, delay } from 'rxjs';
+import { Injectable, signal, computed } from '@angular/core';
+import { Observable, of, throwError, delay, BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import {
   INotificationService,
   Notification,
-  NotificationFilter,
   CreateNotificationPayload,
   UpdateNotificationPayload
 } from './notification.contracts';
@@ -14,7 +14,6 @@ import {
  * @description
  * Core service for managing notifications in the SEMOP ERP system.
  * Implements INotificationService from API Contract.
- * Provides CRUD operations, filtering, and status management.
  * 
  * @implements {INotificationService}
  * @see notification.contracts.ts
@@ -23,8 +22,8 @@ import {
   providedIn: 'root'
 })
 export class NotificationService implements INotificationService {
-  // In-memory storage for demo purposes
-  private notifications = signal<Notification[]>([
+  // Internal state using BehaviorSubject for reactive updates
+  private notificationsSubject = new BehaviorSubject<Notification[]>([
     {
       id: 1,
       type: 'info',
@@ -66,107 +65,35 @@ export class NotificationService implements INotificationService {
   private nextId = 5;
 
   /**
-   * Get all notifications with optional filtering
-   * @param filter - Optional filter criteria
-   * @returns Observable of filtered notifications
+   * Observable للإشعارات
    */
-  getAll(filter?: NotificationFilter): Observable<Notification[]> {
-    try {
-      let result = [...this.notifications()];
+  notifications$: Observable<Notification[]> = this.notificationsSubject.asObservable();
 
-      if (filter) {
-        // Filter by type
-        if (filter.type && filter.type !== 'all') {
-          result = result.filter(n => n.type === filter.type);
-        }
+  /**
+   * Observable لعدد الإشعارات غير المقروءة
+   */
+  unreadCount$: Observable<number> = this.notifications$.pipe(
+    map(notifications => notifications.filter(n => !n.isRead).length)
+  );
 
-        // Filter by status (read/unread)
-        if (filter.status && filter.status !== 'all') {
-          const isRead = filter.status === 'read';
-          result = result.filter(n => n.isRead === isRead);
-        }
-
-        // Filter by date range
-        if (filter.startDate) {
-          const startDate = new Date(filter.startDate);
-          result = result.filter(n => new Date(n.createdAt) >= startDate);
-        }
-
-        if (filter.endDate) {
-          const endDate = new Date(filter.endDate);
-          result = result.filter(n => new Date(n.createdAt) <= endDate);
-        }
-
-        // Search in title and message
-        if (filter.searchTerm) {
-          const term = filter.searchTerm.toLowerCase();
-          result = result.filter(n =>
-            n.title.toLowerCase().includes(term) ||
-            n.message.toLowerCase().includes(term)
-          );
-        }
-
-        // Sorting
-        if (filter.sortBy) {
-          result.sort((a, b) => {
-            let comparison = 0;
-
-            switch (filter.sortBy) {
-              case 'date':
-                comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-                break;
-              case 'type':
-                comparison = a.type.localeCompare(b.type);
-                break;
-              case 'status':
-                comparison = (a.isRead ? 1 : 0) - (b.isRead ? 1 : 0);
-                break;
-            }
-
-            return filter.sortDirection === 'desc' ? -comparison : comparison;
-          });
-        }
-
-        // Pagination
-        if (filter.page !== undefined && filter.pageSize !== undefined) {
-          const start = (filter.page - 1) * filter.pageSize;
-          const end = start + filter.pageSize;
-          result = result.slice(start, end);
-        }
-      }
-
-      // Simulate network delay
-      return of(result).pipe(delay(300));
-    } catch (error) {
-      return throwError(() => new Error('فشل في جلب الإشعارات'));
-    }
+  /**
+   * الحصول على جميع الإشعارات
+   */
+  getNotifications(): Observable<Notification[]> {
+    return of(this.notificationsSubject.value).pipe(delay(200));
   }
 
   /**
-   * Get notification by ID
-   * @param id - Notification ID
-   * @returns Observable of notification or error
+   * الحصول على إشعار واحد
    */
-  getById(id: number): Observable<Notification> {
-    try {
-      const notification = this.notifications().find(n => n.id === id);
-
-      if (!notification) {
-        return throwError(() => new Error(`الإشعار رقم ${id} غير موجود`));
-      }
-
-      return of(notification).pipe(delay(200));
-    } catch (error) {
-      return throwError(() => new Error('فشل في جلب الإشعار'));
-    }
+  getNotificationById(id: number): Notification | undefined {
+    return this.notificationsSubject.value.find(n => n.id === id);
   }
 
   /**
-   * Create new notification
-   * @param payload - Notification data
-   * @returns Observable of created notification
+   * إنشاء إشعار جديد
    */
-  create(payload: CreateNotificationPayload): Observable<Notification> {
+  createNotification(payload: CreateNotificationPayload): Observable<Notification> {
     try {
       const newNotification: Notification = {
         id: this.nextId++,
@@ -179,7 +106,8 @@ export class NotificationService implements INotificationService {
         link: payload.link
       };
 
-      this.notifications.update(notifications => [...notifications, newNotification]);
+      const current = this.notificationsSubject.value;
+      this.notificationsSubject.next([...current, newNotification]);
 
       return of(newNotification).pipe(delay(300));
     } catch (error) {
@@ -188,97 +116,69 @@ export class NotificationService implements INotificationService {
   }
 
   /**
-   * Update existing notification
-   * @param id - Notification ID
-   * @param payload - Updated data
-   * @returns Observable of updated notification
+   * تحديث إشعار
    */
-  update(id: number, payload: UpdateNotificationPayload): Observable<Notification> {
+  updateNotification(id: number, payload: UpdateNotificationPayload): Observable<Notification> {
     try {
-      const index = this.notifications().findIndex(n => n.id === id);
+      const current = this.notificationsSubject.value;
+      const index = current.findIndex(n => n.id === id);
 
       if (index === -1) {
         return throwError(() => new Error(`الإشعار رقم ${id} غير موجود`));
       }
 
-      this.notifications.update(notifications => {
-        const updated = [...notifications];
-        updated[index] = {
-          ...updated[index],
-          ...payload
-        };
-        return updated;
-      });
+      const updated = [...current];
+      updated[index] = {
+        ...updated[index],
+        ...payload
+      };
 
-      return of(this.notifications()[index]).pipe(delay(300));
+      this.notificationsSubject.next(updated);
+
+      return of(updated[index]).pipe(delay(300));
     } catch (error) {
       return throwError(() => new Error('فشل في تحديث الإشعار'));
     }
   }
 
   /**
-   * Delete notification
-   * @param id - Notification ID
-   * @returns Observable of void
+   * تحديد إشعار كمقروء
    */
-  delete(id: number): Observable<void> {
+  markAsRead(id: number): Observable<Notification> {
     try {
-      const index = this.notifications().findIndex(n => n.id === id);
+      const current = this.notificationsSubject.value;
+      const index = current.findIndex(n => n.id === id);
 
       if (index === -1) {
         return throwError(() => new Error(`الإشعار رقم ${id} غير موجود`));
       }
 
-      this.notifications.update(notifications =>
-        notifications.filter(n => n.id !== id)
-      );
+      const updated = [...current];
+      updated[index] = {
+        ...updated[index],
+        isRead: true
+      };
 
-      return of(void 0).pipe(delay(200));
-    } catch (error) {
-      return throwError(() => new Error('فشل في حذف الإشعار'));
-    }
-  }
+      this.notificationsSubject.next(updated);
 
-  /**
-   * Mark notification as read
-   * @param id - Notification ID
-   * @returns Observable of void
-   */
-  markAsRead(id: number): Observable<void> {
-    try {
-      const index = this.notifications().findIndex(n => n.id === id);
-
-      if (index === -1) {
-        return throwError(() => new Error(`الإشعار رقم ${id} غير موجود`));
-      }
-
-      this.notifications.update(notifications => {
-        const updated = [...notifications];
-        updated[index] = {
-          ...updated[index],
-          isRead: true
-        };
-        return updated;
-      });
-
-      return of(void 0).pipe(delay(200));
+      return of(updated[index]).pipe(delay(200));
     } catch (error) {
       return throwError(() => new Error('فشل في تحديث حالة الإشعار'));
     }
   }
 
   /**
-   * Mark all notifications as read
-   * @returns Observable of void
+   * تحديد جميع الإشعارات كمقروءة
    */
   markAllAsRead(): Observable<void> {
     try {
-      this.notifications.update(notifications =>
-        notifications.map(n => ({
-          ...n,
-          isRead: true
-        }))
-      );
+      const current = this.notificationsSubject.value;
+      const updated = current.map(n => ({
+        ...n,
+        isRead: true
+      }));
+
+      this.notificationsSubject.next(updated);
 
       return of(void 0).pipe(delay(300));
     } catch (error) {
@@ -287,15 +187,23 @@ export class NotificationService implements INotificationService {
   }
 
   /**
-   * Get count of unread notifications
-   * @returns Observable of unread count
+   * حذف إشعار
    */
-  getUnreadCount(): Observable<number> {
+  deleteNotification(id: number): Observable<void> {
     try {
-      const count = this.notifications().filter(n => !n.isRead).length;
-      return of(count).pipe(delay(100));
+      const current = this.notificationsSubject.value;
+      const index = current.findIndex(n => n.id === id);
+
+      if (index === -1) {
+        return throwError(() => new Error(`الإشعار رقم ${id} غير موجود`));
+      }
+
+      const updated = current.filter(n => n.id !== id);
+      this.notificationsSubject.next(updated);
+
+      return of(void 0).pipe(delay(200));
     } catch (error) {
-      return throwError(() => new Error('فشل في حساب الإشعارات غير المقروءة'));
+      return throwError(() => new Error('فشل في حذف الإشعار'));
     }
   }
 }
