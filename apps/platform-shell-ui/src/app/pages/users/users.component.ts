@@ -35,7 +35,7 @@ interface State {
   standalone: true,
   imports: [CommonModule, HttpClientModule, ReactiveFormsModule, FormsModule],
   template: '<div class="p-6"><h2 class="text-2xl font-bold mb-4">إدارة المستخدمين</h2><p>صفحة إدارة المستخدمين قيد التطوير</p></div>',
-  styleUrl: './users.component.css', // سيتم استخدام Tailwind CSS مباشرة في HTML
+  styles: [], // سيتم استخدام Tailwind CSS مباشرة في HTML
 })
 export class UsersComponent implements OnInit {
   private http = inject(HttpClient);

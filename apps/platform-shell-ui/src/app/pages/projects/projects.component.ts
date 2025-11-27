@@ -71,7 +71,7 @@ class ProjectService {
   standalone: true,
   imports: [CommonModule, HttpClientModule, ReactiveFormsModule],
   providers: [ProjectService],
-  templateUrl: './projects.component.html',
+  template: '<div class="p-6"><h2 class="text-2xl font-bold mb-4">إدارة المشاريع</h2><p>صفحة إدارة المشاريع قيد التطوير</p></div>',
   styles: [
     `
       /* Tailwind CSS utility classes will be used directly in the HTML template */
