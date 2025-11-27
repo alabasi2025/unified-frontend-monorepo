@@ -1,269 +1,272 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { FormsModule } from '@angular/forms';
-import { MessageService, ConfirmationService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ToolbarModule } from 'primeng/toolbar';
-import { TagModule } from 'primeng/tag';
-import { TooltipModule } from 'primeng/tooltip';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BehaviorSubject, Observable, catchError, map, of, switchMap, tap } from 'rxjs';
 
-@Component({
-  selector: 'app-projects',
-  standalone: true,
-  imports: [
-    CommonModule, TableModule, ButtonModule, DialogModule, 
-    InputTextModule, FormsModule, ToastModule, ConfirmDialogModule,
-    ToolbarModule, TagModule, TooltipModule
-  ],
-  providers: [MessageService, ConfirmationService],
-  template: `
-    <div class="page-container">
-      <p-toast></p-toast>
-      <p-confirmDialog></p-confirmDialog>
+// 1. تعريف الواجهات (Interfaces)
+interface Project {
+  id: number;
+  name: string;
+  description: string;
+  status: 'Pending' | 'InProgress' | 'Completed' | 'Cancelled';
+  start_date: string; // ISO Date string
+  end_date: string;   // ISO Date string
+  budget: number;
+}
 
-      <div class="page-header">
-        <div class="header-content">
-          <div class="header-icon">
-            <i class="pi-briefcase"></i>
-          </div>
-          <div class="header-text">
-            <h1>المشاريع</h1>
-            <p>إدارة المشاريع في النظام</p>
-          </div>
-        </div>
-        <button pButton label="إضافة المشروع" icon="pi pi-plus" class="add-btn" (click)="openNew()"></button>
-      </div>
+interface ApiResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+}
 
-      <p-toolbar styleClass="toolbar">
-        <ng-template pTemplate="left">
-          <span class="p-input-icon-left search-box">
-            <i class="pi pi-search"></i>
-            <input pInputText type="text" [(ngModel)]="searchText" (input)="onSearch()" placeholder="بحث..." />
-          </span>
-        </ng-template>
-        <ng-template pTemplate="right">
-          <button pButton label="تحديث" icon="pi pi-refresh" class="p-button-outlined" (click)="loadData()"></button>
-        </ng-template>
-      </p-toolbar>
+// 2. تعريف خدمة البيانات (Mock Service for demonstration)
+// في تطبيق حقيقي، ستكون هذه في ملف منفصل (project.service.ts)
+class ProjectService {
+  private http = inject(HttpClient);
+  private baseUrl = 'http://localhost:3000/api/projects';
 
-      <div class="table-container">
-        <p-table [value]="filteredItems" [loading]="loading" [paginator]="true" [rows]="10" 
-                 [rowsPerPageOptions]="[10,25,50]" [showCurrentPageReport]="true"
-                 currentPageReportTemplate="عرض {first} إلى {last} من {totalRecords} المشروع"
-                 styleClass="custom-table">
-          <ng-template pTemplate="header">
-            <tr>
-              <th pSortableColumn="id">الرقم <p-sortIcon field="id"></p-sortIcon></th>
-              <th pSortableColumn="name">الاسم <p-sortIcon field="name"></p-sortIcon></th>
-              <th>الوصف</th>
-              <th>الإجراءات</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-item>
-            <tr>
-              <td>{{ item.id }}</td>
-              <td>
-                <div class="item-cell">
-                  <div class="item-avatar">{{ item.name.charAt(0).toUpperCase() }}</div>
-                  <span class="item-name">{{ item.name }}</span>
-                </div>
-              </td>
-              <td>{{ item.description || '-' }}</td>
-              <td>
-                <div class="action-buttons">
-                  <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-info" 
-                          pTooltip="تعديل" (click)="editItem(item)"></button>
-                  <button pButton icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" 
-                          pTooltip="حذف" (click)="deleteItem(item)"></button>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="4" class="empty-message">
-                <div class="empty-state">
-                  <i class="pi-briefcase"></i>
-                  <h3>لا توجد بيانات</h3>
-                  <p>لم يتم العثور على المشاريع</p>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
-
-      <p-dialog [(visible)]="itemDialog" [header]="dialogTitle" [modal]="true" 
-                [style]="{width: '500px'}" styleClass="custom-dialog">
-        <div class="dialog-content">
-          <div class="form-group">
-            <label for="name">الاسم <span class="required">*</span></label>
-            <input pInputText id="name" [(ngModel)]="item.name" required class="w-full" placeholder="أدخل الاسم" />
-          </div>
-          <div class="form-group">
-            <label for="description">الوصف</label>
-            <textarea pInputText id="description" [(ngModel)]="item.description" rows="3" class="w-full" 
-                      placeholder="أدخل الوصف"></textarea>
-          </div>
-        </div>
-        <ng-template pTemplate="footer">
-          <button pButton label="إلغاء" icon="pi pi-times" class="p-button-text" (click)="itemDialog = false"></button>
-          <button pButton label="حفظ" icon="pi pi-check" (click)="saveItem()" [loading]="saving"></button>
-        </ng-template>
-      </p-dialog>
-    </div>
-  `,
-  styles: [`
-    .page-container { padding: 0; }
-    .page-header {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 2rem; background: white; padding: 2rem;
-      border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    .header-content { display: flex; align-items: center; gap: 1.5rem; }
-    .header-icon {
-      width: 64px; height: 64px; border-radius: 16px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      display: flex; align-items: center; justify-content: center;
-      color: white; font-size: 2rem;
-    }
-    .header-text h1 { margin: 0 0 0.5rem 0; font-size: 1.75rem; color: #2c3e50; }
-    .header-text p { margin: 0; color: #7f8c8d; }
-    .add-btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border: none; padding: 0.75rem 1.5rem; font-size: 1rem;
-    }
-    :host ::ng-deep .toolbar {
-      background: white; border: none; border-radius: 12px;
-      padding: 1rem; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    .search-box { width: 300px; }
-    .search-box input { width: 100%; padding-left: 2.5rem; }
-    .table-container {
-      background: white; border-radius: 16px; padding: 1.5rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    :host ::ng-deep .custom-table .p-datatable-thead > tr > th {
-      background: #f8f9fa; color: #2c3e50; font-weight: 600; padding: 1rem; border: none;
-    }
-    :host ::ng-deep .custom-table .p-datatable-tbody > tr:hover { background: #f8f9fa; }
-    :host ::ng-deep .custom-table .p-datatable-tbody > tr > td {
-      padding: 1rem; border-bottom: 1px solid #e9ecef;
-    }
-    .item-cell { display: flex; align-items: center; gap: 0.75rem; }
-    .item-avatar {
-      width: 40px; height: 40px; border-radius: 50%;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white; display: flex; align-items: center; justify-content: center;
-      font-weight: 600; font-size: 1.125rem;
-    }
-    .item-name { font-weight: 500; color: #2c3e50; }
-    .action-buttons { display: flex; gap: 0.5rem; }
-    .empty-state { text-align: center; padding: 3rem; }
-    .empty-state i { font-size: 4rem; color: #dee2e6; margin-bottom: 1rem; }
-    .empty-state h3 { margin: 0 0 0.5rem 0; color: #6c757d; }
-    .empty-state p { margin: 0; color: #adb5bd; }
-    :host ::ng-deep .custom-dialog .p-dialog-header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white; border-radius: 12px 12px 0 0;
-    }
-    :host ::ng-deep .custom-dialog .p-dialog-content { padding: 2rem; }
-    .dialog-content { display: flex; flex-direction: column; gap: 1.5rem; }
-    .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
-    .form-group label { font-weight: 600; color: #2c3e50; }
-    .required { color: #e74c3c; }
-    .w-full { width: 100%; }
-  `]
-})
-export class ProjectsComponent implements OnInit {
-  items: any[] = [];
-  filteredItems: any[] = [];
-  item: any = {};
-  itemDialog = false;
-  loading = false;
-  saving = false;
-  searchText = '';
-  dialogTitle = '';
-
-  constructor(
-    private messageService: MessageService,
-    private confirmationService: ConfirmationService
-  ) {}
-
-  ngOnInit() { this.loadData(); }
-
-  loadData() {
-    this.loading = true;
-    // Simulated data
-    setTimeout(() => {
-      this.items = [];
-      this.filteredItems = [];
-      this.loading = false;
-    }, 500);
-  }
-
-  onSearch() {
-    if (!this.searchText) {
-      this.filteredItems = this.items;
-      return;
-    }
-    const search = this.searchText.toLowerCase();
-    this.filteredItems = this.items.filter(item =>
-      item.name.toLowerCase().includes(search)
+  getProjects(page: number, limit: number, search: string): Observable<ApiResponse<Project>> {
+    const params = {
+      _page: page.toString(),
+      _limit: limit.toString(),
+      q: search,
+    };
+    // استخدام json-server كمحاكاة للـ API
+    return this.http.get<Project[]>(this.baseUrl, { params, observe: 'response' }).pipe(
+      map(response => {
+        const totalCount = response.headers.get('X-Total-Count') || '0';
+        return {
+          data: response.body || [],
+          total: parseInt(totalCount, 10),
+          page: page,
+          limit: limit,
+        };
+      }),
+      catchError(error => {
+        console.error('Error fetching projects:', error);
+        return of({ data: [], total: 0, page: page, limit: limit });
+      })
     );
   }
 
-  openNew() {
-    this.item = {};
-    this.dialogTitle = 'إضافة المشروع جديد';
-    this.itemDialog = true;
+  createProject(project: Omit<Project, 'id'>): Observable<Project> {
+    return this.http.post<Project>(this.baseUrl, project);
   }
 
-  editItem(item: any) {
-    this.item = { ...item };
-    this.dialogTitle = 'تعديل المشروع';
-    this.itemDialog = true;
+  updateProject(id: number, project: Partial<Project>): Observable<Project> {
+    return this.http.put<Project>(`${this.baseUrl}/${id}`, project);
   }
 
-  deleteItem(item: any) {
-    this.confirmationService.confirm({
-      message: `هل أنت متأكد من حذف ${item.name}؟`,
-      header: 'تأكيد الحذف',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'نعم',
-      rejectLabel: 'لا',
-      accept: () => {
-        this.items = this.items.filter(i => i.id !== item.id);
-        this.filteredItems = this.filteredItems.filter(i => i.id !== item.id);
-        this.messageService.add({ severity: 'success', summary: 'نجح', detail: 'تم الحذف بنجاح' });
+  deleteProject(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+}
+
+// 3. تعريف المكون (Component)
+@Component({
+  selector: 'app-projects',
+  standalone: true,
+  imports: [CommonModule, HttpClientModule, ReactiveFormsModule],
+  providers: [ProjectService],
+  templateUrl: './projects.component.html',
+  styles: [
+    `
+      /* Tailwind CSS utility classes will be used directly in the HTML template */
+      /* Custom styles for modal backdrop and z-index if needed */
+      .modal-backdrop {
+        background-color: rgba(0, 0, 0, 0.5);
       }
+    `,
+  ],
+})
+export class ProjectsComponent implements OnInit {
+  // حقن الخدمات
+  private projectService = inject(ProjectService);
+  private fb = inject(FormBuilder);
+
+  // حالة البيانات
+  projects$!: Observable<Project[]>;
+  totalRecords$ = new BehaviorSubject<number>(0);
+  isLoading$ = new BehaviorSubject<boolean>(false);
+  error$ = new BehaviorSubject<string | null>(null);
+
+  // حالة التصفح والبحث
+  currentPage$ = new BehaviorSubject<number>(1);
+  pageSize = 10;
+  searchQuery$ = new BehaviorSubject<string>('');
+  
+  // حالة الـ CRUD
+  isModalOpen = false;
+  isSubmitting = false;
+  isEditMode = false;
+  currentProjectId: number | null = null;
+  projectForm!: FormGroup;
+
+  // حالة رسائل النجاح
+  successMessage$ = new BehaviorSubject<string | null>(null);
+
+  // حالة الحقول
+  projectStatuses = ['Pending', 'InProgress', 'Completed', 'Cancelled'];
+
+  ngOnInit(): void {
+    this.initForm();
+    this.setupDataFlow();
+  }
+
+  // تهيئة النموذج التفاعلي
+  initForm(): void {
+    this.projectForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      description: ['', Validators.required],
+      status: ['Pending', Validators.required],
+      start_date: [this.formatDate(new Date()), Validators.required],
+      end_date: [this.formatDate(new Date()), Validators.required],
+      budget: [0, [Validators.required, Validators.min(0)]],
     });
   }
 
-  saveItem() {
-    if (!this.item.name) {
-      this.messageService.add({ severity: 'warn', summary: 'تنبيه', detail: 'الرجاء ملء الحقول المطلوبة' });
-      return;
-    }
-    this.saving = true;
-    setTimeout(() => {
-      if (this.item.id) {
-        const index = this.items.findIndex(i => i.id === this.item.id);
-        this.items[index] = this.item;
-      } else {
-        this.item.id = this.items.length + 1;
-        this.items.push(this.item);
-      }
-      this.filteredItems = [...this.items];
-      this.saving = false;
-      this.itemDialog = false;
-      this.messageService.add({ severity: 'success', summary: 'نجح', detail: 'تم الحفظ بنجاح' });
-    }, 500);
+  // إعداد تدفق البيانات باستخدام RxJS
+  setupDataFlow(): void {
+    this.projects$ = this.currentPage$.pipe(
+      tap(() => {
+        this.isLoading$.next(true);
+        this.error$.next(null);
+      }),
+      switchMap(page =>
+        this.searchQuery$.pipe(
+          switchMap(search =>
+            this.projectService.getProjects(page, this.pageSize, search).pipe(
+              tap(response => {
+                this.totalRecords$.next(response.total);
+                this.isLoading$.next(false);
+              }),
+              map(response => response.data),
+              catchError(err => {
+                this.error$.next('فشل في تحميل بيانات المشاريع. يرجى المحاولة لاحقاً.');
+                this.isLoading$.next(false);
+                return of([]);
+              })
+            )
+          )
+        )
+      )
+    );
   }
 
+  // وظائف التصفح (Pagination)
+  onPageChange(page: number): void {
+    if (page > 0 && page <= this.totalPages) {
+      this.currentPage$.next(page);
+    }
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.totalRecords$.value / this.pageSize);
+  }
+
+  get pagesArray(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
+  // وظيفة البحث (Search)
+  onSearch(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.searchQuery$.next(input.value);
+    this.currentPage$.next(1); // العودة للصفحة الأولى عند البحث
+  }
+
+  // وظائف الـ CRUD
+  openCreateModal(): void {
+    this.isEditMode = false;
+    this.currentProjectId = null;
+    this.initForm();
+    this.isModalOpen = true;
+  }
+
+  openEditModal(project: Project): void {
+    this.isEditMode = true;
+    this.currentProjectId = project.id;
+    this.projectForm.patchValue({
+      name: project.name,
+      description: project.description,
+      status: project.status,
+      start_date: this.formatDate(new Date(project.start_date)),
+      end_date: this.formatDate(new Date(project.end_date)),
+      budget: project.budget,
+    });
+    this.isModalOpen = true;
+  }
+
+  closeModal(): void {
+    this.isModalOpen = false;
+    this.projectForm.reset();
+  }
+
+  onSubmit(): void {
+    if (this.projectForm.invalid) {
+      this.projectForm.markAllAsTouched();
+      return;
+    }
+
+    this.isSubmitting = true;
+    const projectData = this.projectForm.value;
+
+    const operation$ = this.isEditMode
+      ? this.projectService.updateProject(this.currentProjectId!, projectData)
+      : this.projectService.createProject(projectData);
+
+    operation$.pipe(
+      tap(() => {
+        this.isSubmitting = false;
+        this.closeModal();
+        this.showSuccessMessage(this.isEditMode ? 'تم تحديث المشروع بنجاح.' : 'تم إضافة المشروع بنجاح.');
+        this.currentPage$.next(this.currentPage$.value); // إعادة تحميل البيانات
+      }),
+      catchError(err => {
+        this.isSubmitting = false;
+        this.error$.next(`فشل في ${this.isEditMode ? 'التعديل' : 'الإضافة'}: ${err.message || 'خطأ غير معروف'}`);
+        return of(null);
+      })
+    ).subscribe();
+  }
+
+  onDelete(project: Project): void {
+    if (confirm(`هل أنت متأكد من حذف المشروع: ${project.name}؟`)) {
+      this.isLoading$.next(true);
+      this.projectService.deleteProject(project.id).pipe(
+        tap(() => {
+          this.isLoading$.next(false);
+          this.showSuccessMessage('تم حذف المشروع بنجاح.');
+          this.currentPage$.next(this.currentPage$.value); // إعادة تحميل البيانات
+        }),
+        catchError(err => {
+          this.isLoading$.next(false);
+          this.error$.next(`فشل في الحذف: ${err.message || 'خطأ غير معروف'}`);
+          return of(null);
+        })
+      ).subscribe();
+    }
+  }
+
+  // وظيفة مساعدة لتنسيق التاريخ ليتناسب مع حقول الإدخال من نوع date
+  private formatDate(date: Date): string {
+    const d = new Date(date);
+    let month = '' + (d.getMonth() + 1);
+    let day = '' + d.getDate();
+    const year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+  }
+
+  // وظيفة عرض رسالة النجاح
+  private showSuccessMessage(message: string): void {
+    this.successMessage$.next(message);
+    setTimeout(() => this.successMessage$.next(null), 5000);
+  }
 }

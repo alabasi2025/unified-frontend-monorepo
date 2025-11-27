@@ -1,269 +1,301 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { FormsModule } from '@angular/forms';
-import { MessageService, ConfirmationService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ToolbarModule } from 'primeng/toolbar';
-import { TagModule } from 'primeng/tag';
-import { TooltipModule } from 'primeng/tooltip';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { CurrencyPipe } from '@angular/common'; // إضافة CurrencyPipe لـ HTML
+import { Observable, throwError, of, BehaviorSubject, combineLatest } from 'rxjs';
+import { catchError, finalize, map, startWith, switchMap, tap } from 'rxjs/operators';
 
+// 1. واجهة البيانات (Item Interface)
+export interface Item {
+  id: number;
+  name: string;
+  description: string;
+  category: string;
+  price: number;
+  quantity: number;
+  unit: string;
+}
+
+// 2. خدمة البيانات (ItemService)
 @Component({
-  selector: 'app-items',
+  selector: 'app-item-service',
   standalone: true,
-  imports: [
-    CommonModule, TableModule, ButtonModule, DialogModule, 
-    InputTextModule, FormsModule, ToastModule, ConfirmDialogModule,
-    ToolbarModule, TagModule, TooltipModule
-  ],
-  providers: [MessageService, ConfirmationService],
-  template: `
-    <div class="page-container">
-      <p-toast></p-toast>
-      <p-confirmDialog></p-confirmDialog>
-
-      <div class="page-header">
-        <div class="header-content">
-          <div class="header-icon">
-            <i class="pi-box"></i>
-          </div>
-          <div class="header-text">
-            <h1>الأصناف</h1>
-            <p>إدارة الأصناف في النظام</p>
-          </div>
-        </div>
-        <button pButton label="إضافة الصنف" icon="pi pi-plus" class="add-btn" (click)="openNew()"></button>
-      </div>
-
-      <p-toolbar styleClass="toolbar">
-        <ng-template pTemplate="left">
-          <span class="p-input-icon-left search-box">
-            <i class="pi pi-search"></i>
-            <input pInputText type="text" [(ngModel)]="searchText" (input)="onSearch()" placeholder="بحث..." />
-          </span>
-        </ng-template>
-        <ng-template pTemplate="right">
-          <button pButton label="تحديث" icon="pi pi-refresh" class="p-button-outlined" (click)="loadData()"></button>
-        </ng-template>
-      </p-toolbar>
-
-      <div class="table-container">
-        <p-table [value]="filteredItems" [loading]="loading" [paginator]="true" [rows]="10" 
-                 [rowsPerPageOptions]="[10,25,50]" [showCurrentPageReport]="true"
-                 currentPageReportTemplate="عرض {first} إلى {last} من {totalRecords} الصنف"
-                 styleClass="custom-table">
-          <ng-template pTemplate="header">
-            <tr>
-              <th pSortableColumn="id">الرقم <p-sortIcon field="id"></p-sortIcon></th>
-              <th pSortableColumn="name">الاسم <p-sortIcon field="name"></p-sortIcon></th>
-              <th>الوصف</th>
-              <th>الإجراءات</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-item>
-            <tr>
-              <td>{{ item.id }}</td>
-              <td>
-                <div class="item-cell">
-                  <div class="item-avatar">{{ item.name.charAt(0).toUpperCase() }}</div>
-                  <span class="item-name">{{ item.name }}</span>
-                </div>
-              </td>
-              <td>{{ item.description || '-' }}</td>
-              <td>
-                <div class="action-buttons">
-                  <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-info" 
-                          pTooltip="تعديل" (click)="editItem(item)"></button>
-                  <button pButton icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" 
-                          pTooltip="حذف" (click)="deleteItem(item)"></button>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="4" class="empty-message">
-                <div class="empty-state">
-                  <i class="pi-box"></i>
-                  <h3>لا توجد بيانات</h3>
-                  <p>لم يتم العثور على الأصناف</p>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
-
-      <p-dialog [(visible)]="itemDialog" [header]="dialogTitle" [modal]="true" 
-                [style]="{width: '500px'}" styleClass="custom-dialog">
-        <div class="dialog-content">
-          <div class="form-group">
-            <label for="name">الاسم <span class="required">*</span></label>
-            <input pInputText id="name" [(ngModel)]="item.name" required class="w-full" placeholder="أدخل الاسم" />
-          </div>
-          <div class="form-group">
-            <label for="description">الوصف</label>
-            <textarea pInputText id="description" [(ngModel)]="item.description" rows="3" class="w-full" 
-                      placeholder="أدخل الوصف"></textarea>
-          </div>
-        </div>
-        <ng-template pTemplate="footer">
-          <button pButton label="إلغاء" icon="pi pi-times" class="p-button-text" (click)="itemDialog = false"></button>
-          <button pButton label="حفظ" icon="pi pi-check" (click)="saveItem()" [loading]="saving"></button>
-        </ng-template>
-      </p-dialog>
-    </div>
-  `,
-  styles: [`
-    .page-container { padding: 0; }
-    .page-header {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 2rem; background: white; padding: 2rem;
-      border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    .header-content { display: flex; align-items: center; gap: 1.5rem; }
-    .header-icon {
-      width: 64px; height: 64px; border-radius: 16px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      display: flex; align-items: center; justify-content: center;
-      color: white; font-size: 2rem;
-    }
-    .header-text h1 { margin: 0 0 0.5rem 0; font-size: 1.75rem; color: #2c3e50; }
-    .header-text p { margin: 0; color: #7f8c8d; }
-    .add-btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border: none; padding: 0.75rem 1.5rem; font-size: 1rem;
-    }
-    :host ::ng-deep .toolbar {
-      background: white; border: none; border-radius: 12px;
-      padding: 1rem; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    .search-box { width: 300px; }
-    .search-box input { width: 100%; padding-left: 2.5rem; }
-    .table-container {
-      background: white; border-radius: 16px; padding: 1.5rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    :host ::ng-deep .custom-table .p-datatable-thead > tr > th {
-      background: #f8f9fa; color: #2c3e50; font-weight: 600; padding: 1rem; border: none;
-    }
-    :host ::ng-deep .custom-table .p-datatable-tbody > tr:hover { background: #f8f9fa; }
-    :host ::ng-deep .custom-table .p-datatable-tbody > tr > td {
-      padding: 1rem; border-bottom: 1px solid #e9ecef;
-    }
-    .item-cell { display: flex; align-items: center; gap: 0.75rem; }
-    .item-avatar {
-      width: 40px; height: 40px; border-radius: 50%;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white; display: flex; align-items: center; justify-content: center;
-      font-weight: 600; font-size: 1.125rem;
-    }
-    .item-name { font-weight: 500; color: #2c3e50; }
-    .action-buttons { display: flex; gap: 0.5rem; }
-    .empty-state { text-align: center; padding: 3rem; }
-    .empty-state i { font-size: 4rem; color: #dee2e6; margin-bottom: 1rem; }
-    .empty-state h3 { margin: 0 0 0.5rem 0; color: #6c757d; }
-    .empty-state p { margin: 0; color: #adb5bd; }
-    :host ::ng-deep .custom-dialog .p-dialog-header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white; border-radius: 12px 12px 0 0;
-    }
-    :host ::ng-deep .custom-dialog .p-dialog-content { padding: 2rem; }
-    .dialog-content { display: flex; flex-direction: column; gap: 1.5rem; }
-    .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
-    .form-group label { font-weight: 600; color: #2c3e50; }
-    .required { color: #e74c3c; }
-    .w-full { width: 100%; }
-  `]
+  imports: [HttpClientModule],
+  template: '',
 })
-export class ItemsComponent implements OnInit {
-  items: any[] = [];
-  filteredItems: any[] = [];
-  item: any = {};
-  itemDialog = false;
-  loading = false;
-  saving = false;
-  searchText = '';
-  dialogTitle = '';
+export class ItemService {
+  private http = inject(HttpClient);
+  private baseUrl = 'http://localhost:3000/api/items';
 
-  constructor(
-    private messageService: MessageService,
-    private confirmationService: ConfirmationService
-  ) {}
-
-  ngOnInit() { this.loadData(); }
-
-  loadData() {
-    this.loading = true;
-    // Simulated data
-    setTimeout(() => {
-      this.items = [];
-      this.filteredItems = [];
-      this.loading = false;
-    }, 500);
-  }
-
-  onSearch() {
-    if (!this.searchText) {
-      this.filteredItems = this.items;
-      return;
-    }
-    const search = this.searchText.toLowerCase();
-    this.filteredItems = this.items.filter(item =>
-      item.name.toLowerCase().includes(search)
+  getItems(): Observable<Item[]> {
+    return this.http.get<Item[]>(this.baseUrl).pipe(
+      catchError(this.handleError)
     );
   }
 
-  openNew() {
-    this.item = {};
-    this.dialogTitle = 'إضافة الصنف جديد';
-    this.itemDialog = true;
+  getItem(id: number): Observable<Item> {
+    return this.http.get<Item>(`${this.baseUrl}/${id}`).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  editItem(item: any) {
-    this.item = { ...item };
-    this.dialogTitle = 'تعديل الصنف';
-    this.itemDialog = true;
+  createItem(item: Omit<Item, 'id'>): Observable<Item> {
+    return this.http.post<Item>(this.baseUrl, item).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  deleteItem(item: any) {
-    this.confirmationService.confirm({
-      message: `هل أنت متأكد من حذف ${item.name}؟`,
-      header: 'تأكيد الحذف',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'نعم',
-      rejectLabel: 'لا',
-      accept: () => {
-        this.items = this.items.filter(i => i.id !== item.id);
-        this.filteredItems = this.filteredItems.filter(i => i.id !== item.id);
-        this.messageService.add({ severity: 'success', summary: 'نجح', detail: 'تم الحذف بنجاح' });
-      }
+  updateItem(id: number, item: Omit<Item, 'id'>): Observable<Item> {
+    return this.http.put<Item>(`${this.baseUrl}/${id}`, item).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  deleteItem(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  private handleError(error: any) {
+    console.error('An error occurred:', error);
+    // يمكن تحسين معالجة الأخطاء هنا لإظهار رسائل أكثر وضوحاً للمستخدم
+    return throwError(() => new Error('Something bad happened; please try again later.'));
+  }
+}
+
+// 3. المكون الرئيسي (ItemsComponent)
+@Component({
+  selector: 'app-items',
+  standalone: true,
+  imports: [CommonModule, HttpClientModule, ReactiveFormsModule, CurrencyPipe],
+  templateUrl: './items.component.html',
+  styles: [
+    `
+      /* يمكن إضافة أنماط مخصصة هنا إذا لزم الأمر */
+    `,
+  ],
+  providers: [ItemService],
+})
+export class ItemsComponent implements OnInit {
+  // حقن الخدمات
+  private itemService = inject(ItemService);
+  private fb = inject(FormBuilder);
+
+  // حالة المكون
+  items$!: Observable<Item[]>;
+  loading = signal(false);
+  error = signal<string | null>(null);
+  successMessage = signal<string | null>(null);
+  
+  // حالة الجدول والبحث
+  private refresh$ = new BehaviorSubject<boolean>(true);
+  searchControl = this.fb.control('');
+  currentPage = signal(1);
+  pageSize = 10;
+  totalItems = signal(0);
+  totalPages = signal(0);
+
+  // حالة الـ Modal
+  isModalOpen = signal(false);
+  isEditMode = signal(false);
+  selectedItem = signal<Item | null>(null);
+  itemForm!: FormGroup;
+
+  // الأعمدة
+  columns = [
+    { key: 'name', label: 'الاسم' },
+    { key: 'description', label: 'الوصف' },
+    { key: 'category', label: 'الفئة' },
+    { key: 'price', label: 'السعر' },
+    { key: 'quantity', label: 'الكمية' },
+    { key: 'unit', label: 'الوحدة' },
+    { key: 'actions', label: 'الإجراءات' },
+  ];
+
+  ngOnInit(): void {
+    this.initForm();
+    this.loadItems();
+  }
+
+  initForm(): void {
+    this.itemForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      description: ['', [Validators.required]],
+      category: ['', [Validators.required]],
+      price: [0, [Validators.required, Validators.min(0.01)]],
+      quantity: [0, [Validators.required, Validators.min(1)]],
+      unit: ['', [Validators.required]],
     });
   }
 
-  saveItem() {
-    if (!this.item.name) {
-      this.messageService.add({ severity: 'warn', summary: 'تنبيه', detail: 'الرجاء ملء الحقول المطلوبة' });
-      return;
-    }
-    this.saving = true;
-    setTimeout(() => {
-      if (this.item.id) {
-        const index = this.items.findIndex(i => i.id === this.item.id);
-        this.items[index] = this.item;
-      } else {
-        this.item.id = this.items.length + 1;
-        this.items.push(this.item);
-      }
-      this.filteredItems = [...this.items];
-      this.saving = false;
-      this.itemDialog = false;
-      this.messageService.add({ severity: 'success', summary: 'نجح', detail: 'تم الحفظ بنجاح' });
-    }, 500);
+  loadItems(): void {
+    this.loading.set(true);
+    this.error.set(null);
+    this.successMessage.set(null);
+
+    // دمج تدفقات البيانات: التحديث، البحث، والصفحة الحالية
+    this.items$ = combineLatest([
+      this.refresh$,
+      this.searchControl.valueChanges.pipe(startWith('')),
+      this.currentPage,
+    ]).pipe(
+      // عند حدوث أي تغيير، قم بتبديل إلى استدعاء API
+      switchMap(([_, searchTerm, page]) => {
+        // هنا يجب أن يتم استدعاء API مع معلمات البحث والصفحة
+        // بما أننا نستخدم واجهة خلفية وهمية (http://localhost:3000/api)، سنقوم بمحاكاة منطق البحث والصفحات في الواجهة الأمامية
+        // في تطبيق حقيقي، يجب أن ترسل هذه المعلمات إلى الخادم.
+        
+        // محاكاة استدعاء API
+        return this.itemService.getItems().pipe(
+          map(items => {
+            // 1. تصفية البيانات بناءً على البحث
+            const filteredItems = items.filter(item => 
+              item.name.toLowerCase().includes(searchTerm?.toLowerCase() || '') ||
+              item.category.toLowerCase().includes(searchTerm?.toLowerCase() || '')
+            );
+
+            // 2. حساب إجمالي العناصر والصفحات
+            this.totalItems.set(filteredItems.length);
+            this.totalPages.set(Math.ceil(filteredItems.length / this.pageSize));
+
+            // 3. تطبيق الترحيل (Pagination)
+            const startIndex = (page - 1) * this.pageSize;
+            const endIndex = startIndex + this.pageSize;
+            return filteredItems.slice(startIndex, endIndex);
+          }),
+          catchError(err => {
+            this.error.set('فشل في تحميل البيانات: ' + err.message);
+            return of([]); // إرجاع مصفوفة فارغة عند الخطأ
+          }),
+          finalize(() => this.loading.set(false))
+        );
+      })
+    );
   }
 
+  // *******************************************************************
+  // وظائف الـ CRUD
+  // *******************************************************************
+
+  // فتح الـ Modal لوضع الإضافة
+  openCreateModal(): void {
+    this.isEditMode.set(false);
+    this.selectedItem.set(null);
+    this.itemForm.reset({ price: 0, quantity: 0 });
+    this.isModalOpen.set(true);
+  }
+
+  // فتح الـ Modal لوضع التعديل
+  openEditModal(item: Item): void {
+    this.isEditMode.set(true);
+    this.selectedItem.set(item);
+    this.itemForm.patchValue(item);
+    this.isModalOpen.set(true);
+  }
+
+  // إغلاق الـ Modal
+  closeModal(): void {
+    this.isModalOpen.set(false);
+    this.itemForm.reset();
+  }
+
+  // إرسال النموذج (إضافة أو تعديل)
+  onSubmit(): void {
+    if (this.itemForm.invalid) {
+      this.itemForm.markAllAsTouched();
+      return;
+    }
+
+    this.loading.set(true);
+    this.error.set(null);
+    this.successMessage.set(null);
+
+    const itemData = this.itemForm.value;
+    const isEdit = this.isEditMode();
+    const itemId = this.selectedItem()?.id;
+
+    let operation$: Observable<Item | void>;
+    let successMsg: string;
+
+    if (isEdit && itemId) {
+      // عملية التعديل
+      operation$ = this.itemService.updateItem(itemId, itemData);
+      successMsg = 'تم تعديل العنصر بنجاح.';
+    } else {
+      // عملية الإضافة
+      operation$ = this.itemService.createItem(itemData);
+      successMsg = 'تم إضافة العنصر بنجاح.';
+    }
+
+    operation$.pipe(
+      tap(() => {
+        this.closeModal();
+        this.successMessage.set(successMsg);
+        this.refresh$.next(true); // تحديث قائمة العناصر
+      }),
+      catchError(err => {
+        this.error.set(err.message);
+        return of(null);
+      }),
+      finalize(() => this.loading.set(false))
+    ).subscribe();
+  }
+
+  // عملية الحذف
+  deleteItem(item: Item): void {
+    if (confirm(`هل أنت متأكد من حذف العنصر: ${item.name}؟`)) {
+      this.loading.set(true);
+      this.error.set(null);
+      this.successMessage.set(null);
+
+      this.itemService.deleteItem(item.id).pipe(
+        tap(() => {
+          this.successMessage.set('تم حذف العنصر بنجاح.');
+          this.refresh$.next(true); // تحديث قائمة العناصر
+        }),
+        catchError(err => {
+          this.error.set(err.message);
+          return of(null);
+        }),
+        finalize(() => this.loading.set(false))
+      ).subscribe();
+    }
+  }
+
+  // *******************************************************************
+  // وظائف الـ Pagination
+  // *******************************************************************
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+    }
+  }
+
+  nextPage(): void {
+    this.goToPage(this.currentPage() + 1);
+  }
+
+  prevPage(): void {
+    this.goToPage(this.currentPage() - 1);
+  }
+
+  // *******************************************************************
+  // وظائف مساعدة للـ UI
+  // *******************************************************************
+
+  get isFirstPage(): boolean {
+    return this.currentPage() === 1;
+  }
+
+  get isLastPage(): boolean {
+    return this.currentPage() === this.totalPages();
+  }
+
+  // دالة مساعدة لحساب الحد الأقصى لعرض عدد العناصر في الصفحة
+  getMaxItemIndex(): number {
+    return Math.min(this.currentPage() * this.pageSize, this.totalItems());
+  }
 }

@@ -531,7 +531,19 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         { title: 'خريطة اليمن', route: '/maps', icon: '', color: '' }
       ]
     },
-    { title: 'نظام المطور', icon: '💻', color: 'linear-gradient(135deg, #a855f7 0%, #9333ea 100%)', children: [ { title: 'الوحدة المركزية للذكاء الاصطناعي', route: '/developer', icon: '', color: '' }, { title: 'الدفتر السحري', route: '/magic-notebook', icon: '', color: '' } ] }
+    { title: 'نظام المطور', icon: '💻', color: 'linear-gradient(135deg, #a855f7 0%, #9333ea 100%)', children: [ { title: 'الوحدة المركزية للذكاء الاصطناعي', route: '/developer', icon: '', color: '' }, { title: 'الدفتر السحري', route: '/magic-notebook', icon: '', color: '' } ] },
+    {
+      title: 'الأنظمة الإضافية',
+      icon: '🔧',
+      color: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+      children: [
+        { title: 'الإشعارات', route: '/notifications', icon: '🔔', color: '' },
+        { title: 'المرفقات', route: '/attachments', icon: '📎', color: '' },
+        { title: 'سجلات التدقيق', route: '/audit-logs', icon: '📋', color: '' },
+        { title: 'النسخ الاحتياطية', route: '/backups', icon: '💾', color: '' },
+        { title: 'الإعدادات', route: '/settings', icon: '⚙️', color: '' }
+      ]
+    }
   ];
 
   constructor(
