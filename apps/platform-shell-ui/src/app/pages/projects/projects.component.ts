@@ -83,6 +83,7 @@ class ProjectService {
   ],
 })
 export class ProjectsComponent implements OnInit {
+  Math = Math;
   // حقن الخدمات
   private projectService = inject(ProjectService);
   private fb = inject(FormBuilder);

@@ -326,6 +326,7 @@ export class SupplierService {
 })
 export class SuppliersComponent implements OnInit {
   private supplierService = inject(SupplierService);
+  Math = Math; // Make Math available in template
   private fb = inject(FormBuilder);
 
   // حالة التحميل

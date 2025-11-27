@@ -240,6 +240,7 @@ export interface Customer {
   `
 })
 export class CustomersComponent implements OnInit {
+  Math = Math;
 
   constructor(private fb: FormBuilder, private http: HttpClient) {}
 

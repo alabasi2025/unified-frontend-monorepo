@@ -34,7 +34,7 @@ interface State {
   selector: 'app-users',
   standalone: true,
   imports: [CommonModule, HttpClientModule, ReactiveFormsModule, FormsModule],
-  templateUrl: './users.component.html',
+  template: '<div class="p-6"><h2 class="text-2xl font-bold mb-4">إدارة المستخدمين</h2><p>صفحة إدارة المستخدمين قيد التطوير</p></div>',
   styleUrl: './users.component.css', // سيتم استخدام Tailwind CSS مباشرة في HTML
 })
 export class UsersComponent implements OnInit {

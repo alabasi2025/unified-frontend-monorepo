@@ -79,6 +79,7 @@ export class ItemService {
   providers: [ItemService],
 })
 export class ItemsComponent implements OnInit {
+  Math = Math;
   // حقن الخدمات
   private itemService = inject(ItemService);
   private fb = inject(FormBuilder);
