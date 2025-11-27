@@ -428,7 +428,7 @@ export class MagicNotebookComponent implements OnInit {
     description: ''
   };
 
-  private apiUrl = 'http://72.61.111.217:3000/api/magic-notebook';
+  private apiUrl = '/api/magic-notebook';
 
   constructor(
     private http: HttpClient,
