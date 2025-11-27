@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { Observable, of, throwError, delay, map } from 'rxjs';
+import { Observable, of, throwError, delay } from 'rxjs';
 import {
   INotificationService,
   Notification,
@@ -30,7 +30,7 @@ export class NotificationService implements INotificationService {
       type: 'info',
       title: 'مرحباً بك في نظام SEMOP',
       message: 'تم تسجيل دخولك بنجاح',
-      status: 'unread',
+      isRead: false,
       createdAt: new Date(Date.now() - 3600000).toISOString(),
       userId: 1
     },
@@ -39,7 +39,7 @@ export class NotificationService implements INotificationService {
       type: 'success',
       title: 'تم حفظ البيانات',
       message: 'تم حفظ بيانات العميل بنجاح',
-      status: 'read',
+      isRead: true,
       createdAt: new Date(Date.now() - 7200000).toISOString(),
       userId: 1
     },
@@ -48,7 +48,7 @@ export class NotificationService implements INotificationService {
       type: 'warning',
       title: 'تنبيه',
       message: 'يوجد فواتير مستحقة الدفع',
-      status: 'unread',
+      isRead: false,
       createdAt: new Date(Date.now() - 10800000).toISOString(),
       userId: 1
     },
@@ -57,7 +57,7 @@ export class NotificationService implements INotificationService {
       type: 'error',
       title: 'خطأ في النظام',
       message: 'فشل الاتصال بقاعدة البيانات',
-      status: 'unread',
+      isRead: false,
       createdAt: new Date(Date.now() - 14400000).toISOString(),
       userId: 1
     }
@@ -76,13 +76,14 @@ export class NotificationService implements INotificationService {
 
       if (filter) {
         // Filter by type
-        if (filter.type) {
+        if (filter.type && filter.type !== 'all') {
           result = result.filter(n => n.type === filter.type);
         }
 
-        // Filter by status
-        if (filter.status) {
-          result = result.filter(n => n.status === filter.status);
+        // Filter by status (read/unread)
+        if (filter.status && filter.status !== 'all') {
+          const isRead = filter.status === 'read';
+          result = result.filter(n => n.isRead === isRead);
         }
 
         // Filter by date range
@@ -118,7 +119,7 @@ export class NotificationService implements INotificationService {
                 comparison = a.type.localeCompare(b.type);
                 break;
               case 'status':
-                comparison = a.status.localeCompare(b.status);
+                comparison = (a.isRead ? 1 : 0) - (b.isRead ? 1 : 0);
                 break;
             }
 
@@ -172,11 +173,10 @@ export class NotificationService implements INotificationService {
         type: payload.type,
         title: payload.title,
         message: payload.message,
-        status: 'unread',
+        isRead: false,
         createdAt: new Date().toISOString(),
         userId: payload.userId,
-        link: payload.link,
-        metadata: payload.metadata
+        link: payload.link
       };
 
       this.notifications.update(notifications => [...notifications, newNotification]);
@@ -205,8 +205,7 @@ export class NotificationService implements INotificationService {
         const updated = [...notifications];
         updated[index] = {
           ...updated[index],
-          ...payload,
-          updatedAt: new Date().toISOString()
+          ...payload
         };
         return updated;
       });
@@ -257,8 +256,7 @@ export class NotificationService implements INotificationService {
         const updated = [...notifications];
         updated[index] = {
           ...updated[index],
-          status: 'read',
-          readAt: new Date().toISOString()
+          isRead: true
         };
         return updated;
       });
@@ -278,8 +276,7 @@ export class NotificationService implements INotificationService {
       this.notifications.update(notifications =>
         notifications.map(n => ({
           ...n,
-          status: 'read' as const,
-          readAt: new Date().toISOString()
+          isRead: true
         }))
       );
 
@@ -295,7 +292,7 @@ export class NotificationService implements INotificationService {
    */
   getUnreadCount(): Observable<number> {
     try {
-      const count = this.notifications().filter(n => n.status === 'unread').length;
+      const count = this.notifications().filter(n => !n.isRead).length;
       return of(count).pipe(delay(100));
     } catch (error) {
       return throwError(() => new Error('فشل في حساب الإشعارات غير المقروءة'));
