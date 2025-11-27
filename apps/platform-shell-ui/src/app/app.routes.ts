@@ -1,11 +1,9 @@
 import { Route } from '@angular/router';
 import { MainLayoutComponent } from './layout/main-layout.component';
-
 export const appRoutes: Route[] = [
   {
     path: '',
     component: MainLayoutComponent,
-
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent) },
@@ -45,6 +43,13 @@ export const appRoutes: Route[] = [
       
       // Maps System
       { path: 'maps', loadComponent: () => import('./features/maps/maps.component').then(m => m.MapsComponent) },
+      
+      // Cycle 5 New Routes - Task 81-85
+      { path: 'notifications', loadComponent: () => import('./pages/notifications/notifications.component').then(m => m.NotificationsComponent) },
+      { path: 'attachments', loadComponent: () => import('./pages/attachments/attachments.component').then(m => m.AttachmentsComponent) },
+      { path: 'audit-logs', loadComponent: () => import('./pages/audit-logs/audit-logs.component').then(m => m.AuditLogsComponent) },
+      { path: 'backups', loadComponent: () => import('./pages/backups/backups.component').then(m => m.BackupsComponent) },
+      { path: 'settings', loadComponent: () => import('./pages/settings/settings.component').then(m => m.SettingsComponent) },
       
       { path: 'magic-notebook', loadComponent: () => import('./pages/magic-notebook/magic-notebook.component').then(m => m.MagicNotebookComponent) },
       { path: 'developer', loadComponent: () => import('./pages/developer/developer-chat.component').then(m => m.DeveloperChatComponent) },

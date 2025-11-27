@@ -71,6 +71,95 @@ import { HttpClient } from '@angular/common/http';
         </div>
       </div>
 
+      <!-- Genes Cards - Cycle 5 -->
+      <div class="genes-section">
+        <div class="section-header">
+          <h3>🧬 نظام الجينات</h3>
+          <p>مؤشرات الأداء الرئيسية</p>
+        </div>
+        <div class="genes-grid">
+          <!-- Purchases Gene -->
+          <div class="gene-card purchases">
+            <div class="gene-icon">
+              <i class="pi pi-shopping-cart"></i>
+            </div>
+            <div class="gene-content">
+              <div class="gene-title">جين المشتريات</div>
+              <div class="gene-value">{{ genesData.purchases.total | number:'1.0-0' }} ريال</div>
+              <div class="gene-stats">
+                <span>{{ genesData.purchases.count }} طلب</span>
+                <span class="separator">•</span>
+                <span>متوسط: {{ genesData.purchases.average | number:'1.0-0' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sales Gene -->
+          <div class="gene-card sales">
+            <div class="gene-icon">
+              <i class="pi pi-chart-line"></i>
+            </div>
+            <div class="gene-content">
+              <div class="gene-title">جين المبيعات</div>
+              <div class="gene-value">{{ genesData.sales.total | number:'1.0-0' }} ريال</div>
+              <div class="gene-stats">
+                <span>{{ genesData.sales.count }} فاتورة</span>
+                <span class="separator">•</span>
+                <span>ربح: {{ genesData.sales.profit | number:'1.0-0' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Inventory Gene -->
+          <div class="gene-card inventory">
+            <div class="gene-icon">
+              <i class="pi pi-box"></i>
+            </div>
+            <div class="gene-content">
+              <div class="gene-title">جين المخزون</div>
+              <div class="gene-value">{{ genesData.inventory.total }} صنف</div>
+              <div class="gene-stats">
+                <span>قيمة: {{ genesData.inventory.value | number:'1.0-0' }}</span>
+                <span class="separator">•</span>
+                <span class="low-stock">{{ genesData.inventory.lowStock }} منخفض</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- HR Gene -->
+          <div class="gene-card hr">
+            <div class="gene-icon">
+              <i class="pi pi-users"></i>
+            </div>
+            <div class="gene-content">
+              <div class="gene-title">جين الموارد البشرية</div>
+              <div class="gene-value">{{ genesData.hr.employees }} موظف</div>
+              <div class="gene-stats">
+                <span>حضور: {{ genesData.hr.attendance }}%</span>
+                <span class="separator">•</span>
+                <span>إجازات: {{ genesData.hr.leaves }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Accounting Gene -->
+          <div class="gene-card accounting">
+            <div class="gene-icon">
+              <i class="pi pi-calculator"></i>
+            </div>
+            <div class="gene-content">
+              <div class="gene-title">جين المحاسبة</div>
+              <div class="gene-value">{{ genesData.accounting.balance | number:'1.0-0' }} ريال</div>
+              <div class="gene-stats">
+                <span>إيرادات: {{ genesData.accounting.revenue | number:'1.0-0' }}</span>
+                <span class="separator">•</span>
+                <span>مصروفات: {{ genesData.accounting.expenses | number:'1.0-0' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Charts Row -->
       <div class="charts-row">
         <div class="chart-container">
@@ -500,12 +589,151 @@ import { HttpClient } from '@angular/common/http';
       box-shadow: 0 8px 16px rgba(250, 112, 154, 0.3);
     }
 
+    /* Genes Section */
+    .genes-section {
+      margin-bottom: 2rem;
+    }
+
+    .genes-section .section-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .genes-section .section-header p {
+      margin: 0.25rem 0 0 0;
+      color: #7f8c8d;
+      font-size: 0.875rem;
+    }
+
+    .genes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .gene-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gene-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+    }
+
+    .gene-card.purchases::before {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .gene-card.sales::before {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .gene-card.inventory::before {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .gene-card.hr::before {
+      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    .gene-card.accounting::before {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+
+    .gene-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    .gene-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .gene-card.purchases .gene-icon {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .gene-card.sales .gene-icon {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .gene-card.inventory .gene-icon {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .gene-card.hr .gene-icon {
+      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    .gene-card.accounting .gene-icon {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+
+    .gene-content {
+      flex: 1;
+    }
+
+    .gene-title {
+      font-size: 0.875rem;
+      color: #7f8c8d;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .gene-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+    }
+
+    .gene-stats {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: #95a5a6;
+    }
+
+    .gene-stats .separator {
+      color: #bdc3c7;
+    }
+
+    .gene-stats .low-stock {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+
     @media (max-width: 768px) {
       .charts-row {
         grid-template-columns: 1fr;
       }
       
       .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .genes-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -517,6 +745,35 @@ export class DashboardComponent implements OnInit {
     rolesCount: 0,
     customersCount: 0,
     suppliersCount: 0
+  };
+
+  // Genes Data - Cycle 5
+  genesData = {
+    purchases: {
+      total: 1250000,
+      count: 12,
+      average: 104167
+    },
+    sales: {
+      total: 2850000,
+      count: 20,
+      profit: 450000
+    },
+    inventory: {
+      total: 22,
+      value: 850000,
+      lowStock: 3
+    },
+    hr: {
+      employees: 30,
+      attendance: 95,
+      leaves: 5
+    },
+    accounting: {
+      balance: 1600000,
+      revenue: 2850000,
+      expenses: 1250000
+    }
   };
 
   salesChartData: any;
