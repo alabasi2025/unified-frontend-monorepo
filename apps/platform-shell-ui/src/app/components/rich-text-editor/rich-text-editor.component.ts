@@ -1,6 +1,6 @@
-import { Component, forwardRef, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, forwardRef, Inject, Input, OnInit, PLATFORM_ID, ViewEncapsulation } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { EditorModule } from 'primeng/editor';
 
@@ -94,6 +94,7 @@ import { EditorModule } from 'primeng/editor';
   encapsulation: ViewEncapsulation.None
 })
 export class RichTextEditorComponent implements ControlValueAccessor, OnInit {
+	  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
   @Input() placeholder = 'اكتب هنا...';
   @Input() height = '300px';
   @Input() showWordCount = true;
@@ -122,9 +123,12 @@ export class RichTextEditorComponent implements ControlValueAccessor, OnInit {
   }
 
   stripHtml(html: string): string {
-    const tmp = document.createElement('DIV');
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || '';
+    if (isPlatformBrowser(this.platformId)) {
+      const tmp = document.createElement('DIV');
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || '';
+    }
+    return html; // Return original HTML or an empty string if not in browser (SSR)
   }
 
   writeValue(value: any): void {

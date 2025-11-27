@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter, forwardRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input, Output, EventEmitter, forwardRef, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule, NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 import { MarkdownModule } from 'ngx-markdown';
 
@@ -18,6 +18,11 @@ import { MarkdownModule } from 'ngx-markdown';
   styleUrls: ['./markdown-editor.component.css']
 })
 export class MarkdownEditorComponent implements ControlValueAccessor {
+  private isBrowser: boolean;
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
   @Input() height = 400;
   @Output() valueChange = new EventEmitter<string>();
 
@@ -43,6 +48,10 @@ export class MarkdownEditorComponent implements ControlValueAccessor {
   }
 
   insertMarkdown(before: string, after: string): void {
+    if (!this.isBrowser) {
+      return;
+    }
+
     const textarea = document.querySelector('.editor-textarea') as HTMLTextAreaElement;
     if (!textarea) return;
 
@@ -54,6 +63,8 @@ export class MarkdownEditorComponent implements ControlValueAccessor {
     this.value = newText;
     this.onChange(this.value);
 
+    // setTimeout is generally safe, but the DOM manipulation inside it must be guarded.
+    // Since we already guarded the whole method, this is fine.
     setTimeout(() => {
       textarea.focus();
       textarea.setSelectionRange(start + before.length, end + before.length);
