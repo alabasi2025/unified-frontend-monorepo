@@ -12,12 +12,14 @@
     "@angular/forms": "~20.3.0",
     "@angular/platform-browser": "~20.3.0",
     "@angular/platform-browser-dynamic": "~20.3.0",
+    "@angular/platform-server": "~20.3.0",
     "@angular/router": "~20.3.0",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
     "@types/leaflet": "^1.9.21",
     "@types/leaflet-draw": "^1.0.13",
     "chart.js": "^4.5.1",
+    "express": "^4.18.2",
     "leaflet": "^1.9.4",
     "leaflet-draw": "^1.0.4",
     "marked": "^16.0.0",
@@ -26,11 +28,10 @@
     "primeicons": "^7.0.0",
     "primeng": "^20.3.0",
     "rxjs": "~7.8.0",
-    "zone.js": "~0.15.0",
-    "@angular/platform-server": "~20.3.0",
-    "express": "^4.18.2"
+    "zone.js": "~0.15.0"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "^21.0.1",
     "@angular-devkit/core": "~20.3.0",
     "@angular-devkit/schematics": "~20.3.0",
     "@angular/build": "~20.3.0",

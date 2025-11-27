@@ -532,7 +532,6 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       ]
     },
     { title: 'نظام المطور', icon: '💻', color: 'linear-gradient(135deg, #a855f7 0%, #9333ea 100%)', children: [ { title: 'الوحدة المركزية للذكاء الاصطناعي', route: '/developer', icon: '', color: '' }, { title: 'الدفتر السحري', route: '/magic-notebook', icon: '', color: '' } ] }
-    }
   ];
 
   constructor(

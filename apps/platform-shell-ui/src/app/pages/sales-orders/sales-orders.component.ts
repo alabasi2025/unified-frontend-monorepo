@@ -16,6 +16,7 @@ import { CardModule } from 'primeng/card';
 import { TooltipModule } from 'primeng/tooltip';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { SalesOrdersService } from '../../services/sales-orders.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sales-orders',
@@ -24,7 +25,7 @@ import { SalesOrdersService } from '../../services/sales-orders.service';
     CommonModule, FormsModule, ReactiveFormsModule,
     TableModule, ButtonModule, DialogModule, InputTextModule, InputNumberModule,
     DatePickerModule, SelectModule, BadgeModule, ToastModule, ConfirmDialogModule,
-    ToolbarModule, CardModule, TooltipModule
+    ToolbarModule, CardModule, TooltipModule, TranslateModule
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './sales-orders.component.html',
