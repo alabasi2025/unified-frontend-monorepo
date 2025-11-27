@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { NotificationWidgetComponent } from '../shared/components/notification-widget.component';
 import { environment } from '../../environments/environment';
 
 interface MenuItem {
@@ -16,7 +17,7 @@ interface MenuItem {
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, NotificationWidgetComponent],
   template: `
     <div class="app-container">
       <aside class="sidebar">
@@ -85,7 +86,7 @@ interface MenuItem {
         <header class="topbar">
           <button class="menu-toggle">☰</button>
           <div class="topbar-actions">
-            <button class="icon-btn">🔔</button>
+            <app-notification-widget></app-notification-widget>
             <button class="icon-btn">⚙️</button>
           </div>
         </header>
