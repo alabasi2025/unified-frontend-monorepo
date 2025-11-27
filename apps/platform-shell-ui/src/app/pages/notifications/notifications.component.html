@@ -1,0 +1,63 @@
+<div class="notifications-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>الإشعارات</h1>
+      <div class="header-actions">
+        <!-- Sound Toggle -->
+        <button 
+          class="btn-icon"
+          (click)="toggleSound()"
+          [title]="soundEnabled ? 'تعطيل الصوت' : 'تفعيل الصوت'">
+          {{ soundEnabled ? '🔊' : '🔇' }}
+        </button>
+
+        <!-- Mark All as Read -->
+        <button 
+          class="btn-primary"
+          (click)="markAllAsRead()"
+          [disabled]="unreadCount === 0">
+          تحديد الكل كمقروء
+        </button>
+
+        <!-- Refresh -->
+        <button 
+          class="btn-icon"
+          (click)="refresh()"
+          title="تحديث">
+          🔄
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat-item">
+        <span class="stat-label">المجموع:</span>
+        <span class="stat-value">{{ notifications.length }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">غير مقروءة:</span>
+        <span class="stat-value unread">{{ unreadCount }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notifications List -->
+  <div class="notifications-content">
+    <app-notification-list
+      [notifications]="notifications"
+      [loading]="loading"
+      (onNotificationRead)="handleNotificationRead($event)"
+      (onNotificationDelete)="handleNotificationDelete($event)">
+    </app-notification-list>
+  </div>
+
+  <!-- Floating Badge (for demo) -->
+  <div class="floating-badge">
+    <app-notification-badge
+      [count]="unreadCount"
+      (onClick)="togglePanel()">
+    </app-notification-badge>
+  </div>
+</div>
