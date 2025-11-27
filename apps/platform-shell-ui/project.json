@@ -1,43 +1,44 @@
 {
-  "name": "platform-shell-ui",
+  "name": "my-angular-app",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "prefix": "app",
-  "sourceRoot": "apps/platform-shell-ui/src",
+  "sourceRoot": "src",
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@angular/build:application",
-      "outputs": ["{options.outputPath}"],
+      "executor": "@angular-devkit/build-angular:application",
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
-        "outputPath": "dist/apps/platform-shell-ui",
-        "browser": "apps/platform-shell-ui/src/main.ts",
-        "polyfills": ["zone.js"],
-        "tsConfig": "apps/platform-shell-ui/tsconfig.app.json",
-        "inlineStyleLanguage": "scss",
+        "outputPath": "dist/my-angular-app",
+        "index": "src/index.html",
+        "browser": "src/main.ts",
+        "polyfills": [
+          "zone.js"
+        ],
+        "tsConfig": "tsconfig.app.json",
         "assets": [
-          {
-            "glob": "**/*",
-            "input": "apps/platform-shell-ui/public"
-          }
+          "src/favicon.ico",
+          "src/assets"
         ],
         "styles": [
-          "apps/platform-shell-ui/src/styles.scss",
-          "node_modules/leaflet/dist/leaflet.css"
-        ]
+          "src/styles.css"
+        ],
+        "scripts": []
       },
       "configurations": {
         "production": {
           "budgets": [
             {
               "type": "initial",
-              "maximumWarning": "1mb",
-              "maximumError": "2mb"
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
             },
             {
               "type": "anyComponentStyle",
-              "maximumWarning": "10kb",
-              "maximumError": "20kb"
+              "maximumError": "2kb"
             }
           ],
           "outputHashing": "all"
@@ -51,43 +52,100 @@
       "defaultConfiguration": "production"
     },
     "serve": {
-      "continuous": true,
-      "executor": "@angular/build:dev-server",
+      "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {
         "production": {
-          "buildTarget": "platform-shell-ui:build:production"
+          "buildTarget": "my-angular-app:build:production"
         },
         "development": {
-          "buildTarget": "platform-shell-ui:build:development"
+          "buildTarget": "my-angular-app:build:development"
         }
       },
       "defaultConfiguration": "development"
     },
     "extract-i18n": {
-      "executor": "@angular/build:extract-i18n",
+      "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "buildTarget": "platform-shell-ui:build"
+        "buildTarget": "my-angular-app:build"
       }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint"
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "executor": "@angular-devkit/build-angular:karma",
       "options": {
-        "jestConfig": "apps/platform-shell-ui/jest.config.ts",
-        "tsConfig": "apps/platform-shell-ui/tsconfig.spec.json"
+        "polyfills": [
+          "zone.js",
+          "zone.js/testing"
+        ],
+        "tsConfig": "tsconfig.spec.json",
+        "assets": [
+          "src/favicon.ico",
+          "src/assets"
+        ],
+        "styles": [
+          "src/styles.css"
+        ],
+        "scripts": []
       }
     },
-    "serve-static": {
-      "continuous": true,
-      "executor": "@nx/web:file-server",
+    "server": {
+      "executor": "@angular-devkit/build-angular:server",
       "options": {
-        "buildTarget": "platform-shell-ui:build",
-        "staticFilePath": "dist/apps/platform-shell-ui/browser",
-        "spa": true
-      }
+        "outputPath": "dist/my-angular-app/server",
+        "main": "server.ts",
+        "tsConfig": "tsconfig.server.json",
+        "assets": [
+          "src/favicon.ico",
+          "src/assets"
+        ]
+      },
+      "configurations": {
+        "production": {
+          "outputHashing": "media",
+          "fileReplacements": [
+            {
+              "replace": "src/environments/environment.ts",
+              "with": "src/environments/environment.prod.ts"
+            }
+          ]
+        },
+        "development": {
+          "optimization": false,
+          "sourceMap": true,
+          "extractLicenses": false
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve-ssr": {
+      "executor": "@angular-devkit/build-angular:ssr-dev-server",
+      "configurations": {
+        "development": {
+          "browserTarget": "my-angular-app:build:development",
+          "serverTarget": "my-angular-app:server:development"
+        },
+        "production": {
+          "browserTarget": "my-angular-app:build:production",
+          "serverTarget": "my-angular-app:server:production"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "prerender": {
+      "executor": "@angular-devkit/build-angular:prerender",
+      "options": {
+        "browserTarget": "my-angular-app:build:production",
+        "serverTarget": "my-angular-app:server:production",
+        "routes": [
+          "/"
+        ]
+      },
+      "configurations": {
+        "development": {
+          "browserTarget": "my-angular-app:build:development",
+          "serverTarget": "my-angular-app:server:development"
+        }
+      },
+      "defaultConfiguration": "production"
     }
   }
 }
