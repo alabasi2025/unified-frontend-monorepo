@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { MagicNotebookService, Notebook, Page, Section } from '../../../services/magic-notebook.service';
@@ -7,7 +8,7 @@ import { VersionBadgeComponent } from '../../../shared/components/version-badge/
 @Component({
   selector: 'app-notebook-detail',
   standalone: true,
-  imports: [VersionBadgeComponent],
+  imports: [CommonModule, VersionBadgeComponent],
   templateUrl: './notebook-detail.component.html',
   styleUrls: ['./notebook-detail.component.css']
 })
@@ -257,9 +258,10 @@ export class NotebookDetailComponent implements OnInit, OnDestroy {
       });
   }
   
-  getRelativeTime(date: Date): string {
+  getRelativeTime(date: Date | string): string {
     const now = new Date();
-    const diff = now.getTime() - date.getTime();
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    const diff = now.getTime() - dateObj.getTime();
     const seconds = Math.floor(diff / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
