@@ -55,7 +55,7 @@ export class SearchComponent implements OnInit {
       this.results = [
         {
           id: '1',
-          type: 'page',
+          type: 'page' as const,
           title: 'مقدمة المشروع',
           description: 'نظرة عامة على المشروع',
           content: 'هذا المشروع يهدف إلى...',
@@ -65,7 +65,7 @@ export class SearchComponent implements OnInit {
         },
         {
           id: '2',
-          type: 'idea',
+          type: 'idea' as const,
           title: 'تحسين الأداء',
           description: 'أفكار لتحسين أداء النظام',
           content: 'يمكن تحسين الأداء عن طريق...',
@@ -75,7 +75,7 @@ export class SearchComponent implements OnInit {
         },
         {
           id: '3',
-          type: 'task',
+          type: 'task' as const,
           title: 'تطوير API',
           description: 'تطوير REST APIs',
           content: 'المهام المطلوبة لتطوير API...',
