@@ -662,30 +662,36 @@ export class MagicNotebookService {
     const ideas = [
       {
         id: '1',
-        title: 'إضافة نظام الإشعارات',
-        description: 'تطوير نظام إشعارات متقدم للمستخدمين',
+        title: 'تحسين الأداء',
+        description: 'تحسين أداء التطبيق',
         notebookId: '1',
-        status: 'NEW' as const,
-        priority: 'HIGH' as const,
-        createdAt: '2025-11-20T10:00:00Z'
+        status: 'pending' as const,
+        priority: 'high' as const,
+        tags: ['تطوير', 'أداء'],
+        createdAt: '2025-11-25T10:00:00Z',
+        updatedAt: '2025-11-25T10:00:00Z'
       },
       {
         id: '2',
-        title: 'تحسين الأداء',
-        description: 'تحسين أداء التطبيق وتقليل وقت التحميل',
+        title: 'إضافة ميزة البحث',
+        description: 'إضافة بحث متقدم',
         notebookId: '1',
-        status: 'IN_PROGRESS' as const,
-        priority: 'MEDIUM' as const,
-        createdAt: '2025-11-21T10:00:00Z'
+        status: 'in-progress' as const,
+        priority: 'medium' as const,
+        tags: ['ميزة', 'بحث'],
+        createdAt: '2025-11-24T10:00:00Z',
+        updatedAt: '2025-11-24T10:00:00Z'
       },
       {
         id: '3',
         title: 'إضافة Dark Mode',
         description: 'إضافة وضع الظلام للتطبيق',
         notebookId: '1',
-        status: 'COMPLETED' as const,
-        priority: 'LOW' as const,
-        createdAt: '2025-11-22T10:00:00Z'
+        status: 'completed' as const,
+        priority: 'low' as const,
+        tags: ['UI', 'تصميم'],
+        createdAt: '2025-11-22T10:00:00Z',
+        updatedAt: '2025-11-23T10:00:00Z'
       }
     ];
     return notebookId ? ideas.filter(i => i.notebookId === notebookId) : ideas;
