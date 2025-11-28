@@ -530,13 +530,15 @@ export class MagicNotebookLayoutComponent implements OnInit {
   }
 
   loadNotebooks() {
-    this.notebooks = this.notebookService.getNotebooks();
-    
-    // Select first notebook if none selected
-    if (!this.currentNotebookId && this.notebooks.length > 0) {
-      this.currentNotebookId = this.notebooks[0].id;
-      this.loadStats();
-    }
+    this.notebookService.getNotebooks().subscribe(notebooks => {
+      this.notebooks = notebooks;
+      
+      // Select first notebook if none selected
+      if (!this.currentNotebookId && this.notebooks.length > 0) {
+        this.currentNotebookId = this.notebooks[0].id;
+        this.loadStats();
+      }
+    });
   }
 
   selectNotebook(id: string) {
