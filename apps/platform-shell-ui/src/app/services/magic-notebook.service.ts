@@ -297,8 +297,10 @@ export class MagicNotebookService {
         title: data.title || '',
         description: data.description || '',
         notebookId: data.notebookId || '1',
-        status: data.status || 'NEW',
-        priority: data.priority || 'MEDIUM',
+        status: data.status || 'pending',
+        priority: data.priority || 'medium',
+        tags: data.tags || [],
+        updatedAt: new Date().toISOString(),
         createdAt: new Date().toISOString()
       };
       return of(newIdea);
