@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
   apiUrl: 'http://72.61.111.217',
-  version: "2.9.0"
+  version: "2.10.0"
 };
