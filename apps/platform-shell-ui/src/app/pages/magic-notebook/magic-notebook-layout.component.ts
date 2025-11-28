@@ -495,7 +495,9 @@ interface NavItem {
 })
 export class MagicNotebookLayoutComponent implements OnInit {
   notebooks: Notebook[] = [];
-  currentNotebookId: number | null = null;
+  currentNotebookId: string | null = null;
+  totalPages: number = 0;
+  totalTasks: number = 0;
 
   navItems: NavItem[] = [
     { title: 'نظرة عامة', icon: '📊', route: 'overview', color: '#667eea' },
@@ -521,7 +523,8 @@ export class MagicNotebookLayoutComponent implements OnInit {
     // Get current notebook ID from route
     this.route.params.subscribe(params => {
       if (params['id']) {
-        this.currentNotebookId = +params['id'];
+        this.currentNotebookId = params['id'];
+        this.loadStats();
       }
     });
   }
@@ -532,11 +535,13 @@ export class MagicNotebookLayoutComponent implements OnInit {
     // Select first notebook if none selected
     if (!this.currentNotebookId && this.notebooks.length > 0) {
       this.currentNotebookId = this.notebooks[0].id;
+      this.loadStats();
     }
   }
 
-  selectNotebook(id: number) {
+  selectNotebook(id: string) {
     this.currentNotebookId = id;
+    this.loadStats();
     this.router.navigate(['/magic-notebook', id, 'overview']);
   }
 
@@ -571,15 +576,30 @@ export class MagicNotebookLayoutComponent implements OnInit {
     alert('إضافة مهمة سريعة - قريباً!');
   }
 
+  loadStats() {
+    if (this.currentNotebookId) {
+      this.notebookService.getPages(this.currentNotebookId).subscribe(pages => {
+        this.totalPages = pages.length;
+      });
+      this.notebookService.getTasks(this.currentNotebookId).subscribe(tasks => {
+        this.totalTasks = tasks.length;
+      });
+    }
+  }
+
   getTotalPages(): number {
-    return this.notebookService.getPages(this.currentNotebookId || 0).length;
+    return this.totalPages;
   }
 
   getTotalTasks(): number {
-    return this.notebookService.getTasks(this.currentNotebookId || 0).length;
+    return this.totalTasks;
   }
 
-  getNotebookPageCount(notebookId: number): number {
-    return this.notebookService.getPages(notebookId).length;
+  getNotebookPageCount(notebookId: string): number {
+    let count = 0;
+    this.notebookService.getPages(notebookId).subscribe(pages => {
+      count = pages.length;
+    });
+    return count;
   }
 }
