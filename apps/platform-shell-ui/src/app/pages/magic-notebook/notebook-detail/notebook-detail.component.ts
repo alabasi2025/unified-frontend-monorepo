@@ -2,9 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { MagicNotebookService, Notebook, Page, Section } from '../../../services/magic-notebook.service';
+import { VersionBadgeComponent } from '../../../shared/components/version-badge/version-badge.component';
 
 @Component({
   selector: 'app-notebook-detail',
+  standalone: true,
+  imports: [VersionBadgeComponent],
   templateUrl: './notebook-detail.component.html',
   styleUrls: ['./notebook-detail.component.css']
 })
