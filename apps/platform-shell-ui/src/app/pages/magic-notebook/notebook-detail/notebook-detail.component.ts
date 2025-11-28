@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { MagicNotebookService, Notebook, Page, Section } from '../../../services/magic-notebook.service';
@@ -8,7 +9,7 @@ import { VersionBadgeComponent } from '../../../shared/components/version-badge/
 @Component({
   selector: 'app-notebook-detail',
   standalone: true,
-  imports: [CommonModule, VersionBadgeComponent],
+  imports: [CommonModule, FormsModule, VersionBadgeComponent],
   templateUrl: './notebook-detail.component.html',
   styleUrls: ['./notebook-detail.component.css']
 })
