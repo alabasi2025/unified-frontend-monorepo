@@ -31,21 +31,26 @@ export interface Page {
 export interface Section {
   id: string;
   title: string;
+  description?: string;
   notebookId: string;
   parentId?: string;
   order: number;
+  color?: string;
   createdAt: string;
+  updatedAt?: string;
   children?: Section[];
 }
 
 export interface Idea {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   notebookId: string;
-  status: 'NEW' | 'IN_PROGRESS' | 'COMPLETED';
-  priority: 'LOW' | 'MEDIUM' | 'HIGH';
+  status: 'pending' | 'in-progress' | 'completed' | 'archived';
+  priority: 'low' | 'medium' | 'high';
+  tags?: string[];
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface Task {
