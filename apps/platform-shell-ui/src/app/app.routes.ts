@@ -51,7 +51,18 @@ export const appRoutes: Route[] = [
       { path: 'backups', loadComponent: () => import('./pages/backups/backups.component').then(m => m.BackupsComponent) },
       { path: 'settings', loadComponent: () => import('./pages/settings/settings.component').then(m => m.SettingsComponent) },
       
+      // Magic Notebook Routes
       { path: 'magic-notebook', loadComponent: () => import('./pages/magic-notebook/magic-notebook.component').then(m => m.MagicNotebookComponent) },
+      { path: 'magic-notebook/:id', loadComponent: () => import('./pages/magic-notebook/notebook-detail/notebook-detail.component').then(m => m.NotebookDetailComponent) },
+      { path: 'magic-notebook/:id/pages', loadComponent: () => import('./pages/magic-notebook/pages/pages.component').then(m => m.PagesComponent) },
+      { path: 'magic-notebook/:id/sections', loadComponent: () => import('./pages/magic-notebook/sections/sections.component').then(m => m.SectionsComponent) },
+      { path: 'magic-notebook/:id/ideas', loadComponent: () => import('./pages/magic-notebook/ideas/ideas.component').then(m => m.IdeasComponent) },
+      { path: 'magic-notebook/:id/tasks', loadComponent: () => import('./pages/magic-notebook/tasks/tasks.component').then(m => m.TasksComponent) },
+      { path: 'magic-notebook/:id/sticky-notes', loadComponent: () => import('./pages/magic-notebook/sticky-notes/sticky-notes.component').then(m => m.StickyNotesComponent) },
+      { path: 'magic-notebook/:id/timeline', loadComponent: () => import('./pages/magic-notebook/timeline/timeline.component').then(m => m.TimelineComponent) },
+      { path: 'magic-notebook/:id/archive', loadComponent: () => import('./pages/magic-notebook/archive/archive.component').then(m => m.ArchiveComponent) },
+      { path: 'magic-notebook/:id/search', loadComponent: () => import('./pages/magic-notebook/search/search.component').then(m => m.SearchComponent) },
+      
       { path: 'developer', loadComponent: () => import('./pages/developer/developer-chat.component').then(m => m.DeveloperChatComponent) },
     ]
   },
