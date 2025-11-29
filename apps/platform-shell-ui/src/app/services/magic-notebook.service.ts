@@ -94,12 +94,44 @@ export interface ArchiveItem {
   archivedAt: string;
 }
 
+export interface Attachment {
+  id: string;
+  pageId: string;
+  fileName: string;
+  fileUrl: string;
+  fileType: string;
+  fileSize: number;
+  uploadedBy?: string;
+  uploadedAt: string;
+}
+
+export interface Reminder {
+  id: string;
+  pageId: string;
+  title: string;
+  description?: string;
+  reminderDate: string;
+  isCompleted: boolean;
+  createdBy?: string;
+  createdAt: string;
+}
+
+export interface VersionHistory {
+  id: string;
+  pageId: string;
+  versionNumber: number;
+  content: string;
+  changeDescription?: string;
+  createdBy?: string;
+  createdAt: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class MagicNotebookService {
   private apiUrl = 'http://72.61.111.217:3000/api/magic-notebook';
-  private useMockData = true; // Toggle for development
+  private useMockData = false; // Toggle for development - Now using real API
 
   constructor(private http: HttpClient) {}
 
@@ -524,6 +556,101 @@ export class MagicNotebookService {
       });
     }
     return this.http.get<any>(`${this.apiUrl}/search?q=${query}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  // ==================== ATTACHMENTS ====================
+  
+  getAttachments(pageId?: string): Observable<Attachment[]> {
+    const url = pageId 
+      ? `${this.apiUrl}/attachments?pageId=${pageId}`
+      : `${this.apiUrl}/attachments`;
+    return this.http.get<Attachment[]>(url)
+      .pipe(catchError(this.handleError));
+  }
+
+  getAttachment(id: string): Observable<Attachment> {
+    return this.http.get<Attachment>(`${this.apiUrl}/attachments/${id}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  createAttachment(data: Partial<Attachment>): Observable<Attachment> {
+    return this.http.post<Attachment>(`${this.apiUrl}/attachments`, data)
+      .pipe(catchError(this.handleError));
+  }
+
+  deleteAttachment(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/attachments/${id}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  // ==================== REMINDERS ====================
+  
+  getReminders(pageId?: string): Observable<Reminder[]> {
+    const url = pageId 
+      ? `${this.apiUrl}/reminders?pageId=${pageId}`
+      : `${this.apiUrl}/reminders`;
+    return this.http.get<Reminder[]>(url)
+      .pipe(catchError(this.handleError));
+  }
+
+  getUpcomingReminders(): Observable<Reminder[]> {
+    return this.http.get<Reminder[]>(`${this.apiUrl}/reminders/upcoming`)
+      .pipe(catchError(this.handleError));
+  }
+
+  getReminder(id: string): Observable<Reminder> {
+    return this.http.get<Reminder>(`${this.apiUrl}/reminders/${id}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  createReminder(data: Partial<Reminder>): Observable<Reminder> {
+    return this.http.post<Reminder>(`${this.apiUrl}/reminders`, data)
+      .pipe(catchError(this.handleError));
+  }
+
+  updateReminder(id: string, data: Partial<Reminder>): Observable<Reminder> {
+    return this.http.patch<Reminder>(`${this.apiUrl}/reminders/${id}`, data)
+      .pipe(catchError(this.handleError));
+  }
+
+  markReminderAsCompleted(id: string): Observable<Reminder> {
+    return this.http.patch<Reminder>(`${this.apiUrl}/reminders/${id}/complete`, {})
+      .pipe(catchError(this.handleError));
+  }
+
+  deleteReminder(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/reminders/${id}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  // ==================== VERSION HISTORY ====================
+  
+  getVersionHistory(pageId?: string): Observable<VersionHistory[]> {
+    const url = pageId 
+      ? `${this.apiUrl}/version-history?pageId=${pageId}`
+      : `${this.apiUrl}/version-history`;
+    return this.http.get<VersionHistory[]>(url)
+      .pipe(catchError(this.handleError));
+  }
+
+  getLatestVersion(pageId: string): Observable<VersionHistory> {
+    return this.http.get<VersionHistory>(`${this.apiUrl}/version-history/latest/${pageId}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  getVersion(id: string): Observable<VersionHistory> {
+    return this.http.get<VersionHistory>(`${this.apiUrl}/version-history/${id}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  createVersion(data: Partial<VersionHistory>): Observable<VersionHistory> {
+    return this.http.post<VersionHistory>(`${this.apiUrl}/version-history`, data)
+      .pipe(catchError(this.handleError));
+  }
+
+  deleteVersion(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/version-history/${id}`)
       .pipe(catchError(this.handleError));
   }
 
