@@ -49,49 +49,82 @@ export class SearchComponent implements OnInit {
 
     this.isSearching = true;
 
-    // Simulate search delay
-    setTimeout(() => {
-      // Mock data - replace with actual service call
-      this.results = [
-        {
-          id: '1',
-          type: 'page' as const,
-          title: 'مقدمة المشروع',
-          description: 'نظرة عامة على المشروع',
-          content: 'هذا المشروع يهدف إلى...',
-          matchedText: '...المشروع يهدف إلى تطوير نظام...',
-          createdAt: new Date().toISOString(),
-          icon: '📄'
-        },
-        {
-          id: '2',
-          type: 'idea' as const,
-          title: 'تحسين الأداء',
-          description: 'أفكار لتحسين أداء النظام',
-          content: 'يمكن تحسين الأداء عن طريق...',
-          matchedText: '...تحسين الأداء عن طريق استخدام cache...',
-          createdAt: new Date().toISOString(),
-          icon: '💡'
-        },
-        {
-          id: '3',
-          type: 'task' as const,
-          title: 'تطوير API',
-          description: 'تطوير REST APIs',
-          content: 'المهام المطلوبة لتطوير API...',
-          matchedText: '...تطوير REST APIs للنظام...',
-          createdAt: new Date().toISOString(),
-          icon: '✅'
-        }
-      ].filter(item =>
-        item.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        item.description.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        item.content.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
+    // Search across all content types
+    const query = this.searchQuery.toLowerCase();
+    this.results = [];
 
-      this.applyFilter();
+    // Search Pages
+    this.notebookService.getPages(this.notebookId).subscribe(pages => {
+      pages.forEach(page => {
+        if (page.title.toLowerCase().includes(query) || page.content.toLowerCase().includes(query)) {
+          this.results.push({
+            id: page.id,
+            type: 'page',
+            title: page.title,
+            description: 'صفحة',
+            content: page.content,
+            matchedText: this.getMatchedText(page.content, query),
+            createdAt: page.createdAt,
+            icon: '📄'
+          });
+        }
+      });
+      this.checkSearchComplete();
+    });
+
+    // Search Ideas
+    this.notebookService.getIdeas(this.notebookId).subscribe(ideas => {
+      ideas.forEach(idea => {
+        if (idea.title.toLowerCase().includes(query) || (idea.description && idea.description.toLowerCase().includes(query))) {
+          this.results.push({
+            id: idea.id,
+            type: 'idea',
+            title: idea.title,
+            description: 'فكرة',
+            content: idea.description || '',
+            matchedText: this.getMatchedText(idea.description || idea.title, query),
+            createdAt: idea.createdAt,
+            icon: '💡'
+          });
+        }
+      });
+      this.checkSearchComplete();
+    });
+
+    // Search Tasks
+    this.notebookService.getTasks(this.notebookId).subscribe(tasks => {
+      tasks.forEach(task => {
+        if (task.title.toLowerCase().includes(query) || (task.description && task.description.toLowerCase().includes(query))) {
+          this.results.push({
+            id: task.id,
+            type: 'task',
+            title: task.title,
+            description: 'مهمة',
+            content: task.description || '',
+            matchedText: this.getMatchedText(task.description || task.title, query),
+            createdAt: task.createdAt,
+            icon: '✅'
+          });
+        }
+      });
+      this.checkSearchComplete();
+    });
+  }
+
+  getMatchedText(content: string, query: string): string {
+    const index = content.toLowerCase().indexOf(query);
+    if (index === -1) return content.substring(0, 100) + '...';
+    
+    const start = Math.max(0, index - 50);
+    const end = Math.min(content.length, index + query.length + 50);
+    return '...' + content.substring(start, end) + '...';
+  }
+
+  checkSearchComplete() {
+    setTimeout(() => {
       this.isSearching = false;
-    }, 500);
+      this.applyFilter();
+    }, 100);
   }
 
   applyFilter() {

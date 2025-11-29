@@ -40,37 +40,32 @@ export class ArchiveComponent implements OnInit {
   }
 
   loadArchive() {
-    // Mock data - replace with actual service call
-    this.items = [
-      {
-        id: '1',
-        type: 'page',
-        title: 'صفحة قديمة',
-        description: 'محتوى صفحة تم أرشفتها',
-        archivedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-        archivedBy: 'admin',
-        icon: '📄'
+    this.notebookService.getArchive().subscribe({
+      next: (archiveItems) => {
+        this.items = archiveItems.map(item => ({
+          id: item.id,
+          type: item.itemType.toLowerCase() as any,
+          title: item.itemData.title || 'عنصر مؤرشف',
+          description: item.itemData.description || item.itemData.content || 'لا يوجد وصف',
+          archivedAt: item.archivedAt,
+          archivedBy: item.archivedBy,
+          icon: this.getTypeIcon(item.itemType)
+        }));
+        this.applyFilter();
       },
-      {
-        id: '2',
-        type: 'idea',
-        title: 'فكرة مؤرشفة',
-        description: 'فكرة تم تنفيذها وأرشفتها',
-        archivedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-        archivedBy: 'admin',
-        icon: '💡'
-      },
-      {
-        id: '3',
-        type: 'task',
-        title: 'مهمة مكتملة',
-        description: 'مهمة تم إنجازها وأرشفتها',
-        archivedAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
-        archivedBy: 'admin',
-        icon: '✅'
-      }
-    ];
-    this.applyFilter();
+      error: (error) => console.error('Error loading archive:', error)
+    });
+  }
+
+  getTypeIcon(type: string): string {
+    const icons: { [key: string]: string } = {
+      'PAGE': '📄',
+      'SECTION': '📂',
+      'IDEA': '💡',
+      'TASK': '✅',
+      'NOTE': '📌'
+    };
+    return icons[type] || '📦';
   }
 
   applyFilter() {
