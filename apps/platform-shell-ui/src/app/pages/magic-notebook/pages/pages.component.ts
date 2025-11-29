@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { MagicNotebookService, Page } from '../../../services/magic-notebook.service';
+import { RichTextEditorComponent } from '../rich-text-editor/rich-text-editor.component';
 
 @Component({
   selector: 'app-pages',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RichTextEditorComponent],
   templateUrl: './pages.component.html',
   styleUrls: ['./pages.component.css']
 })

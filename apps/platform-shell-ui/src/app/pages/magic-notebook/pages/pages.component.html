@@ -182,12 +182,11 @@
         
         <div class="form-group">
           <label>المحتوى</label>
-          <textarea 
+          <app-rich-text-editor
             [(ngModel)]="editForm.content"
-            class="form-textarea"
-            rows="10"
-            placeholder="محتوى الصفحة"
-          ></textarea>
+            [placeholder]="'اكتب محتوى الصفحة هنا...'"
+            [height]="'450px'"
+          ></app-rich-text-editor>
         </div>
       </div>
       

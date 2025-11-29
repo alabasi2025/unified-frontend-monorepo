@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { MagicNotebookService, Notebook, Page, Section } from '../../../services/magic-notebook.service';
+import { ExportImportService } from '../../../services/export-import.service';
 import { VersionBadgeComponent } from '../../../shared/components/version-badge/version-badge.component';
 
 @Component({
@@ -39,7 +40,8 @@ export class NotebookDetailComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private notebookService: MagicNotebookService
+    private notebookService: MagicNotebookService,
+    private exportImportService: ExportImportService
   ) {}
   
   ngOnInit(): void {
@@ -259,6 +261,65 @@ export class NotebookDetailComponent implements OnInit, OnDestroy {
       });
   }
   
+  // Export/Import Methods
+  exportAsJSON(): void {
+    if (!this.notebook) return;
+    
+    this.loading = true;
+    this.exportImportService.exportNotebookAsJSON(this.notebook.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.loading = false;
+          alert('تم تصدير الدفتر بنجاح!');
+        },
+        error: (err) => {
+          this.loading = false;
+          alert('فشل تصدير الدفتر: ' + err.message);
+        }
+      });
+  }
+  
+  async exportAsPDF(): Promise<void> {
+    if (!this.notebook) return;
+    
+    this.loading = true;
+    try {
+      await this.exportImportService.exportNotebookAsPDF(this.notebook.id);
+      this.loading = false;
+      alert('تم تصدير الدفتر كـ PDF بنجاح!');
+    } catch (err: any) {
+      this.loading = false;
+      alert('فشل تصدير PDF: ' + err.message);
+    }
+  }
+  
+  async importFromJSON(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    
+    if (!file) return;
+    
+    this.loading = true;
+    this.error = null;
+    
+    try {
+      const importData = await this.exportImportService.importNotebookFromJSON(file);
+      const newNotebookId = await this.exportImportService.createNotebookFromImport(importData);
+      
+      this.loading = false;
+      alert('تم استيراد الدفتر بنجاح!');
+      this.router.navigate(['/magic-notebook', newNotebookId]);
+    } catch (err: any) {
+      this.loading = false;
+      this.error = 'فشل استيراد الدفتر: ' + err.message;
+      alert(this.error);
+    }
+    
+    // Reset input
+    input.value = '';
+  }
+
   getRelativeTime(date: Date | string): string {
     const now = new Date();
     const dateObj = typeof date === 'string' ? new Date(date) : date;

@@ -65,6 +65,23 @@
         <i class="icon-x"></i>
         إلغاء
       </button>
+      <!-- Export/Import Buttons -->
+      <div *ngIf="!editMode" class="export-import-group">
+        <button class="btn btn-info" (click)="exportAsJSON()" title="تصدير JSON">
+          <i class="icon-download"></i>
+          JSON
+        </button>
+        <button class="btn btn-info" (click)="exportAsPDF()" title="تصدير PDF">
+          <i class="icon-file"></i>
+          PDF
+        </button>
+        <label class="btn btn-success" title="استيراد JSON">
+          <i class="icon-upload"></i>
+          استيراد
+          <input type="file" accept=".json" (change)="importFromJSON($event)" style="display: none;" />
+        </label>
+      </div>
+      
       <button 
         *ngIf="!editMode" 
         class="btn btn-danger" 
