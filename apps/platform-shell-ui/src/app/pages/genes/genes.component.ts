@@ -111,8 +111,21 @@ interface CategoryGroup {
         </div>
       </div>
 
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-state">
+        <i class="pi pi-spin pi-spinner" style="font-size: 3rem; color: var(--primary-color);"></i>
+        <p>جاري تحميل الجينات...</p>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="loadError && !isLoading" class="error-state">
+        <i class="pi pi-exclamation-triangle" style="font-size: 3rem; color: #ef4444;"></i>
+        <p>{{ loadError }}</p>
+        <button pButton label="إعادة المحاولة" icon="pi pi-refresh" (click)="retryLoad()"></button>
+      </div>
+
       <!-- Genes List -->
-      <div class="genes-content">
+      <div *ngIf="!isLoading && !loadError" class="genes-content">
         <div *ngFor="let group of filteredGroups" class="category-section">
           <div class="category-header">
             <h2>{{ group.icon }} {{ group.categoryNameAr }}</h2>
@@ -520,6 +533,31 @@ interface CategoryGroup {
       flex: 1;
     }
 
+    .loading-state,
+    .error-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      text-align: center;
+      min-height: 400px;
+    }
+
+    .loading-state p,
+    .error-state p {
+      margin: 1.5rem 0;
+      font-size: 1.1rem;
+      color: #666;
+    }
+
+    .error-state button {
+      margin-top: 1rem;
+    }
+
     .empty-state {
       text-align: center;
       padding: 4rem 2rem;
@@ -563,6 +601,8 @@ export class GenesComponent implements OnInit {
   selectedSector: string = '3'; // Default: Pharmacy
   selectedCategory: string = 'ALL';
   searchTerm: string = '';
+  isLoading: boolean = false;
+  loadError: string | null = null;
   
   categoryGroups: CategoryGroup[] = [];
   filteredGroups: CategoryGroup[] = [];
@@ -602,21 +642,32 @@ export class GenesComponent implements OnInit {
   }
 
   loadGenes() {
+    this.isLoading = true;
+    this.loadError = null;
+    
     this.genesService.getAvailableGenes(this.holdingId).subscribe({
       next: (data) => {
         this.genes = data;
         this.groupGenes();
         this.filterGenes();
+        this.isLoading = false;
       },
       error: (error) => {
         console.error('Error loading genes:', error);
+        this.isLoading = false;
+        this.loadError = 'فشل في تحميل الجينات. الرجاء المحاولة مرة أخرى.';
         this.messageService.add({
           severity: 'error',
           summary: 'خطأ',
-          detail: 'فشل في تحميل الجينات'
+          detail: this.loadError
         });
       }
     });
+  }
+
+  retryLoad() {
+    this.loadGenes();
+    this.loadActiveGenes();
   }
 
   loadActiveGenes() {

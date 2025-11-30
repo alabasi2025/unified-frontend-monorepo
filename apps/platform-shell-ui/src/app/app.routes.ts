@@ -34,6 +34,7 @@ export const appRoutes: Route[] = [
       
       // Genes System
       { path: 'genes', loadComponent: () => import('./pages/genes/genes.component').then(m => m.GenesComponent) },
+      { path: 'genes/:id', loadComponent: () => import('./pages/gene-details/gene-details.component').then(m => m.GeneDetailsComponent) },
       
       // Tasks System
       { path: 'tasks', loadComponent: () => import('./pages/tasks/tasks-list.component').then(m => m.TasksListComponent) },

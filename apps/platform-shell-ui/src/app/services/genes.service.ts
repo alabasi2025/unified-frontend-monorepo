@@ -85,6 +85,10 @@ export class GenesService {
     return this.http.get<Gene>(`${this.apiUrl}/${id}`);
   }
 
+  getGeneById(id: string): Observable<Gene> {
+    return this.http.get<Gene>(`${this.apiUrl}/${id}`);
+  }
+
   create(gene: Partial<Gene>): Observable<Gene> {
     return this.http.post<Gene>(this.apiUrl, gene);
   }
