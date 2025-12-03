@@ -1,8 +1,25 @@
+/**
+ * PHASE-3.1.0: Complete Frontend Fixes
+ * COMPONENT: Auth Service
+ * IMPACT: Critical
+ * 
+ * Changes:
+ * - Updated imports to use @semop/contracts
+ * - Removed local models
+ * - Fixed DTO names
+ * 
+ * Date: 2025-12-03
+ * Author: Development Team
+ */
+
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
-import { LoginRequest, LoginResponse, User } from '../models/user.model';
+import { LoginDto, LoginResponseDto } from '@semop/contracts';
+
+// Define User type from LoginResponseDto
+type User = LoginResponseDto['user'];
 
 @Injectable({
   providedIn: 'root'
@@ -28,8 +45,8 @@ export class AuthService {
     }
   }
 
-  login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials).pipe(
+  login(credentials: LoginDto): Observable<LoginResponseDto> {
+    return this.http.post<LoginResponseDto>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
         if (this.isBrowser) {
           // Store tokens

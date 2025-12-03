@@ -14,7 +14,7 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { UsersService } from '../../services/users.service';
-import { User, CreateUserRequest } from '../../models/user.model';
+import { UserResponseDto, CreateUserDto } from '@semop/contracts';
 
 @Component({
   selector: 'app-users',
@@ -456,8 +456,8 @@ import { User, CreateUserRequest } from '../../models/user.model';
   `]
 })
 export class UsersComponent implements OnInit {
-  users: User[] = [];
-  filteredUsers: User[] = [];
+  users: UserResponseDto[] = [];
+  filteredUsers: UserResponseDto[] = [];
   loading = false;
   displayDialog = false;
   editMode = false;
@@ -479,12 +479,12 @@ export class UsersComponent implements OnInit {
   loadUsers() {
     this.loading = true;
     this.usersService.getAll().subscribe({
-      next: (data) => {
+      next: (data: any) => {
         this.users = data;
         this.filteredUsers = data;
         this.loading = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         this.loading = false;
         this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'فشل تحميل المستخدمين' });
         console.error('Error loading users:', error);
@@ -513,7 +513,7 @@ export class UsersComponent implements OnInit {
     this.displayDialog = true;
   }
 
-  editUser(user: User) {
+  editUser(user: UserResponseDto) {
     this.editMode = true;
     this.currentUser = { ...user };
     this.displayDialog = true;
@@ -540,21 +540,21 @@ export class UsersComponent implements OnInit {
           this.messageService.add({ severity: 'success', summary: 'نجح', detail: 'تم تحديث المستخدم بنجاح' });
           this.loadUsers();
         },
-        error: (error) => {
+        error: (error: any) => {
           this.saving = false;
           this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'فشل تحديث المستخدم' });
           console.error('Error updating user:', error);
         }
       });
     } else {
-      this.usersService.create(this.currentUser as CreateUserRequest).subscribe({
+      this.usersService.create(this.currentUser as CreateUserDto).subscribe({
         next: () => {
           this.saving = false;
           this.displayDialog = false;
           this.messageService.add({ severity: 'success', summary: 'نجح', detail: 'تم إضافة المستخدم بنجاح' });
           this.loadUsers();
         },
-        error: (error) => {
+        error: (error: any) => {
           this.saving = false;
           this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'فشل إضافة المستخدم' });
           console.error('Error creating user:', error);
@@ -563,7 +563,7 @@ export class UsersComponent implements OnInit {
     }
   }
 
-  confirmDelete(user: User) {
+  confirmDelete(user: UserResponseDto) {
     this.confirmationService.confirm({
       message: `هل أنت متأكد من حذف المستخدم ${user.username}؟`,
       header: 'تأكيد الحذف',
@@ -576,13 +576,13 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  deleteUser(id: number) {
+  deleteUser(id: string) {
     this.usersService.delete(id).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'نجح', detail: 'تم حذف المستخدم بنجاح' });
         this.loadUsers();
       },
-      error: (error) => {
+      error: (error: any) => {
         this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'فشل حذف المستخدم' });
         console.error('Error deleting user:', error);
       }
