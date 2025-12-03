@@ -40,7 +40,7 @@ export class VersionBadgeComponent implements OnInit {
   @Input() commitHash?: string;
   
   /** رقم الإصدار */
-  version: string = '1.9.0';
+  version: string = environment.version;
   
   /** اسم الفريق */
   author: string = 'SEMOP Team';
