@@ -47,9 +47,10 @@
   </div>
 
   <!-- Tabs -->
-  <p-tabView>
+  <div class="tabs-container">
     <!-- Departments Tab -->
-    <p-tabPanel header="الأقسام" leftIcon="pi pi-building">
+    <div class="tab-panel">
+      <h2><i class="pi pi-building"></i> الأقسام</h2>
       <p-toolbar styleClass="toolbar">
         <ng-template pTemplate="left">
           <button pButton label="إضافة قسم" icon="pi pi-plus" class="add-btn" (click)="openNewDepartment()"></button>
@@ -88,10 +89,11 @@
           </ng-template>
         </p-table>
       </div>
-    </p-tabPanel>
+    </div>
 
     <!-- Employees Tab -->
-    <p-tabPanel header="الموظفين" leftIcon="pi pi-users">
+    <div class="tab-panel">
+      <h2><i class="pi pi-users"></i> الموظفين</h2>
       <p-toolbar styleClass="toolbar">
         <ng-template pTemplate="left">
           <button pButton label="إضافة موظف" icon="pi pi-plus" class="add-btn" (click)="openNewEmployee()"></button>
@@ -134,10 +136,11 @@
           </ng-template>
         </p-table>
       </div>
-    </p-tabPanel>
+    </div>
 
     <!-- Positions Tab -->
-    <p-tabPanel header="المناصب" leftIcon="pi pi-briefcase">
+    <div class="tab-panel">
+      <h2><i class="pi pi-briefcase"></i> المناصب</h2>
       <p-toolbar styleClass="toolbar">
         <ng-template pTemplate="left">
           <button pButton label="إضافة منصب" icon="pi pi-plus" class="add-btn"></button>
@@ -174,8 +177,8 @@
           </ng-template>
         </p-table>
       </div>
-    </p-tabPanel>
-  </p-tabView>
+    </div>
+  </div>
 </div>
 
 <!-- Department Dialog -->

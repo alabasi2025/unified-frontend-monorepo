@@ -15,7 +15,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToolbarModule } from 'primeng/toolbar';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
-import { TabViewModule } from 'primeng/tabview';
+
 import { CardModule } from 'primeng/card';
 import { OrganizationalStructureService } from '../../services/organizational-structure.service';
 
@@ -25,7 +25,7 @@ import { OrganizationalStructureService } from '../../services/organizational-st
   imports: [
     CommonModule, TableModule, ButtonModule, DialogModule, 
     InputTextModule, FormsModule, ToastModule, ConfirmDialogModule,
-    ToolbarModule, TagModule, TooltipModule, TabViewModule, CardModule
+    ToolbarModule, TagModule, TooltipModule, CardModule
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './organizational-structure.component.html',
