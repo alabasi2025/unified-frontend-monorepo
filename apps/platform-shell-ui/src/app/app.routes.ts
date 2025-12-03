@@ -10,6 +10,7 @@ export const appRoutes: Route[] = [
       { path: 'users', loadComponent: () => import('./pages/users/users.component').then(m => m.UsersComponent) },
       { path: 'roles', loadComponent: () => import('./pages/roles/roles.component').then(m => m.RolesComponent) },
       { path: 'permissions', loadComponent: () => import('./pages/permissions/permissions.component').then(m => m.PermissionsComponent) },
+      { path: 'organizational-structure', loadComponent: () => import('./pages/organizational-structure/organizational-structure.component').then(m => m.OrganizationalStructureComponent) },
       { path: 'holdings', loadComponent: () => import('./pages/holdings/holdings.component').then(m => m.HoldingsComponent) },
       { path: 'units', loadComponent: () => import('./pages/units/units.component').then(m => m.UnitsComponent) },
       { path: 'projects', loadComponent: () => import('./pages/projects/projects.component').then(m => m.ProjectsComponent) },
