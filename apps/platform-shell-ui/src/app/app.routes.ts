@@ -27,6 +27,9 @@ export const appRoutes: Route[] = [
       { path: 'accounting/fiscal-periods', loadComponent: () => import('./pages/accounting/fiscal-periods.component').then(m => m.FiscalPeriodsComponent) },
       { path: 'accounting/cost-centers', loadComponent: () => import('./pages/accounting/cost-centers.component').then(m => m.CostCentersComponent) },
       { path: 'accounting/fiscal-years', loadComponent: () => import('./pages/accounting/fiscal-years.component').then(m => m.FiscalYearsComponent) },
+      { path: 'accounting/smart-journal-entries', loadComponent: () => import('./pages/accounting/smart-journal-entries/dashboard.component').then(m => m.DashboardComponent) },
+      { path: 'accounting/smart-journal-entries/templates', loadComponent: () => import('./pages/accounting/smart-journal-entries/templates-list.component').then(m => m.TemplatesListComponent) },
+      { path: 'accounting/smart-journal-entries/create', loadComponent: () => import('./pages/accounting/smart-journal-entries/create-smart-entry.component').then(m => m.CreateSmartEntryComponent) },
       
       // Inventory Module Routes
       { path: 'warehouses', loadComponent: () => import('./pages/warehouses/warehouses.component').then(m => m.WarehousesComponent) },
