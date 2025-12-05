@@ -2,6 +2,28 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export interface Item {
+  id?: string;
+  code: string;
+  nameAr: string;
+  nameEn?: string;
+  description?: string;
+  categoryId?: string;
+  categoryName?: string;
+  unitId?: string;
+  unitName?: string;
+  barcode?: string;
+  sku?: string;
+  minStock?: number;
+  maxStock?: number;
+  reorderPoint?: number;
+  costPrice?: number;
+  sellingPrice?: number;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -10,23 +32,31 @@ export class ItemsService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+  getAll(): Observable<Item[]> {
+    return this.http.get<Item[]>(this.apiUrl);
   }
 
-  getById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  getById(id: string): Observable<Item> {
+    return this.http.get<Item>(`${this.apiUrl}/${id}`);
   }
 
-  create(data: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, data);
+  getLowStock(): Observable<Item[]> {
+    return this.http.get<Item[]>(`${this.apiUrl}/low-stock`);
   }
 
-  update(id: number, data: any): Observable<any> {
-    return this.http.patch<any>(`${this.apiUrl}/${id}`, data);
+  getItemStock(id: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${id}/stock`);
   }
 
-  delete(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+  create(item: Item): Observable<Item> {
+    return this.http.post<Item>(this.apiUrl, item);
+  }
+
+  update(id: string, item: Partial<Item>): Observable<Item> {
+    return this.http.patch<Item>(`${this.apiUrl}/${id}`, item);
+  }
+
+  delete(id: string): Observable<Item> {
+    return this.http.delete<Item>(`${this.apiUrl}/${id}`);
   }
 }
