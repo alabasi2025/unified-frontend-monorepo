@@ -51,7 +51,7 @@ import { SmartJournalEntriesService } from './smart-journal-entries.service';
 
           <div class="mb-4">
             <label class="block mb-2 font-semibold">الحساب *</label>
-            <input type="text" formControlName="accountId" placeholder="معرف الحساب" class="w-full p-2 border rounded" />
+            <input type="text" formControlName="accountCode" placeholder="رمز الحساب" class="w-full p-2 border rounded" />
           </div>
 
           <div class="flex gap-2">
@@ -101,7 +101,7 @@ export class CreateSmartEntryComponent implements OnInit {
       entryDate: [today, Validators.required],
       description: [''],
       totalAmount: [0, [Validators.required, Validators.min(0.01)]],
-      accountId: ['', Validators.required],
+	 	      accountCode: ['', Validators.required],
     });
   }
 
@@ -119,7 +119,7 @@ export class CreateSmartEntryComponent implements OnInit {
       sourceId: 'manual-' + Date.now(),
       sourceData: {
         totalAmount: formValue.totalAmount,
-        accountId: formValue.accountId,
+	        accountCode: formValue.accountCode,
       },
       entryDate: formValue.entryDate,
       description: formValue.description,

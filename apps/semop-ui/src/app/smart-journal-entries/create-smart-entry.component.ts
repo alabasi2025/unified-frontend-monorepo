@@ -140,13 +140,13 @@ import { SmartJournalEntriesService } from './smart-journal-entries.service';
 
         <!-- Account Selection -->
         <div class="field">
-          <label for="accountId">الحساب *</label>
+          <label for="accountCode">رمز الحساب *</label>
           <input
-            id="accountId"
+            id="accountCode"
             type="text"
             pInputText
-            formControlName="accountId"
-            placeholder="معرف الحساب"
+            formControlName="accountCode"
+            placeholder="رمز الحساب"
             [style]="{ width: '100%' }"
           />
         </div>
@@ -261,7 +261,7 @@ export class CreateSmartEntryComponent implements OnInit {
       entryDate: [new Date(), Validators.required],
       description: [''],
       totalAmount: [0, [Validators.required, Validators.min(0.01)]],
-      accountId: ['', Validators.required],
+      accountCode: ['', Validators.required],
     });
   }
 
@@ -295,7 +295,7 @@ export class CreateSmartEntryComponent implements OnInit {
 
   selectSuggestedAccount(account: any) {
     this.form.patchValue({
-      accountId: account.accountId,
+      accountCode: account.accountCode,
     });
   }
 
@@ -310,7 +310,7 @@ export class CreateSmartEntryComponent implements OnInit {
     this.service.validateJournalEntry({
       lines: [
         {
-          accountId: formValue.accountId,
+	          accountCode: formValue.accountCode,
           debit: formValue.totalAmount,
           credit: 0,
         },
@@ -346,7 +346,7 @@ export class CreateSmartEntryComponent implements OnInit {
       sourceId: 'manual-' + Date.now(),
       sourceData: {
         totalAmount: formValue.totalAmount,
-        accountId: formValue.accountId,
+	        accountCode: formValue.accountCode,
       },
       entryDate: formValue.entryDate,
       description: formValue.description,
