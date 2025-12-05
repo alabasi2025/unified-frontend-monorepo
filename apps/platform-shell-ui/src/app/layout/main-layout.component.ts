@@ -465,6 +465,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         { title: 'التسلسل الهرمي', route: '/account-hierarchy', icon: '', color: '' },
         { title: 'أرصدة الحسابات', route: '/account-balances', icon: '', color: '' },
         { title: 'القيود اليومية', route: '/journal-entries', icon: '', color: '' },
+        { title: 'القيود الذكية', route: '/smart-journal-entries', icon: '', color: '' },
         { title: 'مراكز التكلفة', route: '/cost-centers', icon: '', color: '' },
         { title: 'السنوات المالية', route: '/fiscal-years', icon: '', color: '' },
         { title: 'الفترات المالية', route: '/fiscal-periods', icon: '', color: '' }
