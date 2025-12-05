@@ -2,122 +2,49 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { TagModule } from 'primeng/tag';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ToastModule } from 'primeng/toast';
-import { ConfirmationService, MessageService } from 'primeng/api';
 import { SmartJournalEntriesService } from './smart-journal-entries.service';
 
 @Component({
   selector: 'app-templates-list',
   standalone: true,
-  imports: [
-    CommonModule,
-    TableModule,
-    ButtonModule,
-    CardModule,
-    TagModule,
-    ConfirmDialogModule,
-    ToastModule,
-  ],
-  providers: [ConfirmationService, MessageService],
+  imports: [CommonModule],
   template: `
-    <p-toast></p-toast>
-    <p-confirmDialog></p-confirmDialog>
-    
-    <p-card>
-      <ng-template pTemplate="header">
-        <div class="flex justify-content-between align-items-center p-3">
-          <h2 class="m-0">قوالب القيود الذكية</h2>
-          <p-button
-            label="إضافة قالب جديد"
-            icon="pi pi-plus"
-            (onClick)="navigateToCreate()"
-          ></p-button>
+    <div class="container mx-auto p-4">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-2xl font-bold mb-6">قوالب القيود الذكية</h2>
+
+        <div *ngIf="loading" class="text-center py-8">
+          <p>جاري التحميل...</p>
         </div>
-      </ng-template>
 
-      <p-table
-        [value]="templates"
-        [loading]="loading"
-        [paginator]="true"
-        [rows]="10"
-        [showCurrentPageReport]="true"
-        currentPageReportTemplate="عرض {first} إلى {last} من {totalRecords} قالب"
-        styleClass="p-datatable-sm"
-      >
-        <ng-template pTemplate="header">
-          <tr>
-            <th>الكود</th>
-            <th>الاسم</th>
-            <th>نوع العملية</th>
-            <th>عدد السطور</th>
-            <th>الحالة</th>
-            <th>الإجراءات</th>
-          </tr>
-        </ng-template>
+        <div *ngIf="!loading && templates.length === 0" class="text-center py-8">
+          <p class="text-gray-500">لا توجد قوالب</p>
+        </div>
 
-        <ng-template pTemplate="body" let-template>
-          <tr>
-            <td>{{ template.code }}</td>
-            <td>{{ template.nameAr }}</td>
-            <td>{{ template.operationType }}</td>
-            <td>{{ template.lines?.length || 0 }}</td>
-            <td>
-              <p-tag
-                [value]="template.isActive ? 'نشط' : 'غير نشط'"
-                [severity]="template.isActive ? 'success' : 'danger'"
-              ></p-tag>
-            </td>
-            <td>
-              <p-button
-                icon="pi pi-eye"
-                styleClass="p-button-rounded p-button-text"
-                pTooltip="عرض"
-                (onClick)="viewTemplate(template.id)"
-              ></p-button>
-              <p-button
-                icon="pi pi-pencil"
-                styleClass="p-button-rounded p-button-text p-button-warning"
-                pTooltip="تعديل"
-                (onClick)="editTemplate(template.id)"
-              ></p-button>
-              <p-button
-                icon="pi pi-copy"
-                styleClass="p-button-rounded p-button-text p-button-info"
-                pTooltip="نسخ"
-                (onClick)="cloneTemplate(template)"
-              ></p-button>
-              <p-button
-                icon="pi pi-trash"
-                styleClass="p-button-rounded p-button-text p-button-danger"
-                pTooltip="حذف"
-                (onClick)="deleteTemplate(template)"
-              ></p-button>
-            </td>
-          </tr>
-        </ng-template>
-
-        <ng-template pTemplate="emptymessage">
-          <tr>
-            <td colspan="6" class="text-center">
-              <div class="p-5">
-                <i class="pi pi-inbox" style="font-size: 3rem; color: var(--surface-400)"></i>
-                <p class="mt-3">لا توجد قوالب حالياً</p>
-                <p-button
-                  label="إضافة قالب جديد"
-                  icon="pi pi-plus"
-                  (onClick)="navigateToCreate()"
-                ></p-button>
+        <div *ngIf="!loading && templates.length > 0" class="space-y-4">
+          <div
+            *ngFor="let template of templates"
+            class="border rounded p-4 hover:bg-gray-50"
+          >
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-semibold text-lg">{{ template.nameAr }}</h3>
+                <p class="text-sm text-gray-600">{{ template.code }}</p>
               </div>
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </p-card>
+              <span
+                class="px-3 py-1 rounded text-sm"
+                [ngClass]="{
+                  'bg-green-100 text-green-800': template.isActive,
+                  'bg-gray-100 text-gray-800': !template.isActive
+                }"
+              >
+                {{ template.isActive ? 'نشط' : 'غير نشط' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   `,
 })
 export class TemplatesListComponent implements OnInit {
@@ -126,9 +53,7 @@ export class TemplatesListComponent implements OnInit {
 
   constructor(
     private service: SmartJournalEntriesService,
-    private router: Router,
-    private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -137,63 +62,13 @@ export class TemplatesListComponent implements OnInit {
 
   loadTemplates() {
     this.loading = true;
-    this.service.getAllTemplates().subscribe({
+    this.service.getTemplates().subscribe({
       next: (data) => {
         this.templates = data;
         this.loading = false;
       },
-      error: (error) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'خطأ',
-          detail: 'فشل تحميل القوالب',
-        });
+      error: () => {
         this.loading = false;
-      },
-    });
-  }
-
-  navigateToCreate() {
-    this.router.navigate(['/smart-journal-entries/templates/create']);
-  }
-
-  viewTemplate(id: string) {
-    this.router.navigate(['/smart-journal-entries/templates', id]);
-  }
-
-  editTemplate(id: string) {
-    this.router.navigate(['/smart-journal-entries/templates', id, 'edit']);
-  }
-
-  cloneTemplate(template: any) {
-    this.router.navigate(['/smart-journal-entries/templates/clone', template.id]);
-  }
-
-  deleteTemplate(template: any) {
-    this.confirmationService.confirm({
-      message: `هل أنت متأكد من حذف القالب "${template.nameAr}"؟`,
-      header: 'تأكيد الحذف',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'نعم',
-      rejectLabel: 'لا',
-      accept: () => {
-        this.service.deleteTemplate(template.id).subscribe({
-          next: () => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'نجح',
-              detail: 'تم حذف القالب بنجاح',
-            });
-            this.loadTemplates();
-          },
-          error: (error) => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'خطأ',
-              detail: 'فشل حذف القالب',
-            });
-          },
-        });
       },
     });
   }
