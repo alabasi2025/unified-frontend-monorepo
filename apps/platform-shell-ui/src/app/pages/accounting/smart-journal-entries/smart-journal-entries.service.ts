@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { SmartJournalEntryStatsDto } from '@semop/contracts';
+// import { SmartJournalEntryStatsDto } from '@semop/contracts'; // Temporarily disabled
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +24,7 @@ export class SmartJournalEntriesService {
     return this.http.delete<void>(`${this.apiUrl}/templates/${id}`);
   }
 
-  getStats(): Observable<SmartJournalEntryStatsDto> {
-    return this.http.get<SmartJournalEntryStatsDto>(`${this.apiUrl}/stats`);
-  }
+  // getStats(): Observable<any> {
+  //   return this.http.get<any>(`${this.apiUrl}/stats`);
+  // }
 }

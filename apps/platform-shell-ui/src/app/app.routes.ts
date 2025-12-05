@@ -51,7 +51,7 @@ export const appRoutes: Route[] = [
       { path: 'maps', loadComponent: () => import('./features/maps/maps.component').then(m => m.MapsComponent) },
       
       // Templates Module Routes
-      { path: 'templates', loadChildren: () => import('../features/templates/templates.module').then(m => m.TemplatesModule) },
+      // { path: 'templates', loadChildren: () => import('../features/templates/templates.module').then(m => m.TemplatesModule) }, // Temporarily disabled
 
       // Cycle 5 New Routes - Task 81-85
       { path: 'notifications', loadComponent: () => import('./pages/notifications/notifications.component').then(m => m.NotificationsComponent) },
