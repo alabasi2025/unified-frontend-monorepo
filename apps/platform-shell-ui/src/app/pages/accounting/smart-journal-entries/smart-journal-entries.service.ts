@@ -18,4 +18,8 @@ export class SmartJournalEntriesService {
   createFromOperation(payload: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/create-from-operation`, payload);
   }
+
+  deleteTemplate(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/templates/${id}`);
+  }
 }
