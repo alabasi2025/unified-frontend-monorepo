@@ -31,7 +31,8 @@ import { SmartJournalEntriesService } from './smart-journal-entries.service';
                 <h3 class="font-semibold text-lg">{{ template.nameAr }}</h3>
                 <p class="text-sm text-gray-600">{{ template.code }}</p>
               </div>
-              <span
+              <div class="flex items-center space-x-2">
+                <span
                 class="px-3 py-1 rounded text-sm"
                 [ngClass]="{
                   'bg-green-100 text-green-800': template.isActive,
@@ -40,6 +41,14 @@ import { SmartJournalEntriesService } from './smart-journal-entries.service';
               >
                 {{ template.isActive ? 'نشط' : 'غير نشط' }}
               </span>
+              <button
+                (click)="onDelete(template.id, template.nameAr)"
+                class="text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-100 transition duration-150"
+                title="حذف القالب"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+              </button>
+            </div>
             </div>
           </div>
         </div>
@@ -71,5 +80,20 @@ export class TemplatesListComponent implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  onDelete(id: string, name: string) {
+    if (confirm(`هل أنت متأكد من حذف القالب "${name}"؟`)) {
+      this.service.deleteTemplate(id).subscribe({
+        next: () => {
+          alert(`تم حذف القالب "${name}" بنجاح.`);
+          this.loadTemplates(); // Refresh the list
+        },
+        error: (err) => {
+          console.error('Delete error:', err);
+          alert(`فشل حذف القالب "${name}".`);
+        },
+      });
+    }
   }
 }

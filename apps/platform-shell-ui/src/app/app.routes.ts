@@ -27,9 +27,10 @@ export const appRoutes: Route[] = [
       { path: 'accounting/fiscal-periods', loadComponent: () => import('./pages/accounting/fiscal-periods.component').then(m => m.FiscalPeriodsComponent) },
       { path: 'accounting/cost-centers', loadComponent: () => import('./pages/accounting/cost-centers.component').then(m => m.CostCentersComponent) },
       { path: 'accounting/fiscal-years', loadComponent: () => import('./pages/accounting/fiscal-years.component').then(m => m.FiscalYearsComponent) },
-      { path: 'accounting/smart-journal-entries', loadComponent: () => import('./pages/accounting/smart-journal-entries/dashboard.component').then(m => m.DashboardComponent) },
-      { path: 'accounting/smart-journal-entries/templates', loadComponent: () => import('./pages/accounting/smart-journal-entries/templates-list.component').then(m => m.TemplatesListComponent) },
-      { path: 'accounting/smart-journal-entries/create', loadComponent: () => import('./pages/accounting/smart-journal-entries/create-smart-entry.component').then(m => m.CreateSmartEntryComponent) },
+      {
+        path: 'accounting/smart-journal-entries',
+        loadChildren: () => import('./pages/accounting/smart-journal-entries/smart-journal-entries.routes').then(m => m.SMART_JOURNAL_ENTRIES_ROUTES)
+      },
       
       // Inventory Module Routes
       { path: 'warehouses', loadComponent: () => import('./pages/warehouses/warehouses.component').then(m => m.WarehousesComponent) },
@@ -49,6 +50,9 @@ export const appRoutes: Route[] = [
       // Maps System
       { path: 'maps', loadComponent: () => import('./features/maps/maps.component').then(m => m.MapsComponent) },
       
+      // Templates Module Routes
+      { path: 'templates', loadChildren: () => import('../features/templates/templates.module').then(m => m.TemplatesModule) },
+
       // Cycle 5 New Routes - Task 81-85
       { path: 'notifications', loadComponent: () => import('./pages/notifications/notifications.component').then(m => m.NotificationsComponent) },
       { path: 'attachments', loadComponent: () => import('./pages/attachments/attachments.component').then(m => m.AttachmentsComponent) },

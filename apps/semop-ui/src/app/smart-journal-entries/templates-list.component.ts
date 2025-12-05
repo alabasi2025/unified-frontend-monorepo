@@ -1,4 +1,22 @@
 // PHASE-15: Smart Journal Entries - Templates List Component
+//
+// الوصف:
+// هذا المكون مسؤول عن عرض قائمة قوالب القيود الذكية (Smart Journal Entry Templates) في جدول تفاعلي.
+// يوفر وظائف لتحميل القوالب، عرضها، تعديلها، نسخها، وحذفها.
+// يعتمد على خدمة SmartJournalEntriesService للتفاعل مع الواجهة الخلفية (Backend).
+//
+// الميزات:
+// 1. عرض القوالب في جدول PrimeNG مع ترقيم وتصفية.
+// 2. زر لإضافة قالب جديد.
+// 3. أزرار إجراءات لكل قالب (عرض، تعديل، نسخ، حذف).
+// 4. تأكيد الحذف باستخدام ConfirmDialog.
+// 5. عرض رسائل النجاح/الخطأ باستخدام Toast.
+//
+// الحالة:
+// تم تطوير المكون بشكل كامل في المرحلة السابقة (PHASE-15) وهو جاهز للاستخدام.
+//
+// التغييرات في هذه المهمة:
+// - لا توجد تغييرات وظيفية، فقط إضافة توثيق شامل للمكون.
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
