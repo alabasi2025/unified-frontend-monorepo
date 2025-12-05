@@ -41,9 +41,18 @@
       <textarea id="content" class="form-control" formControlName="content" rows="5" placeholder="{ &quot;key&quot;: &quot;value&quot; }"></textarea>
       <div *ngIf="templateForm.get('content')?.invalid && templateForm.get('content')?.touched" class="text-danger">
         <small *ngIf="templateForm.get('content')?.errors?.['required']">محتوى القالب مطلوب.</small>
+        <small *ngIf="templateForm.get('content')?.errors?.['invalidJson']">يجب أن يكون المحتوى بتنسيق JSON صالح.</small>
       </div>
     </div>
 
-    <button type="submit" class="btn btn-primary" [disabled]="templateForm.invalid">إنشاء القالب</button>
+    <!-- رسالة الإرسال -->
+    <div *ngIf="submissionMessage" class="alert" [ngClass]="{'alert-success': submissionMessage.type === 'success', 'alert-danger': submissionMessage.type === 'error'}">
+      {{ submissionMessage.message }}
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="templateForm.invalid || isLoading">
+      <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      {{ isLoading ? 'جاري الإنشاء...' : 'إنشاء القالب' }}
+    </button>
   </form>
 </div>

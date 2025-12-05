@@ -18,7 +18,7 @@
     "@angular/router": "~20.3.0",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
-    "@semop/contracts": "file:../shared-contracts-repo/semop-contracts-0.1.4.tgz",
+    "@semop/contracts": "file:../shared-contracts-repo",
     "@types/leaflet": "^1.9.21",
     "@types/leaflet-draw": "^1.0.13",
     "chart.js": "^4.5.1",
