@@ -6,7 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { InputTextareaModule } from 'primeng/inputtextarea';
+
 import { CheckboxModule } from 'primeng/checkbox';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -19,7 +19,7 @@ import { ItemsService, Item } from '../../services/items.service';
   standalone: true,
   imports: [
     CommonModule, FormsModule, TableModule, ButtonModule, DialogModule,
-    InputTextModule, InputNumberModule, InputTextareaModule, CheckboxModule,
+    InputTextModule, InputNumberModule, CheckboxModule,
     ToastModule, ConfirmDialogModule, TooltipModule
   ],
   providers: [MessageService, ConfirmationService],
