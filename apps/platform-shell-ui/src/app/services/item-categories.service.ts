@@ -1,45 +1,44 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ItemCategory, CreateItemCategory } from '../models/item-category.model';
+
+export interface ItemCategory {
+  id: string;
+  code: string;
+  nameAr: string;
+  nameEn?: string;
+  description?: string;
+  parentId?: string;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class ItemCategoriesService {
-  private apiUrl = '/api/item-categories'; // يجب تعديل المسار حسب إعدادات المشروع
+  private apiUrl = '/api/item-categories';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  /**
-   * جلب جميع أصناف المواد
-   */
-  getAllCategories(): Observable<ItemCategory[]> {
+  getAll(): Observable<ItemCategory[]> {
     return this.http.get<ItemCategory[]>(this.apiUrl);
   }
 
-  /**
-   * إنشاء صنف مادة جديد
-   * @param categoryData بيانات الصنف الجديد
-   */
-  createCategory(categoryData: CreateItemCategory): Observable<ItemCategory> {
-    return this.http.post<ItemCategory>(this.apiUrl, categoryData);
+  getOne(id: string): Observable<ItemCategory> {
+    return this.http.get<ItemCategory>(`${this.apiUrl}/${id}`);
   }
 
-  /**
-   * تحديث صنف مادة
-   * @param id معرف الصنف
-   * @param categoryData البيانات المراد تحديثها
-   */
-  updateCategory(id: number, categoryData: Partial<CreateItemCategory>): Observable<ItemCategory> {
-    return this.http.patch<ItemCategory>(`${this.apiUrl}/${id}`, categoryData);
+  create(data: Partial<ItemCategory>): Observable<ItemCategory> {
+    return this.http.post<ItemCategory>(this.apiUrl, data);
   }
 
-  /**
-   * حذف صنف مادة
-   * @param id معرف الصنف
-   */
-  deleteCategory(id: number): Observable<void> {
+  update(id: string, data: Partial<ItemCategory>): Observable<ItemCategory> {
+    return this.http.patch<ItemCategory>(`${this.apiUrl}/${id}`, data);
+  }
+
+  delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
