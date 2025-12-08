@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PaymentVouchersService } from '../../../../services/accounting/payment-vouchers.service';
-import { CreatePaymentVoucherDto, UpdatePaymentVoucherDto, PaymentVoucherResponseDto } from '@semop/contracts';
+import { PaymentVouchersService } from '../../../services/accounting/payment-vouchers.service';
+import { CreatePaymentVoucherDTO, UpdatePaymentVoucherDTO, PaymentVoucherResponseDTO } from '@semop/contracts';
 
 /**
  * PHASE: Sprint 2 - Accounting Cycle
@@ -17,8 +17,8 @@ import { CreatePaymentVoucherDto, UpdatePaymentVoucherDto, PaymentVoucherRespons
   styleUrls: ['./payment-vouchers.component.scss']
 })
 export class PaymentVouchersComponent implements OnInit {
-  items: PaymentVoucherResponseDto[] = [];
-  selectedItem: PaymentVoucherResponseDto | null = null;
+  items: PaymentVoucherResponseDTO[] = [];
+  selectedItem: PaymentVoucherResponseDTO | null = null;
   isLoading = false;
   isEditing = false;
 
@@ -42,7 +42,7 @@ export class PaymentVouchersComponent implements OnInit {
     });
   }
 
-  onEdit(item: PaymentVoucherResponseDto): void {
+  onEdit(item: PaymentVoucherResponseDTO): void {
     this.selectedItem = item;
     this.isEditing = true;
   }
@@ -56,9 +56,9 @@ export class PaymentVouchersComponent implements OnInit {
     }
   }
 
-  onSave(dto: CreatePaymentVoucherDto | UpdatePaymentVoucherDto): void {
+  onSave(dto: CreatePaymentVoucherDTO | UpdatePaymentVoucherDTO): void {
     if (this.isEditing && this.selectedItem) {
-      this.service.update(this.selectedItem.id, dto as UpdatePaymentVoucherDto).subscribe({
+      this.service.update(this.selectedItem.id, dto as UpdatePaymentVoucherDTO).subscribe({
         next: () => {
           this.loadItems();
           this.isEditing = false;
@@ -66,7 +66,7 @@ export class PaymentVouchersComponent implements OnInit {
         }
       });
     } else {
-      this.service.create(dto as CreatePaymentVoucherDto).subscribe({
+      this.service.create(dto as CreatePaymentVoucherDTO).subscribe({
         next: () => this.loadItems()
       });
     }

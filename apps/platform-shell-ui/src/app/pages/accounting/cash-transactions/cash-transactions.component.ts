@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CashTransactionsService } from '../../../../services/accounting/cash-transactions.service';
-import { CreateCashTransactionDto, UpdateCashTransactionDto, CashTransactionResponseDto } from '@semop/contracts';
+import { CashTransactionsService } from '../../../services/accounting/cash-transactions.service';
+import { CreateCashTransactionDTO, UpdateCashTransactionDTO, CashTransactionResponseDTO } from '@semop/contracts';
 
 /** PHASE: Sprint 2 - Accounting Cycle | Date: 2025-12-08 | Author: Manus AI */
 @Component({
@@ -13,8 +13,8 @@ import { CreateCashTransactionDto, UpdateCashTransactionDto, CashTransactionResp
   styleUrls: ['./cash-transactions.component.scss']
 })
 export class CashTransactionsComponent implements OnInit {
-  items: CashTransactionResponseDto[] = [];
-  selectedItem: CashTransactionResponseDto | null = null;
+  items: CashTransactionResponseDTO[] = [];
+  selectedItem: CashTransactionResponseDTO | null = null;
   isLoading = false;
   isEditing = false;
 
@@ -30,7 +30,7 @@ export class CashTransactionsComponent implements OnInit {
     });
   }
 
-  onEdit(item: CashTransactionResponseDto): void { this.selectedItem = item; this.isEditing = true; }
+  onEdit(item: CashTransactionResponseDTO): void { this.selectedItem = item; this.isEditing = true; }
 
   onDelete(id: string): void {
     if (confirm('هل أنت متأكد؟')) {
@@ -41,13 +41,13 @@ export class CashTransactionsComponent implements OnInit {
     }
   }
 
-  onSave(dto: CreateCashTransactionDto | UpdateCashTransactionDto): void {
+  onSave(dto: CreateCashTransactionDTO | UpdateCashTransactionDTO): void {
     if (this.isEditing && this.selectedItem) {
-      this.service.update(this.selectedItem.id, dto as UpdateCashTransactionDto).subscribe({
+      this.service.update(this.selectedItem.id, dto as UpdateCashTransactionDTO).subscribe({
         next: () => { this.loadItems(); this.isEditing = false; this.selectedItem = null; }
       });
     } else {
-      this.service.create(dto as CreateCashTransactionDto).subscribe({ next: () => this.loadItems() });
+      this.service.create(dto as CreateCashTransactionDTO).subscribe({ next: () => this.loadItems() });
     }
   }
 }

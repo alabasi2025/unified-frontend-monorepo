@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SuppliersService } from '../../../../services/accounting/suppliers.service';
+import { SuppliersService } from '../../../services/accounting/suppliers.service';
 import { 
-  CreateSupplierDto, 
-  UpdateSupplierDto, 
-  SupplierResponseDto 
+  CreateSupplierDTO, 
+  UpdateSupplierDTO, 
+  SupplierResponseDTO 
 } from '@semop/contracts';
 
 /**
@@ -22,8 +22,8 @@ import {
   styleUrls: ['./suppliers.component.scss']
 })
 export class SuppliersComponent implements OnInit {
-  items: SupplierResponseDto[] = [];
-  selectedItem: SupplierResponseDto | null = null;
+  items: SupplierResponseDTO[] = [];
+  selectedItem: SupplierResponseDTO | null = null;
   isLoading = false;
   isEditing = false;
 
@@ -47,7 +47,7 @@ export class SuppliersComponent implements OnInit {
     });
   }
 
-  onEdit(item: SupplierResponseDto): void {
+  onEdit(item: SupplierResponseDTO): void {
     this.selectedItem = item;
     this.isEditing = true;
   }
@@ -65,9 +65,9 @@ export class SuppliersComponent implements OnInit {
     }
   }
 
-  onSave(dto: CreateSupplierDto | UpdateSupplierDto): void {
+  onSave(dto: CreateSupplierDTO | UpdateSupplierDTO): void {
     if (this.isEditing && this.selectedItem) {
-      this.suppliersService.update(this.selectedItem.id, dto as UpdateSupplierDto).subscribe({
+      this.suppliersService.update(this.selectedItem.id, dto as UpdateSupplierDTO).subscribe({
         next: () => {
           this.loadItems();
           this.isEditing = false;
@@ -78,7 +78,7 @@ export class SuppliersComponent implements OnInit {
         }
       });
     } else {
-      this.suppliersService.create(dto as CreateSupplierDto).subscribe({
+      this.suppliersService.create(dto as CreateSupplierDTO).subscribe({
         next: () => {
           this.loadItems();
         },

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SalesInvoicesService } from '../../../../services/accounting/sales-invoices.service';
-import { CreateSalesInvoiceDto, UpdateSalesInvoiceDto, SalesInvoiceResponseDto } from '@semop/contracts';
+import { SalesInvoicesService } from '../../../services/accounting/sales-invoices.service';
+import { CreateSalesInvoiceDTO, UpdateSalesInvoiceDTO, SalesInvoiceResponseDTO } from '@semop/contracts';
 
 /** PHASE: Sprint 2 - Accounting Cycle | Date: 2025-12-08 | Author: Manus AI */
 @Component({
@@ -13,8 +13,8 @@ import { CreateSalesInvoiceDto, UpdateSalesInvoiceDto, SalesInvoiceResponseDto }
   styleUrls: ['./sales-invoices.component.scss']
 })
 export class SalesInvoicesComponent implements OnInit {
-  items: SalesInvoiceResponseDto[] = [];
-  selectedItem: SalesInvoiceResponseDto | null = null;
+  items: SalesInvoiceResponseDTO[] = [];
+  selectedItem: SalesInvoiceResponseDTO | null = null;
   isLoading = false;
   isEditing = false;
 
@@ -30,7 +30,7 @@ export class SalesInvoicesComponent implements OnInit {
     });
   }
 
-  onEdit(item: SalesInvoiceResponseDto): void { this.selectedItem = item; this.isEditing = true; }
+  onEdit(item: SalesInvoiceResponseDTO): void { this.selectedItem = item; this.isEditing = true; }
 
   onDelete(id: string): void {
     if (confirm('هل أنت متأكد؟')) {
@@ -41,13 +41,13 @@ export class SalesInvoicesComponent implements OnInit {
     }
   }
 
-  onSave(dto: CreateSalesInvoiceDto | UpdateSalesInvoiceDto): void {
+  onSave(dto: CreateSalesInvoiceDTO | UpdateSalesInvoiceDTO): void {
     if (this.isEditing && this.selectedItem) {
-      this.service.update(this.selectedItem.id, dto as UpdateSalesInvoiceDto).subscribe({
+      this.service.update(this.selectedItem.id, dto as UpdateSalesInvoiceDTO).subscribe({
         next: () => { this.loadItems(); this.isEditing = false; this.selectedItem = null; }
       });
     } else {
-      this.service.create(dto as CreateSalesInvoiceDto).subscribe({ next: () => this.loadItems() });
+      this.service.create(dto as CreateSalesInvoiceDTO).subscribe({ next: () => this.loadItems() });
     }
   }
 }

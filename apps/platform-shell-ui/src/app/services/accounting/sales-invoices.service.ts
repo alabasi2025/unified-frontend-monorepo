@@ -3,9 +3,9 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { 
-  CreateSalesInvoiceDto, 
-  UpdateSalesInvoiceDto, 
-  SalesInvoiceResponseDto 
+  CreateSalesInvoiceDTO, 
+  UpdateSalesInvoiceDTO, 
+  SalesInvoiceResponseDTO 
 } from '@semop/contracts';
 // Assuming environment is available via a path like this in a real project
 // import { environment } from '../../../environments/environment'; 
@@ -37,8 +37,8 @@ export class SalesInvoicesService {
   /**
    * Retrieves all sales invoices.
    */
-  getAll(): Observable<SalesInvoiceResponseDto[]> {
-    return this.http.get<SalesInvoiceResponseDto[]>(this.apiUrl).pipe(
+  getAll(): Observable<SalesInvoiceResponseDTO[]> {
+    return this.http.get<SalesInvoiceResponseDTO[]>(this.apiUrl).pipe(
       // tap(data => console.log('Sales Invoices fetched:', data)), // Optional logging
       catchError(this.handleError)
     );
@@ -48,8 +48,8 @@ export class SalesInvoicesService {
    * Retrieves a single sales invoice by its ID.
    * @param id The ID of the sales invoice.
    */
-  getById(id: string): Observable<SalesInvoiceResponseDto> {
-    return this.http.get<SalesInvoiceResponseDto>(`${this.apiUrl}/${id}`).pipe(
+  getById(id: string): Observable<SalesInvoiceResponseDTO> {
+    return this.http.get<SalesInvoiceResponseDTO>(`${this.apiUrl}/${id}`).pipe(
       // tap(data => console.log(`Sales Invoice ${id} fetched:`)), // Optional logging
       catchError(this.handleError)
     );
@@ -59,8 +59,8 @@ export class SalesInvoicesService {
    * Creates a new sales invoice.
    * @param dto The data transfer object for creating a sales invoice.
    */
-  create(dto: CreateSalesInvoiceDto): Observable<SalesInvoiceResponseDto> {
-    return this.http.post<SalesInvoiceResponseDto>(this.apiUrl, dto).pipe(
+  create(dto: CreateSalesInvoiceDTO): Observable<SalesInvoiceResponseDTO> {
+    return this.http.post<SalesInvoiceResponseDTO>(this.apiUrl, dto).pipe(
       // tap(data => console.log('Sales Invoice created:', data)), // Optional logging
       catchError(this.handleError)
     );
@@ -71,8 +71,8 @@ export class SalesInvoicesService {
    * @param id The ID of the sales invoice to update.
    * @param dto The data transfer object for updating a sales invoice.
    */
-  update(id: string, dto: UpdateSalesInvoiceDto): Observable<SalesInvoiceResponseDto> {
-    return this.http.put<SalesInvoiceResponseDto>(`${this.apiUrl}/${id}`, dto).pipe(
+  update(id: string, dto: UpdateSalesInvoiceDTO): Observable<SalesInvoiceResponseDTO> {
+    return this.http.put<SalesInvoiceResponseDTO>(`${this.apiUrl}/${id}`, dto).pipe(
       // tap(data => console.log(`Sales Invoice ${id} updated:`)), // Optional logging
       catchError(this.handleError)
     );

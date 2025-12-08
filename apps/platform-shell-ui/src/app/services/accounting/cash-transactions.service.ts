@@ -4,9 +4,9 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { 
-  CreateCashTransactionDto, 
-  UpdateCashTransactionDto, 
-  CashTransactionResponseDto 
+  CreateCashTransactionDTO, 
+  UpdateCashTransactionDTO, 
+  CashTransactionResponseDTO 
 } from '@semop/contracts';
 
 /**
@@ -43,10 +43,10 @@ export class CashTransactionsService {
 
   /**
    * Retrieves all cash transactions.
-   * @returns An Observable of an array of CashTransactionResponseDto.
+   * @returns An Observable of an array of CashTransactionResponseDTO.
    */
-  getAll(): Observable<CashTransactionResponseDto[]> {
-    return this.http.get<CashTransactionResponseDto[]>(this.apiUrl).pipe(
+  getAll(): Observable<CashTransactionResponseDTO[]> {
+    return this.http.get<CashTransactionResponseDTO[]>(this.apiUrl).pipe(
       catchError(this.handleError)
     );
   }
@@ -54,10 +54,10 @@ export class CashTransactionsService {
   /**
    * Retrieves a single cash transaction by its ID.
    * @param id The ID of the cash transaction.
-   * @returns An Observable of a single CashTransactionResponseDto.
+   * @returns An Observable of a single CashTransactionResponseDTO.
    */
-  getById(id: string): Observable<CashTransactionResponseDto> {
-    return this.http.get<CashTransactionResponseDto>(`${this.apiUrl}/${id}`).pipe(
+  getById(id: string): Observable<CashTransactionResponseDTO> {
+    return this.http.get<CashTransactionResponseDTO>(`${this.apiUrl}/${id}`).pipe(
       catchError(this.handleError)
     );
   }
@@ -65,10 +65,10 @@ export class CashTransactionsService {
   /**
    * Creates a new cash transaction.
    * @param dto The data transfer object for creating a cash transaction.
-   * @returns An Observable of the created CashTransactionResponseDto.
+   * @returns An Observable of the created CashTransactionResponseDTO.
    */
-  create(dto: CreateCashTransactionDto): Observable<CashTransactionResponseDto> {
-    return this.http.post<CashTransactionResponseDto>(this.apiUrl, dto).pipe(
+  create(dto: CreateCashTransactionDTO): Observable<CashTransactionResponseDTO> {
+    return this.http.post<CashTransactionResponseDTO>(this.apiUrl, dto).pipe(
       catchError(this.handleError)
     );
   }
@@ -77,10 +77,10 @@ export class CashTransactionsService {
    * Updates an existing cash transaction.
    * @param id The ID of the cash transaction to update.
    * @param dto The data transfer object for updating a cash transaction.
-   * @returns An Observable of the updated CashTransactionResponseDto.
+   * @returns An Observable of the updated CashTransactionResponseDTO.
    */
-  update(id: string, dto: UpdateCashTransactionDto): Observable<CashTransactionResponseDto> {
-    return this.http.put<CashTransactionResponseDto>(`${this.apiUrl}/${id}`, dto).pipe(
+  update(id: string, dto: UpdateCashTransactionDTO): Observable<CashTransactionResponseDTO> {
+    return this.http.put<CashTransactionResponseDTO>(`${this.apiUrl}/${id}`, dto).pipe(
       catchError(this.handleError)
     );
   }

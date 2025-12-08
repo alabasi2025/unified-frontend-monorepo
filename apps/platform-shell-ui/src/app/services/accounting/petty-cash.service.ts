@@ -9,9 +9,9 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { 
-  CreatePettyCashDto, 
-  UpdatePettyCashDto, 
-  PettyCashResponseDto 
+  CreatePettyCashDTO, 
+  UpdatePettyCashDTO, 
+  PettyCashResponseDTO 
 } from '@semop/contracts';
 import { environment } from '../../../environments/environment';
 
@@ -36,8 +36,8 @@ export class PettyCashService {
    * يجلب جميع سجلات السلفة النثرية.
    * القاعدة 6: getAll(): Observable<XResponseDto[]>
    */
-  getAll(): Observable<PettyCashResponseDto[]> {
-    return this.http.get<PettyCashResponseDto[]>(this.apiUrl).pipe(
+  getAll(): Observable<PettyCashResponseDTO[]> {
+    return this.http.get<PettyCashResponseDTO[]>(this.apiUrl).pipe(
       catchError(this.handleError)
     );
   }
@@ -47,9 +47,9 @@ export class PettyCashService {
    * القاعدة 6: getById(id: string): Observable<XResponseDto>
    * @param id معرف السجل.
    */
-  getById(id: string): Observable<PettyCashResponseDto> {
+  getById(id: string): Observable<PettyCashResponseDTO> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.get<PettyCashResponseDto>(url).pipe(
+    return this.http.get<PettyCashResponseDTO>(url).pipe(
       catchError(this.handleError)
     );
   }
@@ -59,8 +59,8 @@ export class PettyCashService {
    * القاعدة 6: create(dto: CreateXDto): Observable<XResponseDto>
    * @param dto بيانات إنشاء السجل.
    */
-  create(dto: CreatePettyCashDto): Observable<PettyCashResponseDto> {
-    return this.http.post<PettyCashResponseDto>(this.apiUrl, dto).pipe(
+  create(dto: CreatePettyCashDTO): Observable<PettyCashResponseDTO> {
+    return this.http.post<PettyCashResponseDTO>(this.apiUrl, dto).pipe(
       catchError(this.handleError)
     );
   }
@@ -71,9 +71,9 @@ export class PettyCashService {
    * @param id معرف السجل.
    * @param dto بيانات تحديث السجل.
    */
-  update(id: string, dto: UpdatePettyCashDto): Observable<PettyCashResponseDto> {
+  update(id: string, dto: UpdatePettyCashDTO): Observable<PettyCashResponseDTO> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.put<PettyCashResponseDto>(url, dto).pipe(
+    return this.http.put<PettyCashResponseDTO>(url, dto).pipe(
       catchError(this.handleError)
     );
   }

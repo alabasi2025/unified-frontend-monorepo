@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CustomersService } from '../../../../services/accounting/customers.service';
-import { CreateCustomerDto, UpdateCustomerDto, CustomerResponseDto } from '@semop/contracts';
+import { CustomersService } from '../../../services/accounting/customers.service';
+import { CreateCustomerDTO, UpdateCustomerDTO, CustomerResponseDTO } from '@semop/contracts';
 
 /** PHASE: Sprint 2 - Accounting Cycle | Date: 2025-12-08 | Author: Manus AI */
 @Component({
@@ -13,8 +13,8 @@ import { CreateCustomerDto, UpdateCustomerDto, CustomerResponseDto } from '@semo
   styleUrls: ['./customers.component.scss']
 })
 export class CustomersComponent implements OnInit {
-  items: CustomerResponseDto[] = [];
-  selectedItem: CustomerResponseDto | null = null;
+  items: CustomerResponseDTO[] = [];
+  selectedItem: CustomerResponseDTO | null = null;
   isLoading = false;
   isEditing = false;
 
@@ -30,7 +30,7 @@ export class CustomersComponent implements OnInit {
     });
   }
 
-  onEdit(item: CustomerResponseDto): void { this.selectedItem = item; this.isEditing = true; }
+  onEdit(item: CustomerResponseDTO): void { this.selectedItem = item; this.isEditing = true; }
 
   onDelete(id: string): void {
     if (confirm('هل أنت متأكد؟')) {
@@ -41,13 +41,13 @@ export class CustomersComponent implements OnInit {
     }
   }
 
-  onSave(dto: CreateCustomerDto | UpdateCustomerDto): void {
+  onSave(dto: CreateCustomerDTO | UpdateCustomerDTO): void {
     if (this.isEditing && this.selectedItem) {
-      this.service.update(this.selectedItem.id, dto as UpdateCustomerDto).subscribe({
+      this.service.update(this.selectedItem.id, dto as UpdateCustomerDTO).subscribe({
         next: () => { this.loadItems(); this.isEditing = false; this.selectedItem = null; }
       });
     } else {
-      this.service.create(dto as CreateCustomerDto).subscribe({ next: () => this.loadItems() });
+      this.service.create(dto as CreateCustomerDTO).subscribe({ next: () => this.loadItems() });
     }
   }
 }

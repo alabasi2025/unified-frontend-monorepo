@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PettyCashService } from '../../../../services/accounting/petty-cash.service';
-import { CreatePettyCashDto, UpdatePettyCashDto, PettyCashResponseDto } from '@semop/contracts';
+import { PettyCashService } from '../../../services/accounting/petty-cash.service';
+import { CreatePettyCashDTO, UpdatePettyCashDTO, PettyCashResponseDTO } from '@semop/contracts';
 
 /** PHASE: Sprint 2 - Accounting Cycle | Date: 2025-12-08 | Author: Manus AI */
 @Component({
@@ -13,8 +13,8 @@ import { CreatePettyCashDto, UpdatePettyCashDto, PettyCashResponseDto } from '@s
   styleUrls: ['./petty-cash.component.scss']
 })
 export class PettyCashComponent implements OnInit {
-  items: PettyCashResponseDto[] = [];
-  selectedItem: PettyCashResponseDto | null = null;
+  items: PettyCashResponseDTO[] = [];
+  selectedItem: PettyCashResponseDTO | null = null;
   isLoading = false;
   isEditing = false;
 
@@ -30,7 +30,7 @@ export class PettyCashComponent implements OnInit {
     });
   }
 
-  onEdit(item: PettyCashResponseDto): void { this.selectedItem = item; this.isEditing = true; }
+  onEdit(item: PettyCashResponseDTO): void { this.selectedItem = item; this.isEditing = true; }
 
   onDelete(id: string): void {
     if (confirm('هل أنت متأكد؟')) {
@@ -41,13 +41,13 @@ export class PettyCashComponent implements OnInit {
     }
   }
 
-  onSave(dto: CreatePettyCashDto | UpdatePettyCashDto): void {
+  onSave(dto: CreatePettyCashDTO | UpdatePettyCashDTO): void {
     if (this.isEditing && this.selectedItem) {
-      this.service.update(this.selectedItem.id, dto as UpdatePettyCashDto).subscribe({
+      this.service.update(this.selectedItem.id, dto as UpdatePettyCashDTO).subscribe({
         next: () => { this.loadItems(); this.isEditing = false; this.selectedItem = null; }
       });
     } else {
-      this.service.create(dto as CreatePettyCashDto).subscribe({ next: () => this.loadItems() });
+      this.service.create(dto as CreatePettyCashDTO).subscribe({ next: () => this.loadItems() });
     }
   }
 }

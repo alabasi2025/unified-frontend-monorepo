@@ -6,9 +6,9 @@ import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment'; 
 
 import { 
-  CreateSupplierDto, 
-  UpdateSupplierDto, 
-  SupplierResponseDto 
+  CreateSupplierDTO, 
+  UpdateSupplierDTO, 
+  SupplierResponseDTO 
 } from '@semop/contracts';
 
 /**
@@ -47,10 +47,10 @@ export class SuppliersService {
 
   /**
    * استرداد قائمة بجميع الموردين
-   * @returns Observable<SupplierResponseDto[]>
+   * @returns Observable<SupplierResponseDTO[]>
    */
-  getAll(): Observable<SupplierResponseDto[]> {
-    return this.http.get<SupplierResponseDto[]>(this.apiUrl).pipe(
+  getAll(): Observable<SupplierResponseDTO[]> {
+    return this.http.get<SupplierResponseDTO[]>(this.apiUrl).pipe(
       catchError(this.handleError)
     );
   }
@@ -58,10 +58,10 @@ export class SuppliersService {
   /**
    * استرداد مورد واحد بواسطة المعرف
    * @param id معرف المورد
-   * @returns Observable<SupplierResponseDto>
+   * @returns Observable<SupplierResponseDTO>
    */
-  getById(id: string): Observable<SupplierResponseDto> {
-    return this.http.get<SupplierResponseDto>(`${this.apiUrl}/${id}`).pipe(
+  getById(id: string): Observable<SupplierResponseDTO> {
+    return this.http.get<SupplierResponseDTO>(`${this.apiUrl}/${id}`).pipe(
       catchError(this.handleError)
     );
   }
@@ -69,10 +69,10 @@ export class SuppliersService {
   /**
    * إنشاء مورد جديد
    * @param dto بيانات إنشاء المورد
-   * @returns Observable<SupplierResponseDto>
+   * @returns Observable<SupplierResponseDTO>
    */
-  create(dto: CreateSupplierDto): Observable<SupplierResponseDto> {
-    return this.http.post<SupplierResponseDto>(this.apiUrl, dto).pipe(
+  create(dto: CreateSupplierDTO): Observable<SupplierResponseDTO> {
+    return this.http.post<SupplierResponseDTO>(this.apiUrl, dto).pipe(
       catchError(this.handleError)
     );
   }
@@ -81,10 +81,10 @@ export class SuppliersService {
    * تحديث مورد موجود
    * @param id معرف المورد
    * @param dto بيانات تحديث المورد
-   * @returns Observable<SupplierResponseDto>
+   * @returns Observable<SupplierResponseDTO>
    */
-  update(id: string, dto: UpdateSupplierDto): Observable<SupplierResponseDto> {
-    return this.http.put<SupplierResponseDto>(`${this.apiUrl}/${id}`, dto).pipe(
+  update(id: string, dto: UpdateSupplierDTO): Observable<SupplierResponseDTO> {
+    return this.http.put<SupplierResponseDTO>(`${this.apiUrl}/${id}`, dto).pipe(
       catchError(this.handleError)
     );
   }

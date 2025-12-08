@@ -180,7 +180,7 @@ import { TooltipModule } from 'primeng/tooltip';
     .w-full { width: 100%; }
   `]
 })
-export class UnitsComponent implements OnInit {
+export class InventoryCountsComponent implements OnInit {
   items: any[] = [];
   filteredItems: any[] = [];
   item: any = {};

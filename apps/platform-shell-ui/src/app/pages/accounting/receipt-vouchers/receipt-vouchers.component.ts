@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ReceiptVouchersService } from '../../../../services/accounting/receipt-vouchers.service';
-import { CreateReceiptVoucherDto, UpdateReceiptVoucherDto, ReceiptVoucherResponseDto } from '@semop/contracts';
+import { ReceiptVouchersService } from '../../../services/accounting/receipt-vouchers.service';
+import { CreateReceiptVoucherDTO, UpdateReceiptVoucherDTO, ReceiptVoucherResponseDTO } from '@semop/contracts';
 
 /** PHASE: Sprint 2 - Accounting Cycle | Date: 2025-12-08 | Author: Manus AI */
 @Component({
@@ -13,8 +13,8 @@ import { CreateReceiptVoucherDto, UpdateReceiptVoucherDto, ReceiptVoucherRespons
   styleUrls: ['./receipt-vouchers.component.scss']
 })
 export class ReceiptVouchersComponent implements OnInit {
-  items: ReceiptVoucherResponseDto[] = [];
-  selectedItem: ReceiptVoucherResponseDto | null = null;
+  items: ReceiptVoucherResponseDTO[] = [];
+  selectedItem: ReceiptVoucherResponseDTO | null = null;
   isLoading = false;
   isEditing = false;
 
@@ -30,7 +30,7 @@ export class ReceiptVouchersComponent implements OnInit {
     });
   }
 
-  onEdit(item: ReceiptVoucherResponseDto): void { this.selectedItem = item; this.isEditing = true; }
+  onEdit(item: ReceiptVoucherResponseDTO): void { this.selectedItem = item; this.isEditing = true; }
 
   onDelete(id: string): void {
     if (confirm('هل أنت متأكد؟')) {
@@ -41,13 +41,13 @@ export class ReceiptVouchersComponent implements OnInit {
     }
   }
 
-  onSave(dto: CreateReceiptVoucherDto | UpdateReceiptVoucherDto): void {
+  onSave(dto: CreateReceiptVoucherDTO | UpdateReceiptVoucherDTO): void {
     if (this.isEditing && this.selectedItem) {
-      this.service.update(this.selectedItem.id, dto as UpdateReceiptVoucherDto).subscribe({
+      this.service.update(this.selectedItem.id, dto as UpdateReceiptVoucherDTO).subscribe({
         next: () => { this.loadItems(); this.isEditing = false; this.selectedItem = null; }
       });
     } else {
-      this.service.create(dto as CreateReceiptVoucherDto).subscribe({ next: () => this.loadItems() });
+      this.service.create(dto as CreateReceiptVoucherDTO).subscribe({ next: () => this.loadItems() });
     }
   }
 }

@@ -5,9 +5,9 @@ import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 import { 
-  CreateReceiptVoucherDto, 
-  UpdateReceiptVoucherDto, 
-  ReceiptVoucherResponseDto 
+  CreateReceiptVoucherDTO, 
+  UpdateReceiptVoucherDTO, 
+  ReceiptVoucherResponseDTO 
 } from '@semop/contracts';
 
 /**
@@ -39,10 +39,10 @@ export class ReceiptVouchersService {
 
   /**
    * Retrieves all receipt vouchers.
-   * @returns An Observable of an array of ReceiptVoucherResponseDto.
+   * @returns An Observable of an array of ReceiptVoucherResponseDTO.
    */
-  getAll(): Observable<ReceiptVoucherResponseDto[]> {
-    return this.http.get<ReceiptVoucherResponseDto[]>(this.apiUrl).pipe(
+  getAll(): Observable<ReceiptVoucherResponseDTO[]> {
+    return this.http.get<ReceiptVoucherResponseDTO[]>(this.apiUrl).pipe(
       catchError(this.handleError)
     );
   }
@@ -50,10 +50,10 @@ export class ReceiptVouchersService {
   /**
    * Retrieves a single receipt voucher by its ID.
    * @param id The ID of the receipt voucher.
-   * @returns An Observable of a single ReceiptVoucherResponseDto.
+   * @returns An Observable of a single ReceiptVoucherResponseDTO.
    */
-  getById(id: string): Observable<ReceiptVoucherResponseDto> {
-    return this.http.get<ReceiptVoucherResponseDto>(`${this.apiUrl}/${id}`).pipe(
+  getById(id: string): Observable<ReceiptVoucherResponseDTO> {
+    return this.http.get<ReceiptVoucherResponseDTO>(`${this.apiUrl}/${id}`).pipe(
       catchError(this.handleError)
     );
   }
@@ -61,10 +61,10 @@ export class ReceiptVouchersService {
   /**
    * Creates a new receipt voucher.
    * @param dto The data transfer object for creating a receipt voucher.
-   * @returns An Observable of the created ReceiptVoucherResponseDto.
+   * @returns An Observable of the created ReceiptVoucherResponseDTO.
    */
-  create(dto: CreateReceiptVoucherDto): Observable<ReceiptVoucherResponseDto> {
-    return this.http.post<ReceiptVoucherResponseDto>(this.apiUrl, dto).pipe(
+  create(dto: CreateReceiptVoucherDTO): Observable<ReceiptVoucherResponseDTO> {
+    return this.http.post<ReceiptVoucherResponseDTO>(this.apiUrl, dto).pipe(
       catchError(this.handleError)
     );
   }
@@ -73,10 +73,10 @@ export class ReceiptVouchersService {
    * Updates an existing receipt voucher.
    * @param id The ID of the receipt voucher to update.
    * @param dto The data transfer object for updating a receipt voucher.
-   * @returns An Observable of the updated ReceiptVoucherResponseDto.
+   * @returns An Observable of the updated ReceiptVoucherResponseDTO.
    */
-  update(id: string, dto: UpdateReceiptVoucherDto): Observable<ReceiptVoucherResponseDto> {
-    return this.http.put<ReceiptVoucherResponseDto>(`${this.apiUrl}/${id}`, dto).pipe(
+  update(id: string, dto: UpdateReceiptVoucherDTO): Observable<ReceiptVoucherResponseDTO> {
+    return this.http.put<ReceiptVoucherResponseDTO>(`${this.apiUrl}/${id}`, dto).pipe(
       catchError(this.handleError)
     );
   }

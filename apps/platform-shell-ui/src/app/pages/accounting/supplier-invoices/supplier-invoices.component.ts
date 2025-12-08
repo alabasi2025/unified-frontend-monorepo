@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SupplierInvoicesService } from '../../../../services/accounting/supplier-invoices.service';
-import { CreateSupplierInvoiceDto, UpdateSupplierInvoiceDto, SupplierInvoiceResponseDto } from '@semop/contracts';
+import { SupplierInvoicesService } from '../../../services/accounting/supplier-invoices.service';
+import { CreateSupplierInvoiceDTO, UpdateSupplierInvoiceDTO, SupplierInvoiceResponseDTO } from '@semop/contracts';
 
 /**
  * PHASE: Sprint 2 - Accounting Cycle
@@ -17,8 +17,8 @@ import { CreateSupplierInvoiceDto, UpdateSupplierInvoiceDto, SupplierInvoiceResp
   styleUrls: ['./supplier-invoices.component.scss']
 })
 export class SupplierInvoicesComponent implements OnInit {
-  items: SupplierInvoiceResponseDto[] = [];
-  selectedItem: SupplierInvoiceResponseDto | null = null;
+  items: SupplierInvoiceResponseDTO[] = [];
+  selectedItem: SupplierInvoiceResponseDTO | null = null;
   isLoading = false;
   isEditing = false;
 
@@ -42,7 +42,7 @@ export class SupplierInvoicesComponent implements OnInit {
     });
   }
 
-  onEdit(item: SupplierInvoiceResponseDto): void {
+  onEdit(item: SupplierInvoiceResponseDTO): void {
     this.selectedItem = item;
     this.isEditing = true;
   }
@@ -56,9 +56,9 @@ export class SupplierInvoicesComponent implements OnInit {
     }
   }
 
-  onSave(dto: CreateSupplierInvoiceDto | UpdateSupplierInvoiceDto): void {
+  onSave(dto: CreateSupplierInvoiceDTO | UpdateSupplierInvoiceDTO): void {
     if (this.isEditing && this.selectedItem) {
-      this.service.update(this.selectedItem.id, dto as UpdateSupplierInvoiceDto).subscribe({
+      this.service.update(this.selectedItem.id, dto as UpdateSupplierInvoiceDTO).subscribe({
         next: () => {
           this.loadItems();
           this.isEditing = false;
@@ -66,7 +66,7 @@ export class SupplierInvoicesComponent implements OnInit {
         }
       });
     } else {
-      this.service.create(dto as CreateSupplierInvoiceDto).subscribe({
+      this.service.create(dto as CreateSupplierInvoiceDTO).subscribe({
         next: () => this.loadItems()
       });
     }

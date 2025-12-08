@@ -5,9 +5,9 @@ import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 import {
-  CreateCustomerDto,
-  UpdateCustomerDto,
-  CustomerResponseDto
+  CreateCustomerDTO,
+  UpdateCustomerDTO,
+  CustomerResponseDTO
 } from '@semop/contracts';
 
 /**
@@ -35,26 +35,26 @@ export class CustomersService {
     return throwError(() => new Error('Something bad happened; please try again later.'));
   }
 
-  getAll(): Observable<CustomerResponseDto[]> {
-    return this.http.get<CustomerResponseDto[]>(this.apiUrl).pipe(
+  getAll(): Observable<CustomerResponseDTO[]> {
+    return this.http.get<CustomerResponseDTO[]>(this.apiUrl).pipe(
       catchError(this.handleError)
     );
   }
 
-  getById(id: string): Observable<CustomerResponseDto> {
-    return this.http.get<CustomerResponseDto>(`${this.apiUrl}/${id}`).pipe(
+  getById(id: string): Observable<CustomerResponseDTO> {
+    return this.http.get<CustomerResponseDTO>(`${this.apiUrl}/${id}`).pipe(
       catchError(this.handleError)
     );
   }
 
-  create(dto: CreateCustomerDto): Observable<CustomerResponseDto> {
-    return this.http.post<CustomerResponseDto>(this.apiUrl, dto).pipe(
+  create(dto: CreateCustomerDTO): Observable<CustomerResponseDTO> {
+    return this.http.post<CustomerResponseDTO>(this.apiUrl, dto).pipe(
       catchError(this.handleError)
     );
   }
 
-  update(id: string, dto: UpdateCustomerDto): Observable<CustomerResponseDto> {
-    return this.http.put<CustomerResponseDto>(`${this.apiUrl}/${id}`, dto).pipe(
+  update(id: string, dto: UpdateCustomerDTO): Observable<CustomerResponseDTO> {
+    return this.http.put<CustomerResponseDTO>(`${this.apiUrl}/${id}`, dto).pipe(
       catchError(this.handleError)
     );
   }

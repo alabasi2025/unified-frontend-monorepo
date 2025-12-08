@@ -10,9 +10,9 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { 
-  CreatePaymentVoucherDto, 
-  UpdatePaymentVoucherDto, 
-  PaymentVoucherResponseDto 
+  CreatePaymentVoucherDTO, 
+  UpdatePaymentVoucherDTO, 
+  PaymentVoucherResponseDTO 
 } from '@semop/contracts';
 
 @Injectable({
@@ -32,29 +32,29 @@ export class PaymentVouchersService {
   }
 
   // Method: getAll()
-  getAll(): Observable<PaymentVoucherResponseDto[]> {
-    return this.http.get<PaymentVoucherResponseDto[]>(this.apiUrl).pipe(
+  getAll(): Observable<PaymentVoucherResponseDTO[]> {
+    return this.http.get<PaymentVoucherResponseDTO[]>(this.apiUrl).pipe(
       catchError(this.handleError)
     );
   }
 
   // Method: getById(id)
-  getById(id: string): Observable<PaymentVoucherResponseDto> {
-    return this.http.get<PaymentVoucherResponseDto>(`${this.apiUrl}/${id}`).pipe(
+  getById(id: string): Observable<PaymentVoucherResponseDTO> {
+    return this.http.get<PaymentVoucherResponseDTO>(`${this.apiUrl}/${id}`).pipe(
       catchError(this.handleError)
     );
   }
 
   // Method: create(dto)
-  create(dto: CreatePaymentVoucherDto): Observable<PaymentVoucherResponseDto> {
-    return this.http.post<PaymentVoucherResponseDto>(this.apiUrl, dto).pipe(
+  create(dto: CreatePaymentVoucherDTO): Observable<PaymentVoucherResponseDTO> {
+    return this.http.post<PaymentVoucherResponseDTO>(this.apiUrl, dto).pipe(
       catchError(this.handleError)
     );
   }
 
   // Method: update(id, dto)
-  update(id: string, dto: UpdatePaymentVoucherDto): Observable<PaymentVoucherResponseDto> {
-    return this.http.put<PaymentVoucherResponseDto>(`${this.apiUrl}/${id}`, dto).pipe(
+  update(id: string, dto: UpdatePaymentVoucherDTO): Observable<PaymentVoucherResponseDTO> {
+    return this.http.put<PaymentVoucherResponseDTO>(`${this.apiUrl}/${id}`, dto).pipe(
       catchError(this.handleError)
     );
   }

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BankAccountsService } from '../../../../services/accounting/bank-accounts.service';
-import { CreateBankAccountDto, UpdateBankAccountDto, BankAccountResponseDto } from '@semop/contracts';
+import { BankAccountsService } from '../../../services/accounting/bank-accounts.service';
+import { CreateBankAccountDTO, UpdateBankAccountDTO, BankAccountResponseDTO } from '@semop/contracts';
 
 /** PHASE: Sprint 2 - Accounting Cycle | Date: 2025-12-08 | Author: Manus AI */
 @Component({
@@ -13,8 +13,8 @@ import { CreateBankAccountDto, UpdateBankAccountDto, BankAccountResponseDto } fr
   styleUrls: ['./bank-accounts.component.scss']
 })
 export class BankAccountsComponent implements OnInit {
-  items: BankAccountResponseDto[] = [];
-  selectedItem: BankAccountResponseDto | null = null;
+  items: BankAccountResponseDTO[] = [];
+  selectedItem: BankAccountResponseDTO | null = null;
   isLoading = false;
   isEditing = false;
 
@@ -30,7 +30,7 @@ export class BankAccountsComponent implements OnInit {
     });
   }
 
-  onEdit(item: BankAccountResponseDto): void { this.selectedItem = item; this.isEditing = true; }
+  onEdit(item: BankAccountResponseDTO): void { this.selectedItem = item; this.isEditing = true; }
 
   onDelete(id: string): void {
     if (confirm('هل أنت متأكد؟')) {
@@ -41,13 +41,13 @@ export class BankAccountsComponent implements OnInit {
     }
   }
 
-  onSave(dto: CreateBankAccountDto | UpdateBankAccountDto): void {
+  onSave(dto: CreateBankAccountDTO | UpdateBankAccountDTO): void {
     if (this.isEditing && this.selectedItem) {
-      this.service.update(this.selectedItem.id, dto as UpdateBankAccountDto).subscribe({
+      this.service.update(this.selectedItem.id, dto as UpdateBankAccountDTO).subscribe({
         next: () => { this.loadItems(); this.isEditing = false; this.selectedItem = null; }
       });
     } else {
-      this.service.create(dto as CreateBankAccountDto).subscribe({ next: () => this.loadItems() });
+      this.service.create(dto as CreateBankAccountDTO).subscribe({ next: () => this.loadItems() });
     }
   }
 }

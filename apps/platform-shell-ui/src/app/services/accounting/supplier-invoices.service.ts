@@ -9,9 +9,9 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { 
-  CreateSupplierInvoiceDto, 
-  UpdateSupplierInvoiceDto, 
-  SupplierInvoiceResponseDto 
+  CreateSupplierInvoiceDTO, 
+  UpdateSupplierInvoiceDTO, 
+  SupplierInvoiceResponseDTO 
 } from '@semop/contracts';
 
 // المسار المطلوب للـ API
@@ -43,9 +43,9 @@ export class SupplierInvoicesService {
   /**
    * يجلب جميع فواتير الموردين.
    */
-  getAll(): Observable<SupplierInvoiceResponseDto[]> {
+  getAll(): Observable<SupplierInvoiceResponseDTO[]> {
     // يجب أن يكون المسار: `${environment.apiUrl}${this.apiUrl}`
-    return this.http.get<SupplierInvoiceResponseDto[]>(this.apiUrl).pipe(
+    return this.http.get<SupplierInvoiceResponseDTO[]>(this.apiUrl).pipe(
       catchError(this.handleError)
     );
   }
@@ -54,9 +54,9 @@ export class SupplierInvoicesService {
    * يجلب فاتورة مورد محددة بواسطة المعرف.
    * @param id معرف فاتورة المورد.
    */
-  getById(id: string): Observable<SupplierInvoiceResponseDto> {
+  getById(id: string): Observable<SupplierInvoiceResponseDTO> {
     // يجب أن يكون المسار: `${environment.apiUrl}${this.apiUrl}/${id}`
-    return this.http.get<SupplierInvoiceResponseDto>(`${this.apiUrl}/${id}`).pipe(
+    return this.http.get<SupplierInvoiceResponseDTO>(`${this.apiUrl}/${id}`).pipe(
       catchError(this.handleError)
     );
   }
@@ -65,9 +65,9 @@ export class SupplierInvoicesService {
    * ينشئ فاتورة مورد جديدة.
    * @param dto بيانات إنشاء فاتورة المورد.
    */
-  create(dto: CreateSupplierInvoiceDto): Observable<SupplierInvoiceResponseDto> {
+  create(dto: CreateSupplierInvoiceDTO): Observable<SupplierInvoiceResponseDTO> {
     // يجب أن يكون المسار: `${environment.apiUrl}${this.apiUrl}`
-    return this.http.post<SupplierInvoiceResponseDto>(this.apiUrl, dto).pipe(
+    return this.http.post<SupplierInvoiceResponseDTO>(this.apiUrl, dto).pipe(
       catchError(this.handleError)
     );
   }
@@ -77,9 +77,9 @@ export class SupplierInvoicesService {
    * @param id معرف فاتورة المورد.
    * @param dto بيانات تحديث فاتورة المورد.
    */
-  update(id: string, dto: UpdateSupplierInvoiceDto): Observable<SupplierInvoiceResponseDto> {
+  update(id: string, dto: UpdateSupplierInvoiceDTO): Observable<SupplierInvoiceResponseDTO> {
     // يجب أن يكون المسار: `${environment.apiUrl}${this.apiUrl}/${id}`
-    return this.http.put<SupplierInvoiceResponseDto>(`${this.apiUrl}/${id}`, dto).pipe(
+    return this.http.put<SupplierInvoiceResponseDTO>(`${this.apiUrl}/${id}`, dto).pipe(
       catchError(this.handleError)
     );
   }
