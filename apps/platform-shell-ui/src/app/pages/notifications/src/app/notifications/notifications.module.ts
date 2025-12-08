@@ -16,13 +16,13 @@ import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 
 @NgModule({
-  declarations: [
-    NotificationsListComponent,
-    NotificationTypePipe
-  ],
+  declarations: [],
   imports: [
     CommonModule,
     HttpClientModule,
+    // Standalone Components
+    NotificationsListComponent,
+    NotificationTypePipe,
     // PrimeNG Modules
     CardModule,
     ButtonModule,

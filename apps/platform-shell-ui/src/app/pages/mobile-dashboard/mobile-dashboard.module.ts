@@ -11,12 +11,12 @@ import { ListboxModule } from 'primeng/listbox';
 import { TagModule } from 'primeng/tag';
 
 @NgModule({
-  declarations: [
-    MobileDashboardComponent
-  ],
+  declarations: [],
   imports: [
     CommonModule,
     HttpClientModule,
+    // Standalone Component
+    MobileDashboardComponent,
     // PrimeNG
     CardModule,
     ButtonModule,
