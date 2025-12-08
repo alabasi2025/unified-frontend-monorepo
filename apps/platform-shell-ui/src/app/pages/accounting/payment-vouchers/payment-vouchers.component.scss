@@ -1,0 +1,66 @@
+.container {
+  padding: 20px;
+  direction: rtl;
+}
+
+.loading {
+  text-align: center;
+  padding: 50px;
+  font-size: 18px;
+  color: #666;
+}
+
+.table-container {
+  margin: 20px 0;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  
+  th, td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: right;
+  }
+  
+  th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  tbody tr:hover {
+    background-color: #f9f9f9;
+  }
+}
+
+.btn-edit, .btn-delete {
+  padding: 6px 12px;
+  margin: 0 4px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-edit {
+  background-color: #4CAF50;
+  color: white;
+  
+  &:hover {
+    background-color: #45a049;
+  }
+}
+
+.btn-delete {
+  background-color: #f44336;
+  color: white;
+  
+  &:hover {
+    background-color: #da190b;
+  }
+}

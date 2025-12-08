@@ -1,0 +1,29 @@
+<div class="container">
+  <h1>إدارة البيانات</h1>
+  
+  <div *ngIf="isLoading" class="loading">
+    <p>جاري التحميل...</p>
+  </div>
+  
+  <div *ngIf="!isLoading" class="table-container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>الرقم</th>
+          <th>الاسم</th>
+          <th>الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of items">
+          <td>{{ item.id }}</td>
+          <td>{{ item.name || 'N/A' }}</td>
+          <td>
+            <button (click)="onEdit(item)" class="btn-edit">تعديل</button>
+            <button (click)="onDelete(item.id)" class="btn-delete">حذف</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
