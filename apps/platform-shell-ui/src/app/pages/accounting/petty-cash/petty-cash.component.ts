@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { PettyCashService } from '../../../../services/accounting/petty-cash.service';
 import { CreatePettyCashDto, UpdatePettyCashDto, PettyCashResponseDto } from '@semop/contracts';
 
 /** PHASE: Sprint 2 - Accounting Cycle | Date: 2025-12-08 | Author: Manus AI */
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   selector: 'app-petty-cash',
   templateUrl: './petty-cash.component.html',
   styleUrls: ['./petty-cash.component.scss']

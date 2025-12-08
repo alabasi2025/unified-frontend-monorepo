@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { PaymentVouchersService } from '../../../../services/accounting/payment-vouchers.service';
 import { CreatePaymentVoucherDto, UpdatePaymentVoucherDto, PaymentVoucherResponseDto } from '@semop/contracts';
 
@@ -8,6 +10,8 @@ import { CreatePaymentVoucherDto, UpdatePaymentVoucherDto, PaymentVoucherRespons
  * Author: Manus AI
  */
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   selector: 'app-payment-vouchers',
   templateUrl: './payment-vouchers.component.html',
   styleUrls: ['./payment-vouchers.component.scss']

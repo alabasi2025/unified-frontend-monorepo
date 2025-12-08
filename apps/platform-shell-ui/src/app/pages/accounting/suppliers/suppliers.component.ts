@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { SuppliersService } from '../../../../services/accounting/suppliers.service';
 import { 
   CreateSupplierDto, 
@@ -14,6 +16,8 @@ import {
  */
 @Component({
   selector: 'app-suppliers',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './suppliers.component.html',
   styleUrls: ['./suppliers.component.scss']
 })

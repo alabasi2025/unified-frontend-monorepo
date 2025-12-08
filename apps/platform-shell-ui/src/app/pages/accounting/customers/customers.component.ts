@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { CustomersService } from '../../../../services/accounting/customers.service';
 import { CreateCustomerDto, UpdateCustomerDto, CustomerResponseDto } from '@semop/contracts';
 
 /** PHASE: Sprint 2 - Accounting Cycle | Date: 2025-12-08 | Author: Manus AI */
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   selector: 'app-customers',
   templateUrl: './customers.component.html',
   styleUrls: ['./customers.component.scss']

@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { SalesInvoicesService } from '../../../../services/accounting/sales-invoices.service';
 import { CreateSalesInvoiceDto, UpdateSalesInvoiceDto, SalesInvoiceResponseDto } from '@semop/contracts';
 
 /** PHASE: Sprint 2 - Accounting Cycle | Date: 2025-12-08 | Author: Manus AI */
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   selector: 'app-sales-invoices',
   templateUrl: './sales-invoices.component.html',
   styleUrls: ['./sales-invoices.component.scss']

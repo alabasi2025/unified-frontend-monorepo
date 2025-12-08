@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { BankAccountsService } from '../../../../services/accounting/bank-accounts.service';
 import { CreateBankAccountDto, UpdateBankAccountDto, BankAccountResponseDto } from '@semop/contracts';
 
 /** PHASE: Sprint 2 - Accounting Cycle | Date: 2025-12-08 | Author: Manus AI */
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   selector: 'app-bank-accounts',
   templateUrl: './bank-accounts.component.html',
   styleUrls: ['./bank-accounts.component.scss']

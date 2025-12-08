@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { SupplierInvoicesService } from '../../../../services/accounting/supplier-invoices.service';
 import { CreateSupplierInvoiceDto, UpdateSupplierInvoiceDto, SupplierInvoiceResponseDto } from '@semop/contracts';
 
@@ -8,6 +10,8 @@ import { CreateSupplierInvoiceDto, UpdateSupplierInvoiceDto, SupplierInvoiceResp
  * Author: Manus AI
  */
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   selector: 'app-supplier-invoices',
   templateUrl: './supplier-invoices.component.html',
   styleUrls: ['./supplier-invoices.component.scss']

@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ReceiptVouchersService } from '../../../../services/accounting/receipt-vouchers.service';
 import { CreateReceiptVoucherDto, UpdateReceiptVoucherDto, ReceiptVoucherResponseDto } from '@semop/contracts';
 
 /** PHASE: Sprint 2 - Accounting Cycle | Date: 2025-12-08 | Author: Manus AI */
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   selector: 'app-receipt-vouchers',
   templateUrl: './receipt-vouchers.component.html',
   styleUrls: ['./receipt-vouchers.component.scss']

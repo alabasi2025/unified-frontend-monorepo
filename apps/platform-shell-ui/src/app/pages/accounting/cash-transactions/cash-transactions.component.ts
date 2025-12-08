@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { CashTransactionsService } from '../../../../services/accounting/cash-transactions.service';
 import { CreateCashTransactionDto, UpdateCashTransactionDto, CashTransactionResponseDto } from '@semop/contracts';
 
 /** PHASE: Sprint 2 - Accounting Cycle | Date: 2025-12-08 | Author: Manus AI */
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   selector: 'app-cash-transactions',
   templateUrl: './cash-transactions.component.html',
   styleUrls: ['./cash-transactions.component.scss']
