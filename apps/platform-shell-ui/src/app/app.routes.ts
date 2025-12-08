@@ -19,13 +19,16 @@ export const appRoutes: Route[] = [
       { path: 'reports', loadComponent: () => import('./pages/reports/reports.component').then(m => m.ReportsComponent) },
       
       // Accounting Module Routes
+      { path: 'accounting/gl-accounts', loadComponent: () => import('./pages/gl-accounts/gl-accounts.component').then(m => m.GlAccountsComponent) },
       { path: 'accounts', loadComponent: () => import('./pages/accounting/accounts.component').then(m => m.AccountsComponent) },
       { path: 'accounting/journal-entries', loadComponent: () => import('./pages/accounting/journal-entries.component').then(m => m.JournalEntriesComponent) },
       { path: 'accounting/account-balances', loadComponent: () => import('./pages/accounting/account-balances.component').then(m => m.AccountBalancesComponent) },
       { path: 'accounting/account-hierarchy', loadComponent: () => import('./pages/accounting/account-hierarchy.component').then(m => m.AccountHierarchyComponent) },
       { path: 'accounting/fiscal-periods', loadComponent: () => import('./pages/accounting/fiscal-periods.component').then(m => m.FiscalPeriodsComponent) },
-      { path: 'accounting/cost-centers', loadComponent: () => import('./pages/accounting/cost-centers.component').then(m => m.CostCentersComponent) },
-      { path: 'accounting/fiscal-years', loadComponent: () => import('./pages/accounting/fiscal-years.component').then(m => m.FiscalYearsComponent) },
+      { path: 'accounting/cost-centers-old', loadComponent: () => import('./pages/accounting/cost-centers.component').then(m => m.CostCentersComponent) },
+      { path: 'accounting/fiscal-years-old', loadComponent: () => import('./pages/accounting/fiscal-years.component').then(m => m.FiscalYearsComponent) },
+      { path: 'accounting/cost-centers', loadComponent: () => import('./pages/cost-centers/cost-centers.component').then(m => m.CostCentersComponent) },
+      { path: 'accounting/fiscal-years', loadComponent: () => import('./pages/fiscal-years/fiscal-years.component').then(m => m.FiscalYearsComponent) },
       
       // Inventory Module Routes
       { path: 'warehouses', loadComponent: () => import('./pages/warehouses/warehouses.component').then(m => m.WarehousesComponent) },

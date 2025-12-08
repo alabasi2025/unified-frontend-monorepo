@@ -1,0 +1,61 @@
+<div class="card">
+  <p-toast></p-toast>
+  
+  <div class="toolbar">
+    <h2>إدارة دليل الحسابات</h2>
+    <p-button label="إضافة حساب جديد" icon="pi pi-plus" (onClick)="openNew()"></p-button>
+  </div>
+
+  <p-table [value]="accounts" [paginator]="true" [rows]="10" [responsive]="true">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>الكود</th>
+        <th>الاسم (عربي)</th>
+        <th>الاسم (إنجليزي)</th>
+        <th>النوع</th>
+        <th>نشط</th>
+        <th>إجراءات</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-account>
+      <tr>
+        <td>{{ account.code }}</td>
+        <td>{{ account.nameAr }}</td>
+        <td>{{ account.nameEn }}</td>
+        <td>{{ account.accountType }}</td>
+        <td>
+          <i class="pi" [ngClass]="account.isActive ? 'pi-check text-green-500' : 'pi-times text-red-500'"></i>
+        </td>
+        <td>
+          <p-button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (onClick)="openEdit(account)"></p-button>
+          <p-button icon="pi pi-trash" class="p-button-rounded p-button-danger" (onClick)="delete(account.id)"></p-button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-dialog [(visible)]="displayDialog" [header]="isEdit ? 'تعديل حساب' : 'إضافة حساب جديد'" [modal]="true" [style]="{width: '50vw'}">
+    <div class="p-fluid">
+      <div class="field">
+        <label for="code">الكود</label>
+        <input pInputText id="code" [(ngModel)]="selectedAccount.code" required />
+      </div>
+      <div class="field">
+        <label for="nameAr">الاسم (عربي)</label>
+        <input pInputText id="nameAr" [(ngModel)]="selectedAccount.nameAr" required />
+      </div>
+      <div class="field">
+        <label for="nameEn">الاسم (إنجليزي)</label>
+        <input pInputText id="nameEn" [(ngModel)]="selectedAccount.nameEn" />
+      </div>
+      <div class="field">
+        <label for="accountType">النوع</label>
+        <p-dropdown id="accountType" [(ngModel)]="selectedAccount.accountType" [options]="accountTypes" optionLabel="label" optionValue="value"></p-dropdown>
+      </div>
+    </div>
+    <ng-template pTemplate="footer">
+      <p-button label="إلغاء" icon="pi pi-times" (onClick)="cancel()" class="p-button-text"></p-button>
+      <p-button label="حفظ" icon="pi pi-check" (onClick)="save()"></p-button>
+    </ng-template>
+  </p-dialog>
+</div>

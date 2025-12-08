@@ -1,0 +1,53 @@
+<div class="card">
+  <p-toast></p-toast>
+  
+  <div class="toolbar">
+    <h2>إدارة السنوات المالية</h2>
+    <p-button label="إضافة سنة مالية" icon="pi pi-plus" (onClick)="openNew()"></p-button>
+  </div>
+
+  <p-table [value]="fiscalYears" [paginator]="true" [rows]="10" [responsive]="true">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>الاسم</th>
+        <th>تاريخ البداية</th>
+        <th>تاريخ النهاية</th>
+        <th>الحالة</th>
+        <th>إجراءات</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-year>
+      <tr>
+        <td>{{ year.name }}</td>
+        <td>{{ year.startDate | date:'yyyy-MM-dd' }}</td>
+        <td>{{ year.endDate | date:'yyyy-MM-dd' }}</td>
+        <td>{{ year.status }}</td>
+        <td>
+          <p-button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (onClick)="openEdit(year)"></p-button>
+          <p-button icon="pi pi-trash" class="p-button-rounded p-button-danger" (onClick)="delete(year.id)"></p-button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-dialog [(visible)]="displayDialog" [header]="isEdit ? 'تعديل سنة مالية' : 'إضافة سنة مالية'" [modal]="true" [style]="{width: '50vw'}">
+    <div class="p-fluid">
+      <div class="field">
+        <label for="name">الاسم</label>
+        <input pInputText id="name" [(ngModel)]="selectedYear.name" required />
+      </div>
+      <div class="field">
+        <label for="startDate">تاريخ البداية</label>
+        <p-calendar id="startDate" [(ngModel)]="selectedYear.startDate" dateFormat="yy-mm-dd"></p-calendar>
+      </div>
+      <div class="field">
+        <label for="endDate">تاريخ النهاية</label>
+        <p-calendar id="endDate" [(ngModel)]="selectedYear.endDate" dateFormat="yy-mm-dd"></p-calendar>
+      </div>
+    </div>
+    <ng-template pTemplate="footer">
+      <p-button label="إلغاء" icon="pi pi-times" (onClick)="cancel()" class="p-button-text"></p-button>
+      <p-button label="حفظ" icon="pi pi-check" (onClick)="save()"></p-button>
+    </ng-template>
+  </p-dialog>
+</div>
