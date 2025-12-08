@@ -32,6 +32,21 @@ export const appRoutes: Route[] = [
         loadChildren: () => import('./pages/accounting/smart-journal-entries/smart-journal-entries.routes').then(m => m.SMART_JOURNAL_ENTRIES_ROUTES)
       },
       
+      // Sprint 2: Accounts Payable (AP)
+      { path: 'accounting/suppliers', loadComponent: () => import('./pages/accounting/suppliers/suppliers.component').then(m => m.SuppliersComponent) },
+      { path: 'accounting/supplier-invoices', loadComponent: () => import('./pages/accounting/supplier-invoices/supplier-invoices.component').then(m => m.SupplierInvoicesComponent) },
+      { path: 'accounting/payment-vouchers', loadComponent: () => import('./pages/accounting/payment-vouchers/payment-vouchers.component').then(m => m.PaymentVouchersComponent) },
+      
+      // Sprint 2: Accounts Receivable (AR)
+      { path: 'accounting/customers', loadComponent: () => import('./pages/accounting/customers/customers.component').then(m => m.CustomersComponent) },
+      { path: 'accounting/sales-invoices', loadComponent: () => import('./pages/accounting/sales-invoices/sales-invoices.component').then(m => m.SalesInvoicesComponent) },
+      { path: 'accounting/receipt-vouchers', loadComponent: () => import('./pages/accounting/receipt-vouchers/receipt-vouchers.component').then(m => m.ReceiptVouchersComponent) },
+      
+      // Sprint 2: Cash Management
+      { path: 'accounting/bank-accounts', loadComponent: () => import('./pages/accounting/bank-accounts/bank-accounts.component').then(m => m.BankAccountsComponent) },
+      { path: 'accounting/petty-cash', loadComponent: () => import('./pages/accounting/petty-cash/petty-cash.component').then(m => m.PettyCashComponent) },
+      { path: 'accounting/cash-transactions', loadComponent: () => import('./pages/accounting/cash-transactions/cash-transactions.component').then(m => m.CashTransactionsComponent) },
+      
       // Inventory Module Routes
       { path: 'warehouses', loadComponent: () => import('./pages/warehouses/warehouses.component').then(m => m.WarehousesComponent) },
       { path: 'item-categories', loadComponent: () => import('./pages/item-categories/item-categories.component').then(m => m.ItemCategoriesComponent) },

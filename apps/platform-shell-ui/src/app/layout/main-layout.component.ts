@@ -482,13 +482,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         { title: 'الحسابات البنكية', route: '/accounting/bank-accounts', icon: '', color: '' },
         { title: 'الخزائن', route: '/accounting/petty-cash', icon: '', color: '' },
         { title: 'الحركات النقدية', route: '/accounting/cash-transactions', icon: '', color: '' },
-        // Sprint 3: Reports & Analytics
-        { title: 'ميزان المراجعة', route: '/accounting/reports/trial-balance', icon: '', color: '' },
-        { title: 'قائمة الدخل', route: '/accounting/reports/income-statement', icon: '', color: '' },
-        { title: 'الميزانية العمومية', route: '/accounting/reports/balance-sheet', icon: '', color: '' },
-        { title: 'أعمار الذمم', route: '/accounting/reports/aging', icon: '', color: '' },
-        { title: 'التدفقات النقدية', route: '/accounting/reports/cash-flow', icon: '', color: '' },
-        { title: 'مؤشرات الأداء', route: '/accounting/reports/kpis', icon: '', color: '' }
+
       ]
     },
     { title: 'المخزون',      icon: '📦',
