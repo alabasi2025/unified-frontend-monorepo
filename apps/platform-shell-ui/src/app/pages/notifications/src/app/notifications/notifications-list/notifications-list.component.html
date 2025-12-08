@@ -4,7 +4,7 @@
       <p-toast></p-toast>
 
       <div class="p-d-flex p-jc-between p-ai-center p-mb-3">
-        <span class="p-text-bold">لديك <p-badge [value]="unreadCount" severity="warning"></p-badge> إشعار غير مقروء</span>
+        <span class="p-text-bold">لديك <p-badge [value]="unreadCount" severity="warn"></p-badge> إشعار غير مقروء</span>
         <button pButton type="button" label="تعليم الكل كمقروء" icon="pi pi-check-circle" (click)="markAllAsRead()"
           [disabled]="unreadCount === 0" class="p-button-sm p-button-secondary"></button>
       </div>
