@@ -461,6 +461,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       icon: '🧮',
       color: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
       children: [
+        // Sprint 1: GL Module
         { title: 'دليل الحسابات', route: '/chart-of-accounts', icon: '', color: '' },
         { title: 'التسلسل الهرمي', route: '/account-hierarchy', icon: '', color: '' },
         { title: 'أرصدة الحسابات', route: '/account-balances', icon: '', color: '' },
@@ -468,7 +469,26 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         { title: 'القيود الذكية', route: '/smart-journal-entries', icon: '', color: '' },
         { title: 'مراكز التكلفة', route: '/cost-centers', icon: '', color: '' },
         { title: 'السنوات المالية', route: '/fiscal-years', icon: '', color: '' },
-        { title: 'الفترات المالية', route: '/fiscal-periods', icon: '', color: '' }
+        { title: 'الفترات المالية', route: '/fiscal-periods', icon: '', color: '' },
+        // Sprint 2: Accounts Payable (AP)
+        { title: 'الموردين', route: '/accounting/suppliers', icon: '', color: '' },
+        { title: 'فواتير الموردين', route: '/accounting/supplier-invoices', icon: '', color: '' },
+        { title: 'سندات الصرف', route: '/accounting/payment-vouchers', icon: '', color: '' },
+        // Sprint 2: Accounts Receivable (AR)
+        { title: 'العملاء', route: '/accounting/customers', icon: '', color: '' },
+        { title: 'فواتير المبيعات', route: '/accounting/sales-invoices', icon: '', color: '' },
+        { title: 'سندات القبض', route: '/accounting/receipt-vouchers', icon: '', color: '' },
+        // Sprint 2: Cash Management
+        { title: 'الحسابات البنكية', route: '/accounting/bank-accounts', icon: '', color: '' },
+        { title: 'الخزائن', route: '/accounting/petty-cash', icon: '', color: '' },
+        { title: 'الحركات النقدية', route: '/accounting/cash-transactions', icon: '', color: '' },
+        // Sprint 3: Reports & Analytics
+        { title: 'ميزان المراجعة', route: '/accounting/reports/trial-balance', icon: '', color: '' },
+        { title: 'قائمة الدخل', route: '/accounting/reports/income-statement', icon: '', color: '' },
+        { title: 'الميزانية العمومية', route: '/accounting/reports/balance-sheet', icon: '', color: '' },
+        { title: 'أعمار الذمم', route: '/accounting/reports/aging', icon: '', color: '' },
+        { title: 'التدفقات النقدية', route: '/accounting/reports/cash-flow', icon: '', color: '' },
+        { title: 'مؤشرات الأداء', route: '/accounting/reports/kpis', icon: '', color: '' }
       ]
     },
     { title: 'المخزون',      icon: '📦',
