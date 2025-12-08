@@ -1,48 +1,45 @@
+/**
+ * PHASE: Sprint 1 - GL Foundation
+ * Date: 2025-12-08
+ * Author: Manus AI
+ * Description: Frontend service for Fiscal Years
+ */
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-export interface FiscalYear {
-  id: string;
-  code: string;
-  nameAr: string;
-  nameEn?: string;
-  startDate: string;
-  endDate: string;
-  isClosed: boolean;
-  isActive: boolean;
-  createdAt?: string;
-}
+import {
+  CreateFiscalYearDto,
+  UpdateFiscalYearDto,
+  FiscalYearResponseDto,
+} from '@semop/contracts';
+import { environment } from '../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FiscalYearsService {
-  private apiUrl = '/api/fiscal-years';
+  private readonly apiUrl = `${environment.apiUrl}/accounting/fiscal-years`;
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<FiscalYear[]> {
-    return this.http.get<FiscalYear[]>(this.apiUrl);
+  create(dto: CreateFiscalYearDto): Observable<FiscalYearResponseDto> {
+    return this.http.post<FiscalYearResponseDto>(this.apiUrl, dto);
   }
 
-  getById(id: string): Observable<FiscalYear> {
-    return this.http.get<FiscalYear>(`${this.apiUrl}/${id}`);
+  findAll(): Observable<FiscalYearResponseDto[]> {
+    return this.http.get<FiscalYearResponseDto[]>(this.apiUrl);
   }
 
-  create(fiscalYear: Partial<FiscalYear>): Observable<FiscalYear> {
-    return this.http.post<FiscalYear>(this.apiUrl, fiscalYear);
+  findOne(id: string): Observable<FiscalYearResponseDto> {
+    return this.http.get<FiscalYearResponseDto>(`${this.apiUrl}/${id}`);
   }
 
-  update(id: string, fiscalYear: Partial<FiscalYear>): Observable<FiscalYear> {
-    return this.http.patch<FiscalYear>(`${this.apiUrl}/${id}`, fiscalYear);
+  update(id: string, dto: UpdateFiscalYearDto): Observable<FiscalYearResponseDto> {
+    return this.http.put<FiscalYearResponseDto>(`${this.apiUrl}/${id}`, dto);
   }
 
-  delete(id: string): Observable<FiscalYear> {
-    return this.http.delete<FiscalYear>(`${this.apiUrl}/${id}`);
-  }
-
-  close(id: string): Observable<FiscalYear> {
-    return this.http.post<FiscalYear>(`${this.apiUrl}/${id}/close`, {});
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

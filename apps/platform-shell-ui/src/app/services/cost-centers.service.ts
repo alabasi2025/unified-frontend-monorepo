@@ -1,42 +1,45 @@
+/**
+ * PHASE: Sprint 1 - GL Foundation
+ * Date: 2025-12-08
+ * Author: Manus AI
+ * Description: Frontend service for Cost Centers
+ */
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-export interface CostCenter {
-  id: string;
-  code: string;
-  nameAr: string;
-  nameEn?: string;
-  description?: string;
-  isActive: boolean;
-  createdAt?: string;
-}
+import {
+  CreateCostCenterDto,
+  UpdateCostCenterDto,
+  CostCenterResponseDto,
+} from '@semop/contracts';
+import { environment } from '../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CostCentersService {
-  private apiUrl = '/api/cost-centers';
+  private readonly apiUrl = `${environment.apiUrl}/accounting/cost-centers`;
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<CostCenter[]> {
-    return this.http.get<CostCenter[]>(this.apiUrl);
+  create(dto: CreateCostCenterDto): Observable<CostCenterResponseDto> {
+    return this.http.post<CostCenterResponseDto>(this.apiUrl, dto);
   }
 
-  getById(id: string): Observable<CostCenter> {
-    return this.http.get<CostCenter>(`${this.apiUrl}/${id}`);
+  findAll(): Observable<CostCenterResponseDto[]> {
+    return this.http.get<CostCenterResponseDto[]>(this.apiUrl);
   }
 
-  create(costCenter: Partial<CostCenter>): Observable<CostCenter> {
-    return this.http.post<CostCenter>(this.apiUrl, costCenter);
+  findOne(id: string): Observable<CostCenterResponseDto> {
+    return this.http.get<CostCenterResponseDto>(`${this.apiUrl}/${id}`);
   }
 
-  update(id: string, costCenter: Partial<CostCenter>): Observable<CostCenter> {
-    return this.http.patch<CostCenter>(`${this.apiUrl}/${id}`, costCenter);
+  update(id: string, dto: UpdateCostCenterDto): Observable<CostCenterResponseDto> {
+    return this.http.put<CostCenterResponseDto>(`${this.apiUrl}/${id}`, dto);
   }
 
-  delete(id: string): Observable<CostCenter> {
-    return this.http.delete<CostCenter>(`${this.apiUrl}/${id}`);
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
