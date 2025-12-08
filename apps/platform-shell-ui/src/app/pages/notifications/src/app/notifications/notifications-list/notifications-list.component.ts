@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { NotificationsService } from '../notifications.service';
 import { Notification, NotificationType } from '../models/notification.model';
 import { MessageService } from 'primeng/api';
@@ -7,6 +8,8 @@ import { MessageService } from 'primeng/api';
   selector: 'app-notifications-list',
   templateUrl: './notifications-list.component.html',
   styleUrls: ['./notifications-list.component.css'],
+  standalone: true,
+  imports: [DatePipe],
   providers: [MessageService]
 })
 export class NotificationsListComponent implements OnInit {
