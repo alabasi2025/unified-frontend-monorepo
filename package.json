@@ -5,6 +5,7 @@
   "scripts": {},
   "private": true,
   "dependencies": {
+    "@semop/contracts": "^10.1.2",
     "@angular/animations": "~20.3.0",
     "@angular/common": "~20.3.0",
     "@angular/compiler": "~20.3.0",
