@@ -1,15 +1,38 @@
 import { Component, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { NotificationsService } from '../notifications.service';
 import { Notification, NotificationType } from '../models/notification.model';
+import { NotificationTypePipe } from '../pipes/notification-type.pipe';
 import { MessageService } from 'primeng/api';
+import { CardModule } from 'primeng/card';
+import { ButtonModule } from 'primeng/button';
+import { ListboxModule } from 'primeng/listbox';
+import { BadgeModule } from 'primeng/badge';
+import { ToastModule } from 'primeng/toast';
+import { DividerModule } from 'primeng/divider';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-notifications-list',
   templateUrl: './notifications-list.component.html',
   styleUrls: ['./notifications-list.component.css'],
   standalone: true,
-  imports: [DatePipe],
+  imports: [
+    CommonModule,
+    DatePipe,
+    NotificationTypePipe,
+    CardModule,
+    ButtonModule,
+    ListboxModule,
+    BadgeModule,
+    ToastModule,
+    DividerModule,
+    ProgressSpinnerModule,
+    TagModule,
+    TooltipModule
+  ],
   providers: [MessageService]
 })
 export class NotificationsListComponent implements OnInit {
