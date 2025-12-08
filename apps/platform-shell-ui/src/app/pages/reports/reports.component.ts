@@ -1,12 +1,30 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ReportsService, GetReportDto } from './reports.service';
-import { MessageService } from 'primeng/api'; // لاستخدام PrimeNG Toast
+import { Observable } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { TableModule } from 'primeng/table';
+import { CardModule } from 'primeng/card';
+import { ButtonModule } from 'primeng/button';
+
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-reports',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    TableModule,
+    CardModule,
+    ButtonModule,
+
+    ToastModule
+  ],
   templateUrl: './reports.component.html',
   styleUrls: ['./reports.component.css'],
-  providers: [MessageService] // إضافة MessageService
+  providers: [MessageService]
 })
 export class ReportsComponent implements OnInit {
   selectedReport: string = 'inventory-summary';
@@ -46,7 +64,7 @@ export class ReportsComponent implements OnInit {
     }
 
     reportObservable.subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.reportData = response.data;
         this.messageService.add({
           severity: 'success',
@@ -54,7 +72,7 @@ export class ReportsComponent implements OnInit {
           detail: response.message,
         });
       },
-      error: (err) => {
+      error: (err: any) => {
         this.messageService.add({
           severity: 'error',
           summary: 'خطأ',

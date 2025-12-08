@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 // افتراض مسار environment بناءً على مسار الخدمة
-import { environment } from 'src/environments/environment'; 
+import { environment } from '../../../environments/environment'; 
 
 import { 
   CreateSupplierDto, 

@@ -13,7 +13,7 @@ import {
   UpdatePettyCashDto, 
   PettyCashResponseDto 
 } from '@semop/contracts';
-import { environment } from '../../../../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'

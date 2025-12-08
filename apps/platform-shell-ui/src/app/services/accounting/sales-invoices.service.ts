@@ -8,7 +8,7 @@ import {
   SalesInvoiceResponseDto 
 } from '@semop/contracts';
 // Assuming environment is available via a path like this in a real project
-// import { environment } from '../../environments/environment'; 
+// import { environment } from '../../../environments/environment'; 
 
 /**
  * PHASE: Sprint 2 - Accounting Cycle

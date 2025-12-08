@@ -7,38 +7,22 @@
         <!-- اختيار نوع التقرير -->
         <div class="p-col-12 p-md-4">
           <label for="reportType">نوع التقرير</label>
-          <p-dropdown
-            [options]="[
-              { label: 'ملخص المخزون', value: 'inventory-summary' },
-              { label: 'المبيعات حسب الصنف', value: 'sales-by-item' },
-              { label: 'حركة المخزون', value: 'stock-movement' }
-            ]"
-            [(ngModel)]="selectedReport"
-            placeholder="اختر تقريراً"
-            optionLabel="label"
-            optionValue="value"
-          ></p-dropdown>
+          <select [(ngModel)]="selectedReport" class="form-control">
+            <option value="inventory-summary">ملخص المخزون</option>
+            <option value="sales-by-item">المبيعات حسب الصنف</option>
+            <option value="stock-movement">حركة المخزون</option>
+          </select>
         </div>
 
         <!-- فلاتر التاريخ -->
         <div class="p-col-12 p-md-4">
           <label for="startDate">تاريخ البدء</label>
-          <p-calendar
-            [(ngModel)]="filter.startDate"
-            dateFormat="yy-mm-dd"
-            [showIcon]="true"
-            placeholder="تاريخ البدء"
-          ></p-calendar>
+          <input type="date" [(ngModel)]="filter.startDate" class="form-control" placeholder="تاريخ البدء" />
         </div>
 
         <div class="p-col-12 p-md-4">
           <label for="endDate">تاريخ الانتهاء</label>
-          <p-calendar
-            [(ngModel)]="filter.endDate"
-            dateFormat="yy-mm-dd"
-            [showIcon]="true"
-            placeholder="تاريخ الانتهاء"
-          ></p-calendar>
+          <input type="date" [(ngModel)]="filter.endDate" class="form-control" placeholder="تاريخ الانتهاء" />
         </div>
 
         <!-- فلاتر إضافية (الصنف والمستودع) -->
@@ -96,7 +80,7 @@
         <ng-template pTemplate="header" let-columns>
           <tr>
             <th *ngFor="let col of columns" [pSortableColumn]="col.field">
-              {{ col.header }} <p-sortIcon [field]="col.field"></p-sortIcon>
+              {{ col.header }}
             </th>
           </tr>
         </ng-template>

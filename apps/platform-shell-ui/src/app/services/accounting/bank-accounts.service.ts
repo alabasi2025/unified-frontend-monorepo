@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
+import { environment } from '../../../environments/environment';
 import { 
-  CreateBankAccountDto, 
-  UpdateBankAccountDto, 
-  BankAccountResponseDto 
+  CreateBankAccountDTO, 
+  UpdateBankAccountDTO, 
+  BankAccountResponseDTO 
 } from '@semop/contracts';
 
 /**
@@ -37,10 +37,10 @@ export class BankAccountsService {
 
   /**
    * يجلب جميع الحسابات البنكية.
-   * @returns Observable من مصفوفة BankAccountResponseDto.
+   * @returns Observable من مصفوفة BankAccountResponseDTO.
    */
-  getAll(): Observable<BankAccountResponseDto[]> {
-    return this.http.get<BankAccountResponseDto[]>(this.apiUrl).pipe(
+  getAll(): Observable<BankAccountResponseDTO[]> {
+    return this.http.get<BankAccountResponseDTO[]>(this.apiUrl).pipe(
       catchError(this.handleError)
     );
   }
@@ -48,11 +48,11 @@ export class BankAccountsService {
   /**
    * يجلب حساب بنكي واحد بواسطة المعرف الخاص به.
    * @param id معرف الحساب البنكي.
-   * @returns Observable من BankAccountResponseDto واحد.
+   * @returns Observable من BankAccountResponseDTO واحد.
    */
-  getById(id: string): Observable<BankAccountResponseDto> {
+  getById(id: string): Observable<BankAccountResponseDTO> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.get<BankAccountResponseDto>(url).pipe(
+    return this.http.get<BankAccountResponseDTO>(url).pipe(
       catchError(this.handleError)
     );
   }
@@ -60,10 +60,10 @@ export class BankAccountsService {
   /**
    * ينشئ حساب بنكي جديد.
    * @param dto كائن نقل البيانات لإنشاء حساب بنكي.
-   * @returns Observable من BankAccountResponseDto المنشأ.
+   * @returns Observable من BankAccountResponseDTO المنشأ.
    */
-  create(dto: CreateBankAccountDto): Observable<BankAccountResponseDto> {
-    return this.http.post<BankAccountResponseDto>(this.apiUrl, dto).pipe(
+  create(dto: CreateBankAccountDTO): Observable<BankAccountResponseDTO> {
+    return this.http.post<BankAccountResponseDTO>(this.apiUrl, dto).pipe(
       catchError(this.handleError)
     );
   }
@@ -72,11 +72,11 @@ export class BankAccountsService {
    * يحدث حساب بنكي موجود.
    * @param id معرف الحساب البنكي للتحديث.
    * @param dto كائن نقل البيانات لتحديث حساب بنكي.
-   * @returns Observable من BankAccountResponseDto المحدث.
+   * @returns Observable من BankAccountResponseDTO المحدث.
    */
-  update(id: string, dto: UpdateBankAccountDto): Observable<BankAccountResponseDto> {
+  update(id: string, dto: UpdateBankAccountDTO): Observable<BankAccountResponseDTO> {
     const url = `${this.apiUrl}/${id}`;
-    return this.http.put<BankAccountResponseDto>(url, dto).pipe(
+    return this.http.put<BankAccountResponseDTO>(url, dto).pipe(
       catchError(this.handleError)
     );
   }
